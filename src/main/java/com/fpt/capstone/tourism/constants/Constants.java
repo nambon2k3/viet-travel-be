@@ -1,16 +1,6 @@
 package com.fpt.capstone.tourism.constants;
 
 public class Constants {
-    public static final String API_VERSION = "/v1";
-    public static final String BASE_URL = "/tourism" + API_VERSION;
-
-    //API Path Naming
-    public static final String USER_PATH = BASE_URL + "/users";
-
-
-    //Client Endpoint
-    public static final String CLIENT_URL = "http://localhost:4200/";
-
 
 
     public static final class UserExceptionInformation {
