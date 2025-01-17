@@ -2,8 +2,7 @@ package com.fpt.capstone.tourism.dto;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

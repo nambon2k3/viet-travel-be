@@ -1,8 +1,6 @@
 package com.fpt.capstone.tourism.service;
 
-import com.fpt.capstone.tourism.dto.UserDTO;
 import com.fpt.capstone.tourism.model.User;
-import org.springframework.stereotype.Service;
 
 
 public interface UserService {
@@ -12,7 +10,7 @@ public interface UserService {
 
     User findUserByUsername(String username);
 
+    User saveUser(User userDTO);
 
-
-
+    Boolean existsByUsername(String userName);
 }
