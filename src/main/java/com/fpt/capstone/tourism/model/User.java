@@ -32,12 +32,12 @@ public class User implements UserDetails {
     private String email;
 
     @NotNull(message = "Username cannot be null")
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Size(min = 8, max = 30, message = "Username must be between 3 and 30 characters")
     @Column(nullable = false, unique = true)
     private String username;
 
     @NotNull(message = "Password cannot be null")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @Size(min = 8, message = "Password must be at least 6 characters long")
     @ToString.Exclude
     private String password;
 
