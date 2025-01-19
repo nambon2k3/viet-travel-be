@@ -49,4 +49,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsername(userName);
     }
 
+    @Override
+    public Boolean exitsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+
 }
