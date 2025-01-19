@@ -20,6 +20,7 @@ public class Constants {
         public static final String REGISTER_FAIL_MESSAGE = "User registered failed!";
         public static final String LOGOUT_SUCCESS_MESSAGE = "Logged out successfully";
         public static final String LOGOUT_FAIL_MESSAGE = "Logged out failed!";
+        public static final String PASSWORDS_DO_NOT_MATCH_MESSAGE = "Passwords do not match";
     }
 
 

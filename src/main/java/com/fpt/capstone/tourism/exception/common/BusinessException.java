@@ -3,8 +3,7 @@ package com.fpt.capstone.tourism.exception.common;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

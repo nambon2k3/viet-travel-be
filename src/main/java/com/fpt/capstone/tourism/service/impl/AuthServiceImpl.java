@@ -54,10 +54,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public GeneralResponse<UserInfoResponseDTO> register(RegisterRequestDTO registerRequestDTO) {
+    public GeneralResponse<UserInfoResponseDTO> register(RegisterRequestDTO registerRequestDTO) throws BusinessException{
         try {
             if (userService.existsByUsername(registerRequestDTO.getUsername())) {
                 throw BusinessException.of(Constants.UserExceptionInformation.USERNAME_ALREADY_EXISTS_MESSAGE);
+            }
+
+            if (!registerRequestDTO.getPassword().equals(registerRequestDTO.getRePassword())) {
+                throw BusinessException.of(Constants.Message.PASSWORDS_DO_NOT_MATCH_MESSAGE);
             }
 
             User user = User.builder()
