@@ -13,4 +13,5 @@ public interface UserService {
     User saveUser(User userDTO);
 
     Boolean existsByUsername(String userName);
+    Boolean exitsByEmail(String email);
 }

@@ -66,6 +66,9 @@ public class AuthServiceImpl implements AuthService {
             if (userService.existsByUsername(registerRequestDTO.getUsername())) {
                 throw BusinessException.of(Constants.UserExceptionInformation.USERNAME_ALREADY_EXISTS_MESSAGE);
             }
+            if(userService.exitsByEmail(registerRequestDTO.getEmail())){
+                throw BusinessException.of(Constants.UserExceptionInformation.EMAIL_ALREADY_EXISTS_MESSAGE);
+            }
         }
 
 
