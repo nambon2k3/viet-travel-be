@@ -78,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
                 .username(registerRequestDTO.getUsername())
                 .password(passwordEncoder.encode(registerRequestDTO.getPassword()))
                 .email(registerRequestDTO.getEmail())
-                .fullName(registerRequestDTO.getFullName())
+                .fullName(registerRequestDTO.getFullName().trim())
                 .role(Role.USER)
                 .createdDate(LocalDateTime.now())
                 .isDeleted(false)
