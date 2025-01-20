@@ -28,4 +28,10 @@ public class AuthController {
     public ResponseEntity<GeneralResponse<UserInfoResponseDTO>> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
         return ResponseEntity.ok(authService.register(registerRequestDTO));
     }
+
+    @GetMapping("/confirm-email")
+    public ResponseEntity<GeneralResponse<String>> confirmEmail(@RequestParam String token) {
+        return ResponseEntity.ok(authService.confirmEmail(token));
+    }
+
 }

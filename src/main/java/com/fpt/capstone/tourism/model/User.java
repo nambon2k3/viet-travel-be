@@ -62,6 +62,9 @@ public class User implements UserDetails {
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
+    @Column(name = "email_confirmed")
+    private boolean emailConfirmed;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
