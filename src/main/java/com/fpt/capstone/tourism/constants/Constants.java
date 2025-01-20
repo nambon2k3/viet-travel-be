@@ -10,10 +10,11 @@ public class Constants {
         public static final String USERNAME_ALREADY_EXISTS_MESSAGE = "Username already exists";
         public static final String EMAIL_ALREADY_EXISTS_MESSAGE = "Email already exists";
         public static final String FAIL_TO_SAVE_USER_MESSAGE = "Fail to save user";
-        public static final String USER_INFORMATION_NULL_OR_EMPTY = "User information is null or empty";
-        public static final String USERNAME_INVALID = "Username is invalid";
-        public static final String PASSWORD_INVALID = "Password is invalid";
-        public static final String FULL_NAME_INVALID = "FullName is invalid";
+        public static final String USER_INFORMATION_NULL_OR_EMPTY = "This section is required";
+        public static final String USERNAME_INVALID = "Use only letters, numbers, -, _ with range from 8 to 30";
+        public static final String PASSWORD_INVALID = "Use 8 characters or more (must contain 1 uppercase letter, " +
+                "1 lowercase letter and 1 special character";
+        public static final String FULL_NAME_INVALID = "Start with a letter, use only letters and white space";
         public static final String EMAIL_INVALID = "Email is invalid";
 
     }
@@ -40,7 +41,7 @@ public class Constants {
         //public static final String REGEX_PASSWORD = "$d{8}^";
         public static final String REGEX_USERNAME= "^[a-zA-Z0-9-_]{8,30}$";
         public static final String REGEX_PASSWORD = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
-        public static final String REGEX_FULLNAME = "^[a-zA-Z\s]*$";
+        public static final String REGEX_FULLNAME = "^[a-zA-Z][a-zA-Z\s]*$";
         public static final String REGEX_EMAIL = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
 
     }

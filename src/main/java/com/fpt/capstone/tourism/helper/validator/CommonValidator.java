@@ -23,7 +23,7 @@ public class CommonValidator {
     }
 
     public static boolean isFullNameValid(String value){
-        return value.matches(Constants.Regex.REGEX_FULLNAME);
+        return value.trim().matches(Constants.Regex.REGEX_FULLNAME);
     }
 
     public static boolean isEmailValid(String value){
