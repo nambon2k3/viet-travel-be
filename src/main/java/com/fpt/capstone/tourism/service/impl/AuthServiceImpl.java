@@ -60,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
     public GeneralResponse<UserInfoResponseDTO> register(RegisterRequestDTO registerRequestDTO) {
         if (RegisterValidator.isRegisterValid(registerRequestDTO.getUsername(),
                 registerRequestDTO.getPassword(),
+                registerRequestDTO.getRePassword(),
                 registerRequestDTO.getFullName(),
                 registerRequestDTO.getEmail())) {
 
