@@ -9,10 +9,14 @@ import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.enums.Role;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
+import com.fpt.capstone.tourism.helper.TokenEncryptorImpl;
 import com.fpt.capstone.tourism.helper.validator.*;
+import com.fpt.capstone.tourism.model.EmailConfirmationToken;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.service.AuthService;
+import com.fpt.capstone.tourism.service.EmailConfirmationService;
 import com.fpt.capstone.tourism.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +33,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtHelper jwtHelper;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final EmailConfirmationService emailConfirmationService;
+    private final TokenEncryptorImpl tokenEncryptor;
 
     @Override
     public GeneralResponse<TokenDTO> login(UserDTO userDTO) {
@@ -40,8 +46,13 @@ public class AuthServiceImpl implements AuthService {
                     userDTO.getUsername(), userDTO.getPassword()
             ));
             User user = userService.findUserByUsername(userDTO.getUsername());
-            String token = jwtHelper.generateToken(user);
 
+            // Check if the user's email is confirmed
+            if (!user.isEmailConfirmed()) {
+                throw BusinessException.of(Constants.Message.EMAIL_NOT_CONFIRMED_MESSAGE);
+            }
+
+            String token = jwtHelper.generateToken(user);
 
             TokenDTO tokenDTO = TokenDTO.builder()
                     .username(user.getUsername())
@@ -50,10 +61,11 @@ public class AuthServiceImpl implements AuthService {
                     .build();
 
             return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.LOGIN_SUCCESS_MESSAGE, tokenDTO);
-        } catch (Exception ex) {
+        } catch (BusinessException be) {
+            throw be;
+        }catch (Exception ex) {
             throw BusinessException.of(Constants.Message.LOGIN_FAIL_MESSAGE, ex);
         }
-
     }
 
     @Override
@@ -67,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
             if (userService.existsByUsername(registerRequestDTO.getUsername())) {
                 throw BusinessException.of(Constants.UserExceptionInformation.USERNAME_ALREADY_EXISTS_MESSAGE);
             }
-            if(userService.exitsByEmail(registerRequestDTO.getEmail())){
+            if (userService.exitsByEmail(registerRequestDTO.getEmail())) {
                 throw BusinessException.of(Constants.UserExceptionInformation.EMAIL_ALREADY_EXISTS_MESSAGE);
             }
             if (!registerRequestDTO.getPassword().equals(registerRequestDTO.getRePassword())) {
@@ -83,9 +95,17 @@ public class AuthServiceImpl implements AuthService {
                 .role(Role.USER)
                 .createdDate(LocalDateTime.now())
                 .isDeleted(false)
+                .emailConfirmed(false)
                 .build();
 
         User savedUser = userService.saveUser(user);
+
+        EmailConfirmationToken token = emailConfirmationService.createEmailConfirmationToken(savedUser);
+        try {
+            emailConfirmationService.sendConfirmationEmail(savedUser, token);
+        } catch (Exception e) {
+            throw BusinessException.of(Constants.Message.REGISTER_FAIL_MESSAGE);
+        }
 
         UserInfoResponseDTO userResponseDTO = UserInfoResponseDTO.builder()
                 .id(savedUser.getId())
@@ -94,6 +114,20 @@ public class AuthServiceImpl implements AuthService {
                 .fullName(savedUser.getFullName())
                 .role(savedUser.getRole())
                 .build();
-        return new GeneralResponse<>(HttpStatus.CREATED.value(), Constants.Message.REGISTER_SUCCESS_MESSAGE, userResponseDTO);
+
+        return new GeneralResponse<>(HttpStatus.CREATED.value(), Constants.Message.EMAIL_CONFIRMATION_REQUEST_MESSAGE, userResponseDTO);
     }
+
+    @Override
+    @Transactional
+    public GeneralResponse<String> confirmEmail(String token) {
+        EmailConfirmationToken emailToken = emailConfirmationService.validateConfirmationToken(token);
+
+        User user = emailToken.getUser();
+        user.setEmailConfirmed(true);
+        userService.saveUser(user);
+
+        return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.EMAIL_CONFIRMED_SUCCESS_MESSAGE, null);
+    }
+
 }
