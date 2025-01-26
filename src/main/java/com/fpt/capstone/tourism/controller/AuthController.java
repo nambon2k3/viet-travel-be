@@ -1,8 +1,8 @@
 package com.fpt.capstone.tourism.controller;
 
 
-import com.fpt.capstone.tourism.dto.TokenDTO;
-import com.fpt.capstone.tourism.dto.UserDTO;
+import com.fpt.capstone.tourism.dto.common.TokenDTO;
+import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.service.AuthService;
 import lombok.RequiredArgsConstructor;

@@ -1,12 +1,10 @@
 package com.fpt.capstone.tourism.service.impl;
 
-import com.fpt.capstone.tourism.dto.UserDTO;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.repository.UserRepository;
 import com.fpt.capstone.tourism.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
