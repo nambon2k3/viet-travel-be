@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.FAIL_TO_SAVE_USER_MESSAGE;
+import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -85,6 +86,5 @@ public class UserServiceImpl implements UserService {
     public void deleteEmailConfirmationToken(String token) {
         emailConfirmationTokenRepository.deleteByToken(token);
     }
-
 
 }

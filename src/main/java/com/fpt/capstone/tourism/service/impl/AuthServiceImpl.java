@@ -1,8 +1,8 @@
 package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.constants.Constants;
-import com.fpt.capstone.tourism.dto.TokenDTO;
-import com.fpt.capstone.tourism.dto.UserDTO;
+import com.fpt.capstone.tourism.dto.common.TokenDTO;
+import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
@@ -51,15 +51,12 @@ public class AuthServiceImpl implements AuthService {
             if (!user.isEmailConfirmed()) {
                 throw BusinessException.of(Constants.Message.EMAIL_NOT_CONFIRMED_MESSAGE);
             }
-
             String token = jwtHelper.generateToken(user);
-
             TokenDTO tokenDTO = TokenDTO.builder()
                     .username(user.getUsername())
                     .token(token)
                     .expirationTime("24h")
                     .build();
-
             return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.LOGIN_SUCCESS_MESSAGE, tokenDTO);
         } catch (BusinessException be) {
             throw be;
