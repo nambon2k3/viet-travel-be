@@ -9,6 +9,7 @@ public class Constants {
         public static final String USER_NOT_FOUND_MESSAGE = "User not found";
         public static final String USERNAME_ALREADY_EXISTS_MESSAGE = "Username already exists";
         public static final String EMAIL_ALREADY_EXISTS_MESSAGE = "Email already exists";
+        public static final String PHONE_ALREADY_EXISTS_MESSAGE = "Phone already exists";
         public static final String FAIL_TO_SAVE_USER_MESSAGE = "Fail to save user";
         public static final String USER_INFORMATION_NULL_OR_EMPTY = "This section is required";
         public static final String USERNAME_INVALID = "Username contains only letters, numbers, -, _ with range from 8 to 30";
