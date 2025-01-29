@@ -46,6 +46,6 @@ public class Room {
     @JoinColumn(name = "provider_id", nullable = false)
     private ServiceProvider serviceProvider;
 
-    @ManyToMany(mappedBy = "rooms")
+    @OneToMany(mappedBy = "room")
     private Set<TourDayRoom> tourDayRooms;
 }

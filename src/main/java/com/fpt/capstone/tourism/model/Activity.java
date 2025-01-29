@@ -43,7 +43,7 @@ public class Activity {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @ManyToMany(mappedBy = "activities")
+    @OneToMany(mappedBy = "activity")
     private Set<TourDayActivity> tourDayActivities;
 
 }

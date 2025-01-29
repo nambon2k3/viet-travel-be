@@ -40,7 +40,7 @@ public class Meal {
     @JoinColumn(name = "provider_id", nullable = false)
     private ServiceProvider serviceProvider;
 
-    @ManyToMany(mappedBy = "meals")
+    @OneToMany(mappedBy = "meal")
     private Set<TourDayMeal> tourDayMeals;
 
 }

@@ -42,7 +42,7 @@ public class Transport {
     @JoinColumn(name = "provider_id", nullable = false)
     private ServiceProvider serviceProvider;
 
-    @ManyToMany(mappedBy = "transports")
+    @OneToMany(mappedBy = "transport")
     private Set<TourDayTransport> tourDayTransports;
 
 }

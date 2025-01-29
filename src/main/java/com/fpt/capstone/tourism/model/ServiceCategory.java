@@ -31,7 +31,7 @@ public class ServiceCategory {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "service_category")
+    @ManyToMany(mappedBy = "serviceCategories")
     private Set<ServiceProvider> serviceProviders;
 
 }
