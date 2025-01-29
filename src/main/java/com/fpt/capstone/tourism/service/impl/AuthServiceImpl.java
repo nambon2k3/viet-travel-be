@@ -1,22 +1,15 @@
 package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.constants.Constants;
-import com.fpt.capstone.tourism.dto.TokenDTO;
-import com.fpt.capstone.tourism.dto.UserDTO;
+import com.fpt.capstone.tourism.dto.common.TokenDTO;
+import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
-import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
-import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
-import com.fpt.capstone.tourism.enums.Role;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
-import com.fpt.capstone.tourism.helper.TokenEncryptorImpl;
-import com.fpt.capstone.tourism.helper.validator.*;
-import com.fpt.capstone.tourism.model.EmailConfirmationToken;
+import com.fpt.capstone.tourism.helper.validator.CommonValidator;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.service.AuthService;
-import com.fpt.capstone.tourism.service.EmailConfirmationService;
 import com.fpt.capstone.tourism.service.UserService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +25,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final JwtHelper jwtHelper;
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
     private final PasswordEncoder passwordEncoder;
     private final EmailConfirmationService emailConfirmationService;
     private final TokenEncryptorImpl tokenEncryptor;
@@ -49,6 +43,11 @@ public class AuthServiceImpl implements AuthService {
 
             // Check if the user's email is confirmed
             if (!user.isEmailConfirmed()) {
+                throw BusinessException.of(Constants.Message.LOGIN_FAIL_MESSAGE);
+            }
+
+            // Check if the user's email is confirmed
+            if (!user.isEmailConfirmed()) {
                 throw BusinessException.of(Constants.Message.EMAIL_NOT_CONFIRMED_MESSAGE);
             }
 
@@ -59,7 +58,6 @@ public class AuthServiceImpl implements AuthService {
                     .token(token)
                     .expirationTime("24h")
                     .build();
-
             return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.LOGIN_SUCCESS_MESSAGE, tokenDTO);
         } catch (BusinessException be) {
             throw be;

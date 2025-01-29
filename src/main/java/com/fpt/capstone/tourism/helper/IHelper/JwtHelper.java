@@ -1,7 +1,6 @@
 package com.fpt.capstone.tourism.helper.IHelper;
 
 
-import com.fpt.capstone.tourism.dto.UserDTO;
 import com.fpt.capstone.tourism.model.User;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;
