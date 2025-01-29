@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.FAIL_TO_SAVE_USER_MESSAGE;
+import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -61,11 +62,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Boolean existsByPhoneNumber(String phone) {
+        return userRepository.existsByPhone(phone);
+    }
+
+    @Override
     @Transactional
     public void createEmailConfirmationToken(User user, String token) {
         // First, delete any existing tokens for this user
         emailConfirmationTokenRepository.deleteByUser(user);
-
         // Create and save the new token
         EmailConfirmationToken confirmationToken = new EmailConfirmationToken();
         confirmationToken.setToken(token);
@@ -85,6 +90,5 @@ public class UserServiceImpl implements UserService {
     public void deleteEmailConfirmationToken(String token) {
         emailConfirmationTokenRepository.deleteByToken(token);
     }
-
 
 }
