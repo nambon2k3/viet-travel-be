@@ -33,7 +33,6 @@ public class ServiceProvider {
 
     private String address;
 
-
     private boolean isDeleted;
 
     @Column(name = "created_date", nullable = false, updatable = false)
