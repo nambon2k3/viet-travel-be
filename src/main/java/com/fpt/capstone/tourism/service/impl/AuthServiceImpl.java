@@ -102,7 +102,6 @@ public class AuthServiceImpl implements AuthService {
                 .orElseGet(() -> {
                     Role newRole = Role.builder()
                             .roleName("USER")
-                            .createdAt(LocalDateTime.now())
                             .isDeleted(false)
                             .build();
                     return roleRepository.save(newRole);
@@ -119,7 +118,6 @@ public class AuthServiceImpl implements AuthService {
                 .address(registerRequestDTO.getAddress())
                 .role(RoleName.USER)
                 .isDeleted(false)
-                .createdAt(LocalDateTime.now())
                 .emailConfirmed(false)
                 .build();
 
@@ -130,7 +128,6 @@ public class AuthServiceImpl implements AuthService {
                 .user(savedUser)
                 .role(userRole)
                 .isDeleted(false)
-                .createdAt(LocalDateTime.now())
                 .build();
 
         userRoleRepository.save(newUserRole);
