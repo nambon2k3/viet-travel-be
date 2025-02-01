@@ -32,7 +32,7 @@ public class ServiceCategoryController {
 
     @GetMapping
     public ResponseEntity<Page<ServiceCategoryDTO>> getAllServiceCategories(Pageable pageable) {
-        Page<ServiceCategoryDTO> serviceCategories = serviceCategoryService.getAllServiceCategories((java.awt.print.Pageable) pageable);
+        Page<ServiceCategoryDTO> serviceCategories = serviceCategoryService.getAllServiceCategories(pageable);
         return ResponseEntity.ok(serviceCategories);
     }
 

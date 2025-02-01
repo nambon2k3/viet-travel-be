@@ -9,10 +9,10 @@ import com.fpt.capstone.tourism.repository.ServiceCategoryRepository;
 import com.fpt.capstone.tourism.service.ServiceCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 
 import static com.fpt.capstone.tourism.constants.Constants.ServiceCategoryExceptionInformation.SERVICE_CATEGORY_NOT_FOUND_MESSAGE;
@@ -43,7 +43,7 @@ public class ServiceCategoryServiceImpl implements ServiceCategoryService {
 
     @Override
     public Page<ServiceCategoryDTO> getAllServiceCategories(Pageable pageable) {
-        Page<ServiceCategory> serviceCategories = serviceCategoryRepository.findAll((org.springframework.data.domain.Pageable) pageable);
+        Page<ServiceCategory> serviceCategories = serviceCategoryRepository.findAll(pageable);
         return serviceCategories.map(mapper::toDTO);
     }
 

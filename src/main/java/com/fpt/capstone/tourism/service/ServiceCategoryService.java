@@ -2,8 +2,8 @@ package com.fpt.capstone.tourism.service;
 
 import com.fpt.capstone.tourism.dto.common.ServiceCategoryDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.awt.print.Pageable;
 
 public interface ServiceCategoryService {
     ServiceCategoryDTO createServiceCategory(ServiceCategoryDTO serviceCategoryDTO);
