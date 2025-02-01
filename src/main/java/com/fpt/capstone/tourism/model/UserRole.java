@@ -29,10 +29,10 @@ public class UserRole {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-    @Column(name="created_at")
+    @Column(name="created_date")
     private LocalDateTime createdAt;
 
-    @Column(name="updated_at")
+    @Column(name="updated_date")
     private LocalDateTime updatedAt;
 }
 
