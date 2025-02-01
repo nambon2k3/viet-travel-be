@@ -48,7 +48,7 @@ public class Activity {
     private Set<TourDayActivity> tourDayActivities;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private ActivityCategory activityCategory;
 

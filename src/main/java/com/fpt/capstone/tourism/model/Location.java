@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "destination")
+@Table(name = "location")
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +23,11 @@ public class Location {
     private String image;
     private boolean isDeleted;
 
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdDate;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "updated_date")
-    private LocalDateTime updatedDate;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @OneToOne
     @JoinColumn(name = "geo_position_id")
