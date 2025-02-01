@@ -25,6 +25,7 @@ public class Activity {
 
     private String content;
 
+
     private double price_per_person;
 
     private boolean isDeleted;
@@ -45,5 +46,10 @@ public class Activity {
 
     @OneToMany(mappedBy = "activity")
     private Set<TourDayActivity> tourDayActivities;
+
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private ActivityCategory activityCategory;
 
 }
