@@ -17,6 +17,11 @@ public class Constants {
         public static final String EMAIL_INVALID = "Email is invalid";
         public static final String USER_NOT_FOUND = "User not found, please login with a valid account to see your profile";
     }
+
+    public static final class ServiceCategoryExceptionInformation {
+        public static final String SERVICE_CATEGORY_NOT_FOUND_MESSAGE = "Service category not found, please try again";
+    }
+
     public static final class Message {
         public static final String LOGIN_SUCCESS_MESSAGE = "Login successfully";
         public static final String LOGIN_FAIL_MESSAGE = "Login Failed! Invalid username or password";
