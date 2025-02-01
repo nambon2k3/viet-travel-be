@@ -61,10 +61,10 @@ public class User implements UserDetails {
     private boolean isDeleted;
 
     @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_date")
-    private LocalDateTime updatedDate;
+    private LocalDateTime updatedAt;
 
     @Column(name = "email_confirmed")
     private boolean emailConfirmed;
