@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRole {
+public class UserRole extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,11 +27,5 @@ public class UserRole {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
-    @Column(name="created_date")
-    private LocalDateTime createdAt;
-    @Column(name="updated_date")
-    private LocalDateTime updatedAt;
 }
 
