@@ -23,6 +23,9 @@ public class UserRole extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name="is_deleted")
+    private boolean isDeleted;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

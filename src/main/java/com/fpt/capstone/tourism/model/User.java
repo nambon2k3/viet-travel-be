@@ -60,6 +60,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "email_confirmed")
     private boolean emailConfirmed;
 
+    @Column(name="is_deleted")
+    private boolean isDeleted;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
