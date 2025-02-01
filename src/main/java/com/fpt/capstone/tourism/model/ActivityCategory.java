@@ -30,4 +30,5 @@ public class ActivityCategory {
     @Column(name = "updated_date")
     private LocalDateTime updatedAt;
 
+
 }
