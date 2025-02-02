@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "tour_day_activity")
 public class TourDayActivity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +30,7 @@ public class TourDayActivity {
 
     private int numberTicket;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "created_at", nullable = false, updatable = false)

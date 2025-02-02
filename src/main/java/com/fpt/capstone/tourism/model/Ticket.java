@@ -19,6 +19,8 @@ public class Ticket {
     private Long id;
     private String type;
     private Double price;
+
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "created_at", nullable = false, updatable = false)

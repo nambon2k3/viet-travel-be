@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
+@Table(name = "operation-bill")
 public class OperationBill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +28,7 @@ public class OperationBill {
 
     private String status;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "created_at", nullable = false, updatable = false)

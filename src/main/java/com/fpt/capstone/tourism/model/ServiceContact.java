@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "service_contact")
 public class ServiceContact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +26,7 @@ public class ServiceContact {
     private String email;
     private Gender gender;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -31,6 +31,7 @@ public class Tour {
 
     private String note;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "created_at", nullable = false, updatable = false)

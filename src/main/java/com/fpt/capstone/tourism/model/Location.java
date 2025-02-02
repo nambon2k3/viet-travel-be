@@ -21,6 +21,7 @@ public class Location {
     private String name;
     private String description;
     private String image;
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "meal")
 public class Meal {
     @Id
     @GeneratedValue
@@ -25,7 +26,7 @@ public class Meal {
     private double pricePerPerson;
     private String imageUrl;
 
-
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "created_at", nullable = false, updatable = false)

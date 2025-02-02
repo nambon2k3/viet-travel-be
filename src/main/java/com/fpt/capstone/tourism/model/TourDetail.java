@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Builder
+@Table(name = "tour_details")
 public class TourDetail {
 
     @Id
@@ -24,6 +25,8 @@ public class TourDetail {
 
     private String content;
 
+
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -28,6 +28,7 @@ public class Activity {
 
     private double price_per_person;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @Column(name = "created_date", nullable = false, updatable = false)
