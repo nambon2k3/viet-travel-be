@@ -1,5 +1,6 @@
 package com.fpt.capstone.tourism.dto.response;
 
+import com.fpt.capstone.tourism.enums.Gender;
 import com.fpt.capstone.tourism.enums.Role;
 import lombok.Builder;
 import lombok.Data;
@@ -11,5 +12,9 @@ public class UserInfoResponseDTO {
     private String username;
     private String email;
     private String fullName;
+    private Gender gender;
+    private String phone;
+    private String address;
+    private String avatarImg;
     private Role role;
 }

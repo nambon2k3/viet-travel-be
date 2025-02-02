@@ -1,5 +1,8 @@
 package com.fpt.capstone.tourism.service.impl;
 
+import com.fpt.capstone.tourism.converter.Converter;
+import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
 import com.fpt.capstone.tourism.model.EmailConfirmationToken;
@@ -9,6 +12,7 @@ import com.fpt.capstone.tourism.repository.UserRepository;
 import com.fpt.capstone.tourism.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -84,6 +88,18 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteEmailConfirmationToken(String token) {
         emailConfirmationTokenRepository.deleteByToken(token);
+    }
+
+    @Override
+    public GeneralResponse<UserInfoResponseDTO> getUserProfile(String token) {
+        String jwt = token.substring(7);
+
+        String username = jwtHelper.extractUsername(jwt);
+
+        //Find corresponding user object in database
+        User user = userRepository.findByUsername(username).get();
+
+        return GeneralResponse.of(Converter.convertUseToUserResponseDTO(user));
     }
 
 
