@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceCategoryDTO {
-    private Long id;
     private String categoryName;
 }
 

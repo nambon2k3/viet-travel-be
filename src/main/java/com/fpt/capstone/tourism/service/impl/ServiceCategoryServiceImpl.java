@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
+import static com.fpt.capstone.tourism.constants.Constants.ServiceCategoryExceptionInformation.DUPLICATE_SERVICE_CATEGORY_MESSAGE;
 import static com.fpt.capstone.tourism.constants.Constants.ServiceCategoryExceptionInformation.SERVICE_CATEGORY_NOT_FOUND_MESSAGE;
 
 @Service
@@ -27,6 +29,12 @@ public class ServiceCategoryServiceImpl implements ServiceCategoryService {
     @Override
     @Transactional
     public ServiceCategoryDTO createServiceCategory(ServiceCategoryDTO serviceCategoryDTO) {
+        Optional<ServiceCategory> existingCategory = serviceCategoryRepository.findByCategoryName(serviceCategoryDTO.getCategoryName());
+        //Check if category name is existed
+        if (existingCategory.isPresent()) {
+            throw BusinessException.of(DUPLICATE_SERVICE_CATEGORY_MESSAGE);
+        }
+
         ServiceCategory serviceCategory = serviceCategoryMapper.toEntity(serviceCategoryDTO);
         serviceCategory.setDeleted(false);
         return serviceCategoryMapper.toDTO(serviceCategoryRepository.save(serviceCategory));
@@ -51,6 +59,11 @@ public class ServiceCategoryServiceImpl implements ServiceCategoryService {
     public ServiceCategoryDTO updateServiceCategory(Long id, ServiceCategoryDTO serviceCategoryDTO) {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(id)
                 .orElseThrow(() -> BusinessException.of(SERVICE_CATEGORY_NOT_FOUND_MESSAGE));
+
+        Optional<ServiceCategory> existingCategory = serviceCategoryRepository.findByCategoryName(serviceCategoryDTO.getCategoryName());
+        if (existingCategory.isPresent() && !existingCategory.get().getId().equals(id)) {
+            throw BusinessException.of(DUPLICATE_SERVICE_CATEGORY_MESSAGE);
+        }
         serviceCategory.setCategoryName(serviceCategoryDTO.getCategoryName());
         return serviceCategoryMapper.toDTO(serviceCategoryRepository.save(serviceCategory));
     }
@@ -64,6 +77,20 @@ public class ServiceCategoryServiceImpl implements ServiceCategoryService {
             serviceCategory.setDeleted(true);
             serviceCategoryRepository.saveAndFlush(serviceCategory);
         }
+    }
+
+    @Override
+    public Page<ServiceCategoryDTO> filterServiceCategories(String status, Pageable pageable) {
+        Page<ServiceCategory> serviceCategories;
+
+        if ("deleted".equalsIgnoreCase(status)) {
+            serviceCategories = serviceCategoryRepository.findByDeletedTrue(pageable);
+        } else if ("available".equalsIgnoreCase(status)) {
+            serviceCategories = serviceCategoryRepository.findByDeletedFalse(pageable);
+        } else {
+            serviceCategories = serviceCategoryRepository.findAll(pageable);
+        }
+        return serviceCategories.map(serviceCategoryMapper::toDTO);
     }
 }
 

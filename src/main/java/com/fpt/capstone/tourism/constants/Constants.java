@@ -20,6 +20,7 @@ public class Constants {
 
     public static final class ServiceCategoryExceptionInformation {
         public static final String SERVICE_CATEGORY_NOT_FOUND_MESSAGE = "Service category not found, please try again";
+        public static final String DUPLICATE_SERVICE_CATEGORY_MESSAGE = "Duplicate service category name, please choose another name";
     }
 
     public static final class Message {
@@ -33,6 +34,9 @@ public class Constants {
         public static final String TOKEN_USED_MESSAGE = "Email had already been confirmed before. Do not need to confirm again";
         public static final String EMAIL_CONFIRMED_SUCCESS_MESSAGE = "Registration successfully! Please log in to continue.";
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
+        public static final String CATEGORY_DELETED_SUCCESS_MESSAGE = "Category deleted successfully!";
+        public static final String CATEGORY_CREATED_SUCCESS_MESSAGE = "Category created successfully!";
+        public static final String CATEGORY_UPDATED_SUCCESS_MESSAGE = "Category updated successfully!";
     }
     public static final class Regex {
         //public static final String REGEX_PASSWORD = "$d{8}^";

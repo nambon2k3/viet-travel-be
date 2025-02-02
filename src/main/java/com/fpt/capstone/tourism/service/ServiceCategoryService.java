@@ -15,4 +15,6 @@ public interface ServiceCategoryService {
     ServiceCategoryDTO updateServiceCategory(Long id, ServiceCategoryDTO serviceCategoryDTO);
 
     void deleteServiceCategory(Long id);
+
+    Page<ServiceCategoryDTO> filterServiceCategories(String status, Pageable pageable);
 }
