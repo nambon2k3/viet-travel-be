@@ -22,29 +22,27 @@ import static com.fpt.capstone.tourism.constants.Constants.ServiceCategoryExcept
 public class ServiceCategoryServiceImpl implements ServiceCategoryService {
 
     private final ServiceCategoryRepository serviceCategoryRepository;
-    private final ServiceCategoryMapper mapper;
+    private final ServiceCategoryMapper serviceCategoryMapper;
 
     @Override
     @Transactional
     public ServiceCategoryDTO createServiceCategory(ServiceCategoryDTO serviceCategoryDTO) {
-        ServiceCategory serviceCategory = mapper.toEntity(serviceCategoryDTO);
-        serviceCategory.setCreatedAt(LocalDateTime.now());
-        serviceCategory.setUpdatedAt(LocalDateTime.now());
+        ServiceCategory serviceCategory = serviceCategoryMapper.toEntity(serviceCategoryDTO);
         serviceCategory.setDeleted(false);
-        return mapper.toDTO(serviceCategoryRepository.save(serviceCategory));
+        return serviceCategoryMapper.toDTO(serviceCategoryRepository.save(serviceCategory));
     }
 
     @Override
     public ServiceCategoryDTO getServiceCategoryById(Long id) {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(id)
                 .orElseThrow(() -> BusinessException.of(SERVICE_CATEGORY_NOT_FOUND_MESSAGE));
-        return mapper.toDTO(serviceCategory);
+        return serviceCategoryMapper.toDTO(serviceCategory);
     }
 
     @Override
     public Page<ServiceCategoryDTO> getAllServiceCategories(Pageable pageable) {
         Page<ServiceCategory> serviceCategories = serviceCategoryRepository.findAll(pageable);
-        return serviceCategories.map(mapper::toDTO);
+        return serviceCategories.map(serviceCategoryMapper::toDTO);
     }
 
 
@@ -53,11 +51,8 @@ public class ServiceCategoryServiceImpl implements ServiceCategoryService {
     public ServiceCategoryDTO updateServiceCategory(Long id, ServiceCategoryDTO serviceCategoryDTO) {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(id)
                 .orElseThrow(() -> BusinessException.of(SERVICE_CATEGORY_NOT_FOUND_MESSAGE));
-
         serviceCategory.setCategoryName(serviceCategoryDTO.getCategoryName());
-        serviceCategory.setUpdatedAt(LocalDateTime.now());
-
-        return mapper.toDTO(serviceCategoryRepository.save(serviceCategory));
+        return serviceCategoryMapper.toDTO(serviceCategoryRepository.save(serviceCategory));
     }
 
     @Override
@@ -65,9 +60,10 @@ public class ServiceCategoryServiceImpl implements ServiceCategoryService {
     public void deleteServiceCategory(Long id) {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(id)
                 .orElseThrow(() -> BusinessException.of(SERVICE_CATEGORY_NOT_FOUND_MESSAGE));
-        serviceCategory.setDeleted(true);
-        serviceCategory.setUpdatedAt(LocalDateTime.now());
-        serviceCategoryRepository.save(serviceCategory);
+        if (!serviceCategory.isDeleted()) {
+            serviceCategory.setDeleted(true);
+            serviceCategoryRepository.saveAndFlush(serviceCategory);
+        }
     }
 }
 

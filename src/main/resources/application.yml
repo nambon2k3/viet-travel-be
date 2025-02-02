@@ -25,7 +25,6 @@ spring:
           starttls:
             enable: true
 
-
 endpoints:
   connect-timeout: 100000
   read-timeout: 100000
