@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Table(name = "tour_day_room")
-public class TourDayRoom {
+public class TourDayRoom extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,9 +32,4 @@ public class TourDayRoom {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }

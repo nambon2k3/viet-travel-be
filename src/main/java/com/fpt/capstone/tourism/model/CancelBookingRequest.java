@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Table(name = "cancel_booking_request")
-public class CancelBookingRequest {
+public class CancelBookingRequest extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,11 +34,4 @@ public class CancelBookingRequest {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
 }

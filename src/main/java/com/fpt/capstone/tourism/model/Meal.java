@@ -15,26 +15,26 @@ import java.util.Set;
 @Data
 @Builder
 @Table(name = "meal")
-public class Meal {
+public class Meal extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
 
     private String name;
-    private String meal_type;
 
+    @Column(name = "meal_type")
+    private String mealType;
+
+    @Column(name = "price_per_person")
     private double pricePerPerson;
+
+    @Column(name = "image_url")
     private String imageUrl;
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
+    @Column(name = "expired_at")
     private LocalDateTime expiredAt;
 
     @ManyToOne

@@ -15,21 +15,16 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Table(name = "tour_image")
-public class TourImage {
+public class TourImage extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "image_url")
     private String imageUrl;
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tour_id")

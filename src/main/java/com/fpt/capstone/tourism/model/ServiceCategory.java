@@ -16,7 +16,7 @@ import java.util.Set;
 @Data
 @Builder
 @Table(name = "service_category")
-public class ServiceCategory {
+public class ServiceCategory extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,12 +26,6 @@ public class ServiceCategory {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @ManyToMany(mappedBy = "serviceCategories")
     private Set<ServiceProvider> serviceProviders;

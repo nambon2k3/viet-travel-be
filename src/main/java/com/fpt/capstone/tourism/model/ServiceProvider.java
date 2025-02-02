@@ -16,7 +16,7 @@ import java.util.Set;
 @Builder
 @Data
 @Table(name = "service_provider")
-public class ServiceProvider {
+public class ServiceProvider extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,15 +34,8 @@ public class ServiceProvider {
 
     private String address;
 
-
     @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
 
     @OneToOne

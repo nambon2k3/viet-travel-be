@@ -15,25 +15,22 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Table(name = "service_contact")
-public class ServiceContact {
+public class ServiceContact extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String position;
+    @Column(name = "full_name")
     private String fullName;
+
+    @Column(name = "phone_number")
     private String phoneNumber;
     private String email;
     private Gender gender;
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "provider_id")

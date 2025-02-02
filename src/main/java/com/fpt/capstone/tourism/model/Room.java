@@ -15,19 +15,24 @@ import java.util.Set;
 @Data
 @Builder
 @Table(name = "room")
-public class Room {
+public class Room extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String room_type;
+    @Column(name = "room_type")
+    private String roomType;
 
+    @Column(name = "room_name")
     private String roomName;
 
+    @Column(name = "bed_type")
     private String bedType;
 
+    @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "price_per_night")
     private Double pricePerNight;
 
     private double rating;
@@ -35,13 +40,7 @@ public class Room {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @Column
+    @Column(name = "expired_at")
     private LocalDateTime expiredAt;
 
     @ManyToOne

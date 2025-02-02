@@ -15,15 +15,20 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Builder
-public class Transport {
+@Table(name = "transport")
+public class Transport extends BaseEntity{
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "transport_name")
     private String transportName;
+    @Column(name = "transport_type")
     private String transportType;
     private String brand;
+    @Column(name = "image_url")
     private String imageUrl;
+    @Column(name = "driver_name")
     private String driverName;
 
     private String description;
@@ -32,12 +37,6 @@ public class Transport {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "provider_id", nullable = false)

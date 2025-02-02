@@ -15,20 +15,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "activity_category")
-public class ActivityCategory {
+public class ActivityCategory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
+    @Column(name="is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_date")
-    private LocalDateTime updatedAt;
-
-
 }
