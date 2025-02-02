@@ -1,6 +1,6 @@
 package com.fpt.capstone.tourism.enums;
 
-public enum Role {
+public enum RoleName {
     USER,
     ADMIN,
     MANAGER

@@ -1,4 +1,4 @@
-package com.fpt.capstone.tourism.dto;
+package com.fpt.capstone.tourism.dto.common;
 
 import lombok.*;
 

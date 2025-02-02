@@ -1,7 +1,9 @@
 package com.fpt.capstone.tourism.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,26 +11,25 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailConfirmationToken {
+@Table(name = "wishlist")
+public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String token;
+    @Column(name = "item_id")
+    private String itemId;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
+    @Column(name = "item_type")
+    private String itemType;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name="created_date")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    @Column(name="expires_date")
-    private LocalDateTime expiresAt;
-
-    private boolean used;
-
 }
-
-
