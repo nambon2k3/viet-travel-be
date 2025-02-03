@@ -15,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Builder
+@Table(name = "transport")
 public class Transport extends BaseEntity{
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)

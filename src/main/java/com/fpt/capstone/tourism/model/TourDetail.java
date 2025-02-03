@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Builder
-public class TourDetail extends BaseEntity{
-
+@Table(name = "tour_details")
+public class TourDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

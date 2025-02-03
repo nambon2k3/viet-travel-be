@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Data
+@Table (name = "tour_day")
 public class TourDay extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

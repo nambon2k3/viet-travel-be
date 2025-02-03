@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "tour_day_activity")
 public class TourDayActivity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

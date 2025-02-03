@@ -15,6 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "service_category")
 public class ServiceCategory extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

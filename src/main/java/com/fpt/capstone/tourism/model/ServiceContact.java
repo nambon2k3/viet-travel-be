@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "service_contact")
 public class ServiceContact extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
