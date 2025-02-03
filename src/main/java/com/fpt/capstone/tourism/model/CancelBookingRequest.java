@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "cancel_booking_request")
 public class CancelBookingRequest extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

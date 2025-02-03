@@ -16,6 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "tour_booking")
 public class TourBooking extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

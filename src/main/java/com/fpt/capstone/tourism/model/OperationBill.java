@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
+@Table(name = "operation_bill")
 public class OperationBill extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

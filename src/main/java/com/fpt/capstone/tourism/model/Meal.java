@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "meal")
 public class Meal extends BaseEntity {
     @Id
     @GeneratedValue
