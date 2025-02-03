@@ -28,6 +28,8 @@ public class Constants {
         public static final String TOKEN_USED_MESSAGE = "Email had already been confirmed before. Do not need to confirm again";
         public static final String EMAIL_CONFIRMED_SUCCESS_MESSAGE = "Registration successfully! Please log in to continue.";
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
+        public static final String DUPLICATE_SERVICE_CONTACT_PHONE = "This service contact phone number already exists";
+        public static final String SERVICE_CONTACT_NOT_FOUND = "This service contact does not exist";
     }
     public static final class Regex {
         //public static final String REGEX_PASSWORD = "$d{8}^";
