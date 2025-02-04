@@ -1,7 +1,9 @@
 package com.fpt.capstone.tourism.service.impl;
 
+import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.converter.Converter;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
@@ -10,9 +12,12 @@ import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.repository.EmailConfirmationTokenRepository;
 import com.fpt.capstone.tourism.repository.UserRepository;
 import com.fpt.capstone.tourism.service.UserService;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -97,17 +102,50 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public GeneralResponse<UserInfoResponseDTO> getUserProfile(String token) {
-        String jwt = token.substring(7);
+    public GeneralResponse<UserInfoResponseDTO> getUserProfile(User currentUser) {
+//        String jwt = token.substring(7);
+//
+//        String username = jwtHelper.extractUsername(jwt);
 
-        String username = jwtHelper.extractUsername(jwt);
-
-        //Find corresponding user object in database
-        User user = userRepository.findByUsername(username).get();
-
-        return GeneralResponse.of(Converter.convertUseToUserResponseDTO(user));
+        return GeneralResponse.of(Converter.convertUseToUserResponseDTO(currentUser));
     }
 
+    @Override
+    public GeneralResponse<UserInfoResponseDTO> updateUserProfile(Integer userId, UserProfileRequestDTO user) {
+
+        //Find existing user
+        User existingUser = userRepository.findUserById(userId).orElseThrow(() ->
+                BusinessException.of("User not found"));
+
+        //Valid users field need to update here
+
+        //Update user follow by userProfileRequestDTO
+        existingUser.setFullName(user.getFullName());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setGender(user.getGender());
+        existingUser.setPhone(user.getPhone());
+        existingUser.setAddress(user.getAddress());
+
+        userRepository.save(existingUser);
+
+        UserInfoResponseDTO userInfoResponseDTO = UserInfoResponseDTO.builder()
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .gender(user.getGender())
+                .phone(user.getPhone())
+                .address(user.getAddress())
+                .build();
+        return GeneralResponse.of(userInfoResponseDTO, Constants.Message.USER_UPDATE_SUCCESS);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.isAuthenticated()){
+            throw BusinessException.of(Constants.Message.USER_NOT_AUTHENTICATED);
+        }
+        return (User) authentication.getPrincipal();
+    }
 
 
 }

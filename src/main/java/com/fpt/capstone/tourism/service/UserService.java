@@ -1,6 +1,7 @@
 package com.fpt.capstone.tourism.service;
 
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.model.User;
 
@@ -16,5 +17,7 @@ public interface UserService {
     void createEmailConfirmationToken(User user, String token);
     User findUserByEmailConfirmationToken(String token);
     void deleteEmailConfirmationToken(String token);
-    GeneralResponse<UserInfoResponseDTO> getUserProfile(String token);
+    GeneralResponse<UserInfoResponseDTO> getUserProfile(User currentUser);
+    GeneralResponse<UserInfoResponseDTO> updateUserProfile(Integer userId, UserProfileRequestDTO user);
+    User getCurrentUser();
 }
