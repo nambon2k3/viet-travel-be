@@ -25,6 +25,9 @@ public class Activity extends BaseEntity {
 
     private String content;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(name="price_per_person")
     private double pricePerPerson;
 

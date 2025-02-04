@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Builder
+@Table(name = "tour_image")
 public class TourImage extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

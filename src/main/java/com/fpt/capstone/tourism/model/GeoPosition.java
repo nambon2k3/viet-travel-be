@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "GeoPosition")
+@Table(name = "geo_position")
 public class GeoPosition extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
