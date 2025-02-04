@@ -24,6 +24,8 @@ public class ServiceProvider extends BaseEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    private String name;
+
     private String abbreviation;
 
     private String website;
