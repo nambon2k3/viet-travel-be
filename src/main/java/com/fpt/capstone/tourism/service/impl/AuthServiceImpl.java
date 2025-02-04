@@ -56,11 +56,6 @@ public class AuthServiceImpl implements AuthService {
             if (!user.isEmailConfirmed()) {
                 throw BusinessException.of(Constants.Message.LOGIN_FAIL_MESSAGE);
             }
-
-            // Check if the user's email is confirmed
-            if (!user.isEmailConfirmed()) {
-                throw BusinessException.of(Constants.Message.LOGIN_FAIL_MESSAGE);
-            }
             String token = jwtHelper.generateToken(user);
             TokenDTO tokenDTO = TokenDTO.builder()
                     .username(user.getUsername())
@@ -120,7 +115,6 @@ public class AuthServiceImpl implements AuthService {
                 .gender(registerRequestDTO.getGender())
                 .phone(registerRequestDTO.getPhone())
                 .address(registerRequestDTO.getAddress())
-                .role(RoleName.CUSTOMER)
                 .isDeleted(false)
                 .emailConfirmed(false)
                 .build();
