@@ -74,6 +74,8 @@ public class AuthServiceImpl implements AuthService {
                 registerRequestDTO.getPassword(),
                 registerRequestDTO.getRePassword(),
                 registerRequestDTO.getFullName(),
+                registerRequestDTO.getPhone(),
+                registerRequestDTO.getAddress(),
                 registerRequestDTO.getEmail())) {
 
             if (userService.existsByUsername(registerRequestDTO.getUsername())) {
@@ -81,6 +83,9 @@ public class AuthServiceImpl implements AuthService {
             }
             if (userService.exitsByEmail(registerRequestDTO.getEmail())) {
                 throw BusinessException.of(Constants.UserExceptionInformation.EMAIL_ALREADY_EXISTS_MESSAGE);
+            }
+            if (userService.exitsByPhone(registerRequestDTO.getPhone())) {
+                throw BusinessException.of(Constants.UserExceptionInformation.PHONE_ALREADY_EXISTS_MESSAGE);
             }
             if (!registerRequestDTO.getPassword().equals(registerRequestDTO.getRePassword())) {
                 throw BusinessException.of(Constants.Message.PASSWORDS_DO_NOT_MATCH_MESSAGE);

@@ -61,6 +61,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Boolean exitsByPhone(String phone) {
+        return userRepository.existsByPhone(phone);
+    }
+
+    @Override
     @Transactional
     public void createEmailConfirmationToken(User user, String token) {
         // First, delete any existing tokens for this user
