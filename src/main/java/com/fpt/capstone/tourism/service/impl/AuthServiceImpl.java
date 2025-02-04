@@ -29,8 +29,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -58,7 +56,6 @@ public class AuthServiceImpl implements AuthService {
             if (!user.isEmailConfirmed()) {
                 throw BusinessException.of(Constants.Message.LOGIN_FAIL_MESSAGE);
             }
-
             String token = jwtHelper.generateToken(user);
             TokenDTO tokenDTO = TokenDTO.builder()
                     .username(user.getUsername())
@@ -99,11 +96,11 @@ public class AuthServiceImpl implements AuthService {
 
         }
 
-        // Ensure "USER" role exists, otherwise create it
-        Role userRole = roleRepository.findByRoleName("USER")
+        // Ensure "CUSTOMER" role exists, otherwise create it
+        Role userRole = roleRepository.findByRoleName("CUSTOMER")
                 .orElseGet(() -> {
                     Role newRole = Role.builder()
-                            .roleName("USER")
+                            .roleName("CUSTOMER")
                             .isDeleted(false)
                             .build();
                     return roleRepository.save(newRole);
@@ -146,7 +143,7 @@ public class AuthServiceImpl implements AuthService {
                 .username(savedUser.getUsername())
                 .email(savedUser.getEmail())
                 .fullName(savedUser.getFullName())
-                .role(RoleName.USER)
+                .role(RoleName.CUSTOMER)
                 .build();
 
         return new GeneralResponse<>(HttpStatus.CREATED.value(), Constants.Message.EMAIL_CONFIRMATION_REQUEST_MESSAGE, userResponseDTO);

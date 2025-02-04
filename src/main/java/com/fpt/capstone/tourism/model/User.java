@@ -52,17 +52,11 @@ public class User extends BaseEntity implements UserDetails {
 
     private String address;
 
-
     @Column(name="avatar_img")
     private String avatarImage;
 
     @Column(name = "email_confirmed")
     private boolean emailConfirmed;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<UserRole> userRoles;
 
     @Column(name="is_deleted")
     private boolean isDeleted;
@@ -74,5 +68,9 @@ public class User extends BaseEntity implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<UserRole> userRoles;
 }
 
