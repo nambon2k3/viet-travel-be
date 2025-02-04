@@ -11,7 +11,6 @@ public class Converter {
                  .fullName(user.getFullName())
                  .phone(user.getPhone())
                  .address(user.getAddress())
-                 .role(user.getRole())
                  .gender(user.getGender())
                  .email(user.getEmail())
                  .build();
