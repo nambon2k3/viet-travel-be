@@ -1,14 +1,13 @@
 package com.fpt.capstone.tourism.controller;
 
 
-import com.fpt.capstone.tourism.dto.TokenDTO;
-import com.fpt.capstone.tourism.dto.UserDTO;
+import com.fpt.capstone.tourism.dto.common.TokenDTO;
+import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
