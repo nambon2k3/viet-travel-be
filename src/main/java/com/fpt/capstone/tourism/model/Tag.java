@@ -8,22 +8,32 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "roles")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Role extends BaseEntity{
+@Table(name = "tag")
+public class Tag extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="role_name")
-    private String roleName;
+    @Column(name = "tag_name")
+    private String name;
 
-    @Column(name="is_deleted")
+    @Column
+    private String description;
+
+    @Column(name = "is_deleted")
     private boolean isDeleted;
-}
 
+    @ManyToMany(mappedBy = "tags")
+    private List<Tour> tours;
+
+    @ManyToMany(mappedBy = "tags")
+    private List<Blog> blogs;
+
+}

@@ -10,20 +10,26 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "roles")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
-public class Role extends BaseEntity{
+@Table(name = "tour_day_transport")
+public class TourDayTransport extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="role_name")
-    private String roleName;
+    @ManyToOne
+    @JoinColumn(name = "day_id")
+    private TourDay tourDay;
 
-    @Column(name="is_deleted")
+    @ManyToOne
+    @JoinColumn(name = "transport_id")
+    private Transport transport;
+
+    private int number;
+
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 }
-

@@ -8,22 +8,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
-@Table(name = "roles")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
-public class Role extends BaseEntity{
+@Table(name = "service_category")
+public class ServiceCategory extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="role_name")
-    private String roleName;
+    @Column(name = "category_name")
+    private String categoryName;
 
-    @Column(name="is_deleted")
+    @Column(name = "is_deleted")
     private boolean isDeleted;
-}
 
+    @ManyToMany(mappedBy = "serviceCategories")
+    private Set<ServiceProvider> serviceProviders;
+
+}

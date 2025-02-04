@@ -1,6 +1,5 @@
 package com.fpt.capstone.tourism.model;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,21 +8,21 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+
 @Entity
-@Table(name = "roles")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Role extends BaseEntity{
+@Table(name = "geo_position")
+public class GeoPosition extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Double latitude;
+    private Double longitude;
 
-    @Column(name="role_name")
-    private String roleName;
-
-    @Column(name="is_deleted")
+    @Column(name = "is_deleted")
     private boolean isDeleted;
-}
 
+}
