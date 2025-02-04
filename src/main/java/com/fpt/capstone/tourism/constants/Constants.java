@@ -14,6 +14,7 @@ public class Constants {
         public static final String PASSWORD_INVALID = "Password contains 8 characters or more (must contain 1 uppercase letter, " +
                 "1 lowercase letter and 1 special character";
         public static final String FULL_NAME_INVALID = "Full name starts with a letter, use only letters and white space";
+        public static final String PHONE_INVALID = "Phone must contain 10 characters";
         public static final String EMAIL_INVALID = "Email is invalid";
         public static final String USER_NOT_FOUND = "User not found, please login with a valid account to see your profile";
     }
@@ -37,5 +38,7 @@ public class Constants {
         public static final String REGEX_PASSWORD = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
         public static final String REGEX_FULLNAME = "^[a-zA-Z][a-zA-Z\s]*$";
         public static final String REGEX_EMAIL = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+        public static final String REGEX_PHONE = "^[0-9]{10}$";
+
     }
 }

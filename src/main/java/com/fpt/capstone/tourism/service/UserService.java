@@ -17,7 +17,7 @@ public interface UserService {
     void createEmailConfirmationToken(User user, String token);
     User findUserByEmailConfirmationToken(String token);
     void deleteEmailConfirmationToken(String token);
-    GeneralResponse<UserInfoResponseDTO> getUserProfile(User currentUser);
-    GeneralResponse<UserInfoResponseDTO> updateUserProfile(Integer userId, UserProfileRequestDTO user);
-    User getCurrentUser();
+    GeneralResponse<UserInfoResponseDTO> getUserProfile(String token);
+    GeneralResponse<UserInfoResponseDTO> updateUserProfile(String token, Integer userId, UserProfileRequestDTO user);
+    String getCurrentUser();
 }

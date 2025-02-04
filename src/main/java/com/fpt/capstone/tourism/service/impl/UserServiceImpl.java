@@ -7,6 +7,7 @@ import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
+import com.fpt.capstone.tourism.helper.validator.UserProfileValidator;
 import com.fpt.capstone.tourism.model.EmailConfirmationToken;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.repository.EmailConfirmationTokenRepository;
@@ -15,6 +16,7 @@ import com.fpt.capstone.tourism.service.UserService;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -102,49 +104,64 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public GeneralResponse<UserInfoResponseDTO> getUserProfile(User currentUser) {
-//        String jwt = token.substring(7);
-//
-//        String username = jwtHelper.extractUsername(jwt);
+    public GeneralResponse<UserInfoResponseDTO> getUserProfile(String token) {
+        String jwt = token.substring(7);
+
+        String username = jwtHelper.extractUsername(jwt);
+
+        User currentUser = userRepository.findByUsername(username).orElseThrow();
 
         return GeneralResponse.of(Converter.convertUseToUserResponseDTO(currentUser));
     }
 
     @Override
-    public GeneralResponse<UserInfoResponseDTO> updateUserProfile(Integer userId, UserProfileRequestDTO user) {
+    public GeneralResponse<UserInfoResponseDTO> updateUserProfile(String token, Integer userId, UserProfileRequestDTO newUser) {
 
-        //Find existing user
-        User existingUser = userRepository.findUserById(userId).orElseThrow(() ->
-                BusinessException.of("User not found"));
+        String jwt = token.substring(7);
 
-        //Valid users field need to update here
+        String username = jwtHelper.extractUsername(jwt);
+
+        User currentUser = userRepository.findByUsername(username).orElseThrow();
+
+        if(!userId.equals(currentUser.getId())){
+            throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
+
+        }
+
+        User existingUser = userRepository.findUserById(userId).orElseThrow();
+
+        //Check valid users field need to update
+        UserProfileValidator.isProfileValid(newUser.getFullName(), newUser.getEmail(),
+                newUser.getPhone(), newUser.getAddress());
 
         //Update user follow by userProfileRequestDTO
-        existingUser.setFullName(user.getFullName());
-        existingUser.setEmail(user.getEmail());
-        existingUser.setGender(user.getGender());
-        existingUser.setPhone(user.getPhone());
-        existingUser.setAddress(user.getAddress());
+        existingUser.setFullName(newUser.getFullName());
+        existingUser.setEmail(newUser.getEmail());
+        existingUser.setGender(newUser.getGender());
+        existingUser.setPhone(newUser.getPhone());
+        existingUser.setAddress(newUser.getAddress());
 
         userRepository.save(existingUser);
 
         UserInfoResponseDTO userInfoResponseDTO = UserInfoResponseDTO.builder()
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .gender(user.getGender())
-                .phone(user.getPhone())
-                .address(user.getAddress())
+                .fullName(newUser.getFullName())
+                .email(newUser.getEmail())
+                .gender(newUser.getGender())
+                .phone(newUser.getPhone())
+                .address(newUser.getAddress())
                 .build();
         return GeneralResponse.of(userInfoResponseDTO, Constants.Message.USER_UPDATE_SUCCESS);
+
     }
 
     @Override
-    public User getCurrentUser() {
+    public String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication == null || !authentication.isAuthenticated()){
             throw BusinessException.of(Constants.Message.USER_NOT_AUTHENTICATED);
         }
-        return (User) authentication.getPrincipal();
+        System.out.println(authentication.getPrincipal().toString());
+        return authentication.getPrincipal().toString();
     }
 
 

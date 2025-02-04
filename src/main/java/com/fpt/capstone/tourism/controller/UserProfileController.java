@@ -26,22 +26,25 @@ public class UserProfileController {
     private final CloudinaryService cloudinaryService;
 
     @PostMapping()
-    public ResponseEntity<GeneralResponse<UserInfoResponseDTO>> getUserProfile(){
-        User currentUser = userService.getCurrentUser();
-        return ResponseEntity.ok(userService.getUserProfile(currentUser));
+    public ResponseEntity<GeneralResponse<UserInfoResponseDTO>> getUserProfile(
+            @RequestHeader("Authorization") String token
+    ){
+        return ResponseEntity.ok(userService.getUserProfile(token));
     }
 
     @PostMapping("/update/{userId}")
     public ResponseEntity<GeneralResponse<UserInfoResponseDTO>> updateUserProfile(
+            @RequestHeader("Authorization") String token,
             @PathVariable Integer userId,
             @RequestBody UserProfileRequestDTO userProfileRequestDTO
             ){
-        User currentUser = userService.getCurrentUser();
-
-        if(!userId.equals(currentUser.getId())){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        return ResponseEntity.ok(userService.updateUserProfile(userId, userProfileRequestDTO));
+//        String username = userService.getCurrentUser();
+//        User currentUser = userService.findUserByUsername(username);
+//
+//        if(!userId.equals(currentUser.getId())){
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        }
+        return ResponseEntity.ok(userService.updateUserProfile(token, userId, userProfileRequestDTO));
     }
 
     @PostMapping("/avatar")
