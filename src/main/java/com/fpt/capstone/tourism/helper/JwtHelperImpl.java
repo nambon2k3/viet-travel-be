@@ -70,7 +70,7 @@ public class JwtHelperImpl implements JwtHelper {
                     .builder()
                     .subject(user.getUsername())
                     .claim("id", user.getId())
-                    .claim("role", user.getRole())
+                    .claim("role", user.getUserRoles())
                     .issuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis() + expiredTime))
                     .signWith(getSignInKey())

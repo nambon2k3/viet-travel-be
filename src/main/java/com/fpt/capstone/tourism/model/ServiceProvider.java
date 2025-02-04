@@ -38,7 +38,7 @@ public class ServiceProvider extends BaseEntity {
     private boolean isDeleted;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
 

@@ -122,7 +122,6 @@ public class AuthServiceImpl implements AuthService {
                 .gender(registerRequestDTO.getGender())
                 .phone(registerRequestDTO.getPhone())
                 .address(registerRequestDTO.getAddress())
-                .role(RoleName.USER)
                 .isDeleted(false)
                 .emailConfirmed(false)
                 .build();
