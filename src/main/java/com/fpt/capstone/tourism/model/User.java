@@ -1,7 +1,7 @@
 package com.fpt.capstone.tourism.model;
 
 import com.fpt.capstone.tourism.enums.Gender;
-import com.fpt.capstone.tourism.enums.Role;
+import com.fpt.capstone.tourism.enums.RoleName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -52,7 +52,7 @@ public class User extends BaseEntity implements UserDetails {
     private String address;
 
     @NotNull(message = "Role cannot be null")
-    private Role role;
+    private RoleName role;
 
     @Column(name="avatar_img")
     private String avatarImage;
@@ -69,5 +69,7 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<UserRole> userRoles;
 }
