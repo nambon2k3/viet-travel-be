@@ -1,7 +1,12 @@
 package com.fpt.capstone.tourism.enums;
 
 public enum RoleName {
-    USER,
-    ADMIN,
-    MANAGER
+    CUSTOMER,
+    CEO,
+    SERVICE_PROVIDER,
+    HEAD_OF_BUSINESS,
+    SALESMAN,
+    MARKETER,
+    OPERATOR,
+    ACCOUNTANT
 }
