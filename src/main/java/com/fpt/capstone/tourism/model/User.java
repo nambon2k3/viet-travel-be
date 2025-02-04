@@ -1,7 +1,7 @@
 package com.fpt.capstone.tourism.model;
 
 import com.fpt.capstone.tourism.enums.Gender;
-import com.fpt.capstone.tourism.enums.Role;
+import com.fpt.capstone.tourism.enums.RoleName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -51,9 +52,6 @@ public class User extends BaseEntity implements UserDetails {
 
     private String address;
 
-    @NotNull(message = "Role cannot be null")
-    private Role role;
-
     @Column(name="avatar_img")
     private String avatarImage;
 
@@ -65,9 +63,13 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return userRoles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRole().getRoleName()))
+                .collect(Collectors.toList());
     }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<UserRole> userRoles;
 }
