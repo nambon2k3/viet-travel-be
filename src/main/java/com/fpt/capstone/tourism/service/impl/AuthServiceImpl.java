@@ -12,7 +12,7 @@ import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
 import com.fpt.capstone.tourism.helper.validator.*;
 import com.fpt.capstone.tourism.model.Role;
-import com.fpt.capstone.tourism.helper.validator.CommonValidator;
+import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.model.UserRole;
 import com.fpt.capstone.tourism.repository.RoleRepository;
@@ -41,8 +41,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public GeneralResponse<TokenDTO> login(UserDTO userDTO) {
-        CommonValidator.isFieldValid(userDTO.getUsername(), CommonValidator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
-        CommonValidator.isFieldValid(userDTO.getPassword(), CommonValidator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+        Validator.isFieldValid(userDTO.getUsername(), Validator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+        Validator.isFieldValid(userDTO.getPassword(), Validator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

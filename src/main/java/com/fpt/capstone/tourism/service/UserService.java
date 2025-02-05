@@ -18,4 +18,6 @@ public interface UserService {
     GeneralResponse<UserProfileResponseDTO> getUserProfile(String token);
     GeneralResponse<UserProfileResponseDTO> updateUserProfile(String token, Integer userId, UserProfileRequestDTO user);
     String getCurrentUser();
+
+    String changePassword(String token, String currentPassword, String newPassword, String newRePassword);
 }

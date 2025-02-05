@@ -2,6 +2,7 @@ package com.fpt.capstone.tourism.controller;
 
 import com.cloudinary.utils.ObjectUtils;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.request.PasswordChangeDTO;
 import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.dto.response.UserProfileResponseDTO;
@@ -39,15 +40,15 @@ public class UserProfileController {
             @PathVariable Integer userId,
             @RequestBody UserProfileRequestDTO userProfileRequestDTO
             ){
-//        String username = userService.getCurrentUser();
-//        User currentUser = userService.findUserByUsername(username);
-//
-//        if(!userId.equals(currentUser.getId())){
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        }
         return ResponseEntity.ok(userService.updateUserProfile(token, userId, userProfileRequestDTO));
     }
 
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestHeader("Authorization") String token,
+                                 @RequestBody PasswordChangeDTO passwordChangeDTO){
+        return ResponseEntity.ok(userService.changePassword(token, passwordChangeDTO.getCurrentPassword(),
+                passwordChangeDTO.getNewPassword(), passwordChangeDTO.getNewRePassword()));
+    }
     @PostMapping("/avatar")
     public ResponseEntity<List<String>> uploadFile(@RequestParam("avatar")MultipartFile[] file){
         return ResponseEntity.ok(cloudinaryService.uploadFile(file));

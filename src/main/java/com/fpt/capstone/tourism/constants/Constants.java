@@ -28,6 +28,9 @@ public class Constants {
         public static final String EMAIL_CONFIRMATION_REQUEST_MESSAGE = "Thank you for your registration, please check your email to complete verification";
         public static final String REGISTER_FAIL_MESSAGE = "User registered failed due to server error!";
         public static final String PASSWORDS_DO_NOT_MATCH_MESSAGE = "Passwords do not match";
+        public static final String PASSWORDS_INCORRECT_MESSAGE = "Current password is incorrect";
+        public static final String CHANGE_PASSWORD_SUCCESS_MESSAGE = "Change password successfully";
+        public static final String CHANGE_PASSWORD_FAIL_MESSAGE = "Change password fail";
         public static final String EMAIL_NOT_CONFIRMED_MESSAGE = "Email not confirmed. Please check your email for the confirmation link.";
         public static final String INVALID_CONFIRMATION_TOKEN_MESSAGE = "Invalid or expired confirmation link.";
         public static final String TOKEN_USED_MESSAGE = "Email had already been confirmed before. Do not need to confirm again";

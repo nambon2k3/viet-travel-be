@@ -11,6 +11,7 @@ import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
 
 import com.fpt.capstone.tourism.helper.validator.UserProfileValidator;
 
+import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.repository.UserRepository;
 import com.fpt.capstone.tourism.service.UserService;
@@ -23,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.FAIL_TO_SAVE_USER_MESSAGE;
@@ -34,6 +36,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JwtHelper jwtHelper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public String generateToken(User user) {
@@ -105,14 +108,14 @@ public class UserServiceImpl implements UserService {
 
         String username = jwtHelper.extractUsername(jwt);
 
-        User currentUser = userRepository.findByUsername(username).orElseThrow();
+        User currentUser = findUserByUsername(username);
 
         if(!userId.equals(currentUser.getId())){
             throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
 
         }
 
-        User existingUser = userRepository.findUserById(userId).orElseThrow();
+        User existingUser = findUserById(userId.toString());
 
         //Check valid users field need to update
         UserProfileValidator.isProfileValid(newUser.getFullName(), newUser.getEmail(),
@@ -150,5 +153,35 @@ public class UserServiceImpl implements UserService {
         return authentication.getPrincipal().toString();
     }
 
+    @Override
+    public String changePassword(String token, String currentPassword, String newPassword, String newRePassword) {
+//        try{
+            String jwt = token.substring(7);
+            String username = jwtHelper.extractUsername(jwt);
 
+            //Find user from database
+            User currentUser = findUserByUsername(username);
+
+            //Check current password correct or not
+            if(!passwordEncoder.matches(currentPassword, currentUser.getPassword())){
+                throw BusinessException.of(Constants.Message.PASSWORDS_INCORRECT_MESSAGE);
+            }
+
+            //Valid new password
+            if(!Validator.isPasswordValid(newPassword)){
+                throw BusinessException.of(Constants.UserExceptionInformation.PASSWORD_INVALID);
+            }
+
+            if(!newPassword.equals(newRePassword)){
+                throw BusinessException.of(Constants.Message.PASSWORDS_DO_NOT_MATCH_MESSAGE);
+            }
+
+            currentUser.setPassword(passwordEncoder.encode(newPassword));
+            saveUser(currentUser);
+
+            return Constants.Message.CHANGE_PASSWORD_SUCCESS_MESSAGE;
+//        } catch (Exception e){
+//            throw BusinessException.of(Constants.Message.CHANGE_PASSWORD_FAIL_MESSAGE);
+//        }
+    }
 }
