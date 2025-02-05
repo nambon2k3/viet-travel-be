@@ -1,6 +1,5 @@
 package com.fpt.capstone.tourism.constants;
 
-
 public class Constants {
     public static final class UserExceptionInformation {
         public static final String USER_NOT_FOUND_CODE = "000100";
@@ -14,9 +13,12 @@ public class Constants {
         public static final String PASSWORD_INVALID = "Password contains 8 characters or more (must contain 1 uppercase letter, " +
                 "1 lowercase letter and 1 special character";
         public static final String FULL_NAME_INVALID = "Full name starts with a letter, use only letters and white space";
+        public static final String PHONE_INVALID = "Phone must contain 10 characters";
         public static final String EMAIL_INVALID = "Email is invalid";
         public static final String USER_NOT_FOUND = "User not found, please login with a valid account to see your profile";
     }
+
+
     public static final class Message {
         public static final String LOGIN_SUCCESS_MESSAGE = "Login successfully";
         public static final String LOGIN_FAIL_MESSAGE = "Login Failed! Invalid username or password";
@@ -28,6 +30,8 @@ public class Constants {
         public static final String TOKEN_USED_MESSAGE = "Email had already been confirmed before. Do not need to confirm again";
         public static final String EMAIL_CONFIRMED_SUCCESS_MESSAGE = "Registration successfully! Please log in to continue.";
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
+        public static final String INVALID_REGISTER_INFO= "Register information is invalid";
+        public static final String INVALID_CONFIRMATION_TOKEN = "Invalid confirmation token, please check again";
         public static final String GET_USER_SUCCESS_MESSAGE = "Get user successfully";
         public static final String GET_USER_FAIL_MESSAGE = "Get user failed";
         public static final String DUPLICATE_USERNAME_MESSAGE = "Username already exists, please choose another one";
@@ -39,11 +43,17 @@ public class Constants {
         public static final String DELETE_USER_SUCCESS_MESSAGE = "User deleted successfully";
         public static final String DELETE_USER_FAIL_MESSAGE = "User deleted failed";
     }
+
+
     public static final class Regex {
         //public static final String REGEX_PASSWORD = "$d{8}^";
         public static final String REGEX_USERNAME= "^[a-zA-Z0-9-_]{8,30}$";
         public static final String REGEX_PASSWORD = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
         public static final String REGEX_FULLNAME = "^[a-zA-Z][a-zA-Z\s]*$";
         public static final String REGEX_EMAIL = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+        public static final String REGEX_PHONE = "^[0-9]{10}$";
+
     }
+
+
 }

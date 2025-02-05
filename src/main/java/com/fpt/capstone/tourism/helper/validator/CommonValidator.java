@@ -29,10 +29,11 @@ public class CommonValidator {
     public static boolean isEmailValid(String value){
         return value.matches(Constants.Regex.REGEX_EMAIL);
     }
+    public static boolean isPhoneValid(String value) { return value.matches(Constants.Regex.REGEX_PHONE);}
 
     public static boolean isFieldValid(String value, Predicate<String> validation, String message) {
         if (CommonValidator.isNullOrEmpty(value)) {
-            if (!validation.test(value)) {
+            if (validation != null && !validation.test(value)) {
                 throw BusinessException.of(message);
             }
         }

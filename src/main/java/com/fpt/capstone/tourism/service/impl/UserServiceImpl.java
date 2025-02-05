@@ -3,15 +3,17 @@ package com.fpt.capstone.tourism.service.impl;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.UserCreationRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserFullInformationResponseDTO;
+import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.request.UserCreationRequestDTO;
+import com.fpt.capstone.tourism.dto.response.UserFullInformationResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
 import com.fpt.capstone.tourism.mapper.UserCreationMapper;
 import com.fpt.capstone.tourism.mapper.UserFullInformationMapper;
-import com.fpt.capstone.tourism.model.EmailConfirmationToken;
+import com.fpt.capstone.tourism.model.Role;
 import com.fpt.capstone.tourism.model.Role;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.model.UserRole;
-import com.fpt.capstone.tourism.repository.EmailConfirmationTokenRepository;
 import com.fpt.capstone.tourism.repository.RoleRepository;
 import com.fpt.capstone.tourism.repository.UserRepository;
 import com.fpt.capstone.tourism.repository.UserRoleRepository;
@@ -21,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -34,7 +35,6 @@ import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformat
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtHelper jwtHelper;
-    private final EmailConfirmationTokenRepository emailConfirmationTokenRepository;
     private final UserCreationMapper userCreationMapper;
     private final UserFullInformationMapper userFullInformationMapper;
     private final RoleRepository roleRepository;
@@ -76,31 +76,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
     public Boolean existsByPhoneNumber(String phone) {
+
         return userRepository.existsByPhone(phone);
-    }
-
-    @Override
-    @Transactional
-    public void createEmailConfirmationToken(User user, String token) {
-        emailConfirmationTokenRepository.deleteByUser(user);
-        EmailConfirmationToken confirmationToken = new EmailConfirmationToken();
-        confirmationToken.setToken(token);
-        confirmationToken.setUser(user);
-        confirmationToken.setCreatedAt(LocalDateTime.now());
-        emailConfirmationTokenRepository.save(confirmationToken);
-    }
-
-    @Override
-    public User findUserByEmailConfirmationToken(String token) {
-        Optional<EmailConfirmationToken> confirmationToken = emailConfirmationTokenRepository.findByToken(token);
-        return confirmationToken.map(EmailConfirmationToken::getUser).orElse(null);
-    }
-
-    @Override
-    @Transactional
-    public void deleteEmailConfirmationToken(String token) {
-        emailConfirmationTokenRepository.deleteByToken(token);
     }
 
     @Override
@@ -195,4 +174,5 @@ public class UserServiceImpl implements UserService {
         }
         return GeneralResponse.of(null, DELETE_USER_SUCCESS_MESSAGE);
     }
+
 }
