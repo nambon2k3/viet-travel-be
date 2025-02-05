@@ -7,14 +7,16 @@ import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
+
 import com.fpt.capstone.tourism.helper.validator.UserProfileValidator;
-import com.fpt.capstone.tourism.model.EmailConfirmationToken;
+
 import com.fpt.capstone.tourism.model.User;
-import com.fpt.capstone.tourism.repository.EmailConfirmationTokenRepository;
 import com.fpt.capstone.tourism.repository.UserRepository;
 import com.fpt.capstone.tourism.service.UserService;
+
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.FAIL_TO_SAVE_USER_MESSAGE;
-import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +33,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JwtHelper jwtHelper;
-    private final EmailConfirmationTokenRepository emailConfirmationTokenRepository;
 
     @Override
     public String generateToken(User user) {
@@ -73,35 +70,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
     public Boolean existsByPhoneNumber(String phone) {
+
         return userRepository.existsByPhone(phone);
     }
-
-    @Override
-    @Transactional
-    public void createEmailConfirmationToken(User user, String token) {
-        // First, delete any existing tokens for this user
-        emailConfirmationTokenRepository.deleteByUser(user);
-        // Create and save the new token
-        EmailConfirmationToken confirmationToken = new EmailConfirmationToken();
-        confirmationToken.setToken(token);
-        confirmationToken.setUser(user);
-        confirmationToken.setCreatedAt(LocalDateTime.now());
-        emailConfirmationTokenRepository.save(confirmationToken);
-    }
-
-    @Override
-    public User findUserByEmailConfirmationToken(String token) {
-        Optional<EmailConfirmationToken> confirmationToken = emailConfirmationTokenRepository.findByToken(token);
-        return confirmationToken.map(EmailConfirmationToken::getUser).orElse(null);
-    }
-
-    @Override
-    @Transactional
-    public void deleteEmailConfirmationToken(String token) {
-        emailConfirmationTokenRepository.deleteByToken(token);
-    }
-
 
     @Override
     public GeneralResponse<UserInfoResponseDTO> getUserProfile(String token) {

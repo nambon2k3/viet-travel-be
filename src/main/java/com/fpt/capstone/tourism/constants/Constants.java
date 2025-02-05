@@ -1,8 +1,10 @@
 package com.fpt.capstone.tourism.constants;
 
-
 public class Constants {
+
+
     public static final class UserExceptionInformation {
+
         public static final String USER_NOT_FOUND_CODE = "000100";
         public static final String USER_NOT_FOUND_MESSAGE = "User not found";
         public static final String USERNAME_ALREADY_EXISTS_MESSAGE = "Username already exists";
@@ -18,6 +20,8 @@ public class Constants {
         public static final String EMAIL_INVALID = "Email is invalid";
         public static final String USER_NOT_FOUND = "User not found, please login with a valid account to see your profile";
     }
+
+
     public static final class Message {
         public static final String LOGIN_SUCCESS_MESSAGE = "Login successfully";
         public static final String LOGIN_FAIL_MESSAGE = "Login Failed! Invalid username or password";
@@ -29,9 +33,16 @@ public class Constants {
         public static final String TOKEN_USED_MESSAGE = "Email had already been confirmed before. Do not need to confirm again";
         public static final String EMAIL_CONFIRMED_SUCCESS_MESSAGE = "Registration successfully! Please log in to continue.";
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
+
         public static final String USER_NOT_AUTHENTICATED = "User is not authenticated";
         public static final String USER_UPDATE_SUCCESS = "Successfully update user";
+
+        public static final String INVALID_REGISTER_INFO= "Register information is invalid";
+        public static final String INVALID_CONFIRMATION_TOKEN = "Invalid confirmation token, please check again";
+
     }
+
+
     public static final class Regex {
         //public static final String REGEX_PASSWORD = "$d{8}^";
         public static final String REGEX_USERNAME= "^[a-zA-Z0-9-_]{8,30}$";
@@ -41,4 +52,6 @@ public class Constants {
         public static final String REGEX_PHONE = "^[0-9]{10}$";
 
     }
+
+
 }
