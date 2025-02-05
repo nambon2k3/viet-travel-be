@@ -4,6 +4,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
+import com.fpt.capstone.tourism.dto.response.UserProfileResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.service.CloudinaryService;
@@ -26,14 +27,14 @@ public class UserProfileController {
     private final CloudinaryService cloudinaryService;
 
     @PostMapping()
-    public ResponseEntity<GeneralResponse<UserInfoResponseDTO>> getUserProfile(
+    public ResponseEntity<GeneralResponse<UserProfileResponseDTO>> getUserProfile(
             @RequestHeader("Authorization") String token
     ){
         return ResponseEntity.ok(userService.getUserProfile(token));
     }
 
     @PostMapping("/update/{userId}")
-    public ResponseEntity<GeneralResponse<UserInfoResponseDTO>> updateUserProfile(
+    public ResponseEntity<GeneralResponse<UserProfileResponseDTO>> updateUserProfile(
             @RequestHeader("Authorization") String token,
             @PathVariable Integer userId,
             @RequestBody UserProfileRequestDTO userProfileRequestDTO
