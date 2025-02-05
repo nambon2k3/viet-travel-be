@@ -5,6 +5,7 @@ import com.fpt.capstone.tourism.converter.Converter;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
+import com.fpt.capstone.tourism.dto.response.UserProfileResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
 
@@ -77,18 +78,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GeneralResponse<UserInfoResponseDTO> getUserProfile(String token) {
+    public GeneralResponse<UserProfileResponseDTO> getUserProfile(String token) {
         String jwt = token.substring(7);
 
         String username = jwtHelper.extractUsername(jwt);
 
         User currentUser = userRepository.findByUsername(username).orElseThrow();
 
-        return GeneralResponse.of(Converter.convertUseToUserResponseDTO(currentUser));
+        UserProfileResponseDTO userProfileResponseDTO = UserProfileResponseDTO.builder()
+                .id(currentUser.getId())
+                .username(currentUser.getUsername())
+                .fullName(currentUser.getFullName())
+                .email(currentUser.getEmail())
+                .gender(currentUser.getGender())
+                .phone(currentUser.getPhone())
+                .address(currentUser.getAddress())
+                .build();
+
+        return GeneralResponse.of(userProfileResponseDTO);
     }
 
     @Override
-    public GeneralResponse<UserInfoResponseDTO> updateUserProfile(String token, Integer userId, UserProfileRequestDTO newUser) {
+    public GeneralResponse<UserProfileResponseDTO> updateUserProfile(String token, Integer userId, UserProfileRequestDTO newUser) {
 
         String jwt = token.substring(7);
 
@@ -116,14 +127,16 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(existingUser);
 
-        UserInfoResponseDTO userInfoResponseDTO = UserInfoResponseDTO.builder()
+        UserProfileResponseDTO userProfileResponseDTO = UserProfileResponseDTO.builder()
+                .id(existingUser.getId())
+                .username(existingUser.getUsername())
                 .fullName(newUser.getFullName())
                 .email(newUser.getEmail())
                 .gender(newUser.getGender())
                 .phone(newUser.getPhone())
                 .address(newUser.getAddress())
                 .build();
-        return GeneralResponse.of(userInfoResponseDTO, Constants.Message.USER_UPDATE_SUCCESS);
+        return GeneralResponse.of(userProfileResponseDTO, Constants.Message.USER_UPDATE_SUCCESS);
 
     }
 

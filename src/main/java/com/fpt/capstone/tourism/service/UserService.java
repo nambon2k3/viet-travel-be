@@ -3,6 +3,7 @@ package com.fpt.capstone.tourism.service;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
+import com.fpt.capstone.tourism.dto.response.UserProfileResponseDTO;
 import com.fpt.capstone.tourism.model.User;
 
 
@@ -14,7 +15,7 @@ public interface UserService {
     Boolean existsByUsername(String userName);
     Boolean exitsByEmail(String email);
     Boolean existsByPhoneNumber(String phone);
-    GeneralResponse<UserInfoResponseDTO> getUserProfile(String token);
-    GeneralResponse<UserInfoResponseDTO> updateUserProfile(String token, Integer userId, UserProfileRequestDTO user);
+    GeneralResponse<UserProfileResponseDTO> getUserProfile(String token);
+    GeneralResponse<UserProfileResponseDTO> updateUserProfile(String token, Integer userId, UserProfileRequestDTO user);
     String getCurrentUser();
 }
