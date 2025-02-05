@@ -31,6 +31,7 @@ public class Constants {
         public static final String GET_USER_SUCCESS_MESSAGE = "Get user successfully";
         public static final String GET_USER_FAIL_MESSAGE = "Get user failed";
         public static final String DUPLICATE_USERNAME_MESSAGE = "Username already exists, please choose another one";
+        public static final String ROLE_NOT_FOUND = "Role not found";
         public static final String CREATE_USER_SUCCESS_MESSAGE = "User created successfully";
         public static final String CREATE_USER_FAIL_MESSAGE = "User created failed";
         public static final String UPDATE_USER_SUCCESS_MESSAGE = "User updated successfully";

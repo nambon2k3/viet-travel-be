@@ -1,16 +1,17 @@
-package com.fpt.capstone.tourism.dto.request;
+package com.fpt.capstone.tourism.dto.response;
 
 import com.fpt.capstone.tourism.enums.Gender;
 import com.fpt.capstone.tourism.enums.RoleName;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreationRequestDTO {
+public class UserFullInformationResponseDTO {
     private String fullName;
     private String username;
     private String password;
@@ -19,5 +20,7 @@ public class UserCreationRequestDTO {
     private String phone;
     private String address;
     private String avatarImage;
-    private List<Long> roleIds;
+    private boolean isDeleted;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
