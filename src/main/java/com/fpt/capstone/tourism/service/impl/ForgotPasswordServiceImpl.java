@@ -3,7 +3,6 @@ package com.fpt.capstone.tourism.service.impl;
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.validator.Validator;
-import com.fpt.capstone.tourism.model.EmailConfirmationToken;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.service.EmailConfirmationService;
 import com.fpt.capstone.tourism.service.ForgotPasswordService;
@@ -53,7 +52,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
             Long createdTime = Long.parseLong(parts[1]);
             Long currentTime = System.currentTimeMillis();
 
-            if(email.equals(tokenEmail)){
+            if(!email.equals(tokenEmail)){
                 throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
             }
 
@@ -62,7 +61,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
             }
 
             //Check valid password
-            if(!(Validator.isPasswordValid(newPassword) || Validator.isPasswordValid(newRePassword))){
+            if(!(Validator.isPasswordValid(newPassword))){
                 throw BusinessException.of(Constants.UserExceptionInformation.PASSWORD_INVALID);
             }
 
