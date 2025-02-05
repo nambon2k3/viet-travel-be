@@ -19,6 +19,7 @@ public class Constants {
     }
     public static final class Message {
         public static final String LOGIN_SUCCESS_MESSAGE = "Login successfully";
+        public static final String PASSWORD_UPDATED_SUCCESS_MESSAGE = "Your password is updated successfully";
         public static final String LOGIN_FAIL_MESSAGE = "Login Failed! Invalid username or password";
         public static final String EMAIL_CONFIRMATION_REQUEST_MESSAGE = "Thank you for your registration, please check your email to complete verification";
         public static final String REGISTER_FAIL_MESSAGE = "User registered failed due to server error!";
@@ -28,6 +29,7 @@ public class Constants {
         public static final String TOKEN_USED_MESSAGE = "Email had already been confirmed before. Do not need to confirm again";
         public static final String EMAIL_CONFIRMED_SUCCESS_MESSAGE = "Registration successfully! Please log in to continue.";
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
+        public static final String TOKEN_EXPIRED_MESSAGE = "Token expired.";
     }
     public static final class Regex {
         //public static final String REGEX_PASSWORD = "$d{8}^";

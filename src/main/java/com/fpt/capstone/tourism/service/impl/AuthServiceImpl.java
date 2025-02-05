@@ -13,7 +13,7 @@ import com.fpt.capstone.tourism.helper.TokenEncryptorImpl;
 import com.fpt.capstone.tourism.helper.validator.*;
 import com.fpt.capstone.tourism.model.EmailConfirmationToken;
 import com.fpt.capstone.tourism.model.Role;
-import com.fpt.capstone.tourism.helper.validator.CommonValidator;
+import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.model.UserRole;
 import com.fpt.capstone.tourism.repository.RoleRepository;
@@ -29,8 +29,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -45,8 +43,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public GeneralResponse<TokenDTO> login(UserDTO userDTO) {
-        CommonValidator.isFieldValid(userDTO.getUsername(), CommonValidator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
-        CommonValidator.isFieldValid(userDTO.getPassword(), CommonValidator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+        Validator.isFieldValid(userDTO.getUsername(), Validator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+        Validator.isFieldValid(userDTO.getPassword(), Validator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

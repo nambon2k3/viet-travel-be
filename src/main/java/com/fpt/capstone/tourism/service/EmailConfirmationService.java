@@ -7,4 +7,5 @@ public interface EmailConfirmationService {
     EmailConfirmationToken createEmailConfirmationToken(User user);
     void sendConfirmationEmail(User user, EmailConfirmationToken token) throws Exception;
     EmailConfirmationToken validateConfirmationToken(String token);
+    void sendForgotPasswordEmail(User user, String token);
 }

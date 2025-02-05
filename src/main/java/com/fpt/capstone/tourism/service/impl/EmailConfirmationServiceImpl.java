@@ -38,17 +38,17 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
     @Override
     public void sendConfirmationEmail(User user, EmailConfirmationToken token) {
         try {
-        //Token encryptor when need
-        String encryptedToken = TokenEncryptorImpl.encrypt(token.getToken());
+            //Token encryptor when need
+            String encryptedToken = TokenEncryptorImpl.encrypt(token.getToken());
 
-        String link = "http://localhost:8080/api/auth/confirm-email?token=" + token.getToken();
-        String subject = "Viet Travel Email Confirmation";
+            String link = "http://localhost:8080/api/auth/confirm-email?token=" + token.getToken();
+            String subject = "Viet Travel Email Confirmation";
             String content = "Dear " + user.getFullName() + ",\n\n"
                     + "Welcome to Viet Travel! We are thrilled to have you join our community."
                     + "\nWe hope you have fun and enjoy exploring Viet Nam with us.\n\n"
                     + "To confirm your email address, please click the link below:\n" + link;
 
-        emailService.sendEmail(user.getEmail(), subject, content);
+            emailService.sendEmail(user.getEmail(), subject, content);
         } catch (Exception e) {
             throw BusinessException.of(Constants.Message.TOKEN_ENCRYPTION_FAILED_MESSAGE, e);
         }
@@ -71,6 +71,25 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
         tokenRepository.save(emailToken);
 
         return emailToken;
+    }
+
+    @Override
+    public void sendForgotPasswordEmail(User user, String token) {
+        try {
+
+
+            String link = "http://localhost:8080/api/reset-password?token=" + token;
+            String subject = "Reset Password";
+            String content = "Dear " + user.getFullName() + ",\n\n"
+                    + "Hello,"
+                    + "\nYou have requested to reset your password.\n\n"
+                    + "Click the link below to change your password:\n" + link
+                    +"\nIgnore this email if you do remember your password, or you have not made the request.";
+
+            emailService.sendEmail(user.getEmail(), subject, content);
+        } catch (Exception e) {
+            throw BusinessException.of(Constants.Message.TOKEN_ENCRYPTION_FAILED_MESSAGE, e);
+        }
     }
 
 }
