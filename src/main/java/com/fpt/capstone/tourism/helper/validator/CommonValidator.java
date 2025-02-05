@@ -39,6 +39,4 @@ public class CommonValidator {
         }
         return true;
     }
-
-
 }

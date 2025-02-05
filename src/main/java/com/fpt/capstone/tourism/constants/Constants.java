@@ -42,6 +42,8 @@ public class Constants {
         public static final String UPDATE_USER_FAIL_MESSAGE = "User updated failed";
         public static final String DELETE_USER_SUCCESS_MESSAGE = "User deleted successfully";
         public static final String DELETE_USER_FAIL_MESSAGE = "User deleted failed";
+        public static final String GET_ALL_USER_SUCCESS_MESSAGE = "Get all users successfully";
+        public static final String GET_ALL_USER_FAIL_MESSAGE = "Get all users failed";
     }
 
 
