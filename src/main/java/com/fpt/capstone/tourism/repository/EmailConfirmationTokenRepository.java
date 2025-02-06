@@ -14,4 +14,3 @@ public interface EmailConfirmationTokenRepository extends JpaRepository<EmailCon
     void deleteByUser(User user);
 }
 
-

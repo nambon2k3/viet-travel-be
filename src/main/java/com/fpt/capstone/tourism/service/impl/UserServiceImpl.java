@@ -62,9 +62,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-
     public Boolean existsByPhoneNumber(String phone) {
-
         return userRepository.existsByPhone(phone);
     }
 
