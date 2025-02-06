@@ -1,6 +1,7 @@
 package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.constants.Constants;
+import com.fpt.capstone.tourism.constants.Constants.Message.*;
 import com.fpt.capstone.tourism.converter.Converter;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
@@ -27,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static com.fpt.capstone.tourism.constants.Constants.Message.*;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.FAIL_TO_SAVE_USER_MESSAGE;
 
 @Service
@@ -82,23 +84,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GeneralResponse<UserProfileResponseDTO> getUserProfile(String token) {
-        String jwt = token.substring(7);
+        try {
+            String jwt = token.substring(7);
 
-        String username = jwtHelper.extractUsername(jwt);
+            String username = jwtHelper.extractUsername(jwt);
 
-        User currentUser = userRepository.findByUsername(username).orElseThrow();
+            User currentUser = userRepository.findByUsername(username).orElseThrow();
 
-        UserProfileResponseDTO userProfileResponseDTO = UserProfileResponseDTO.builder()
-                .id(currentUser.getId())
-                .username(currentUser.getUsername())
-                .fullName(currentUser.getFullName())
-                .email(currentUser.getEmail())
-                .gender(currentUser.getGender())
-                .phone(currentUser.getPhone())
-                .address(currentUser.getAddress())
-                .build();
+            UserProfileResponseDTO userProfileResponseDTO = UserProfileResponseDTO.builder()
+                    .id(currentUser.getId())
+                    .username(currentUser.getUsername())
+                    .fullName(currentUser.getFullName())
+                    .email(currentUser.getEmail())
+                    .gender(currentUser.getGender())
+                    .phone(currentUser.getPhone())
+                    .address(currentUser.getAddress())
+                    .build();
 
-        return GeneralResponse.of(userProfileResponseDTO);
+            return GeneralResponse.of(userProfileResponseDTO, GET_PROFILE_SUCCESS);
+        } catch (Exception e){
+            throw BusinessException.of(GET_PROFILE_FAIL);
+        }
     }
 
     @Override
