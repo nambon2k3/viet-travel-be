@@ -12,6 +12,6 @@ import com.fpt.capstone.tourism.exception.common.BusinessException;
 
 public interface AuthService {
     GeneralResponse<TokenDTO> login(UserDTO userDTO);
-    GeneralResponse<RegisterInitResponseDTO> registerInit(RegisterRequestDTO registerRequestDTO);
-    GeneralResponse<RegisterInforResponseDTO> registerConfirm(RegisterConfirmRequestDTO requestDTO);
+    GeneralResponse<UserInfoResponseDTO> register(RegisterRequestDTO registerRequestDTO) throws BusinessException;
+    GeneralResponse<String> confirmEmail(String token);;
 }
