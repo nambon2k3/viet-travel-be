@@ -1,5 +1,6 @@
 package com.fpt.capstone.tourism.service.impl;
 
+import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.UserCreationRequestDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
@@ -7,6 +8,7 @@ import com.fpt.capstone.tourism.dto.response.UserFullInformationResponseDTO;
 import com.fpt.capstone.tourism.dto.response.UserManageGeneralInformationDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
+import com.fpt.capstone.tourism.helper.validator.UserCreationValidator;
 import com.fpt.capstone.tourism.mapper.UserCreationMapper;
 import com.fpt.capstone.tourism.mapper.UserFullInformationMapper;
 import com.fpt.capstone.tourism.mapper.UserManageGeneralInformationMapper;
@@ -145,6 +147,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public GeneralResponse<?> createUser(UserCreationRequestDTO userDTO) {
         try {
+            // Validate user input
+            UserCreationValidator.validateUserCreation(userDTO.getFullName(), userDTO.getUsername(),
+                    userDTO.getPassword(), userDTO.getRePassword(), userDTO.getEmail(), String.valueOf(userDTO.getGender()),
+                    userDTO.getPhone(), userDTO.getAddress(), userDTO.getAvatarImage(), userDTO.getRoleNames());
+
             // Check for duplicate username
             if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
                 throw BusinessException.of(DUPLICATE_USERNAME_MESSAGE);
@@ -160,7 +167,7 @@ public class UserServiceImpl implements UserService {
 
             User savedUser = userRepository.save(user);
 
-            // Assign roles based on role names
+            // Assign roles
             Set<UserRole> userRoles = new HashSet<>();
             for (String roleName : userDTO.getRoleNames()) {
                 Role role = roleRepository.findByRoleName(roleName)
@@ -170,48 +177,63 @@ public class UserServiceImpl implements UserService {
             userRoleRepository.saveAll(userRoles);
 
             return GeneralResponse.of(userCreationMapper.toDTO(savedUser), CREATE_USER_SUCCESS_MESSAGE);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             throw BusinessException.of(CREATE_USER_FAIL_MESSAGE, e);
         }
     }
 
-
     @Override
     @Transactional
     public GeneralResponse<?> updateUser(int id, UserCreationRequestDTO userDTO) {
         try {
+            // Validate user input
+            UserCreationValidator.validateUserUpdate(userDTO.getFullName(), userDTO.getPhone(),
+                    userDTO.getAddress(), userDTO.getEmail(), userDTO.getPassword());
+
             // Find user by ID
             User user = userRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND_MESSAGE));
+
             // Check for duplicate username (except for the current user)
             Optional<User> existingUser = userRepository.findByUsername(userDTO.getUsername());
             if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
                 throw BusinessException.of(DUPLICATE_USERNAME_MESSAGE);
             }
+
             // Update user details
             user.setFullName(userDTO.getFullName());
             user.setEmail(userDTO.getEmail());
             user.setPhone(userDTO.getPhone());
             user.setAddress(userDTO.getAddress());
+
             // If password is provided, hash and update it
             if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
                 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
-            // Update user roles based on role names
+
+            // Update roles
             Set<UserRole> newRoles = new HashSet<>();
             for (String roleName : userDTO.getRoleNames()) {
                 Role role = roleRepository.findByRoleName(roleName)
                         .orElseThrow(() -> BusinessException.of(ROLE_NOT_FOUND));
                 newRoles.add(new UserRole(null, user, false, role));
             }
+
             // Clear and update roles
             userRoleRepository.deleteByUserId(user.getId());
             userRoleRepository.saveAll(newRoles);
+
             return GeneralResponse.of(userCreationMapper.toDTO(userRepository.save(user)), UPDATE_USER_SUCCESS_MESSAGE);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             throw BusinessException.of(UPDATE_USER_FAIL_MESSAGE, e);
         }
     }
+
+
 
     @Override
     @Transactional
