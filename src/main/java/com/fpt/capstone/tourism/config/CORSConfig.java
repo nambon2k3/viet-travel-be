@@ -11,6 +11,7 @@ public class CORSConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:4200") // Client endpoints
                 .allowedMethods("GET", "POST", "PUT", "DELETE") //  HTTP methods allowed to request
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }

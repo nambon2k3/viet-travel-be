@@ -4,6 +4,7 @@ package com.fpt.capstone.tourism.controller;
 import com.fpt.capstone.tourism.dto.common.TokenDTO;
 import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.request.LoginRequestDTO;
 import com.fpt.capstone.tourism.dto.request.RegisterConfirmRequestDTO;
 import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
 import com.fpt.capstone.tourism.dto.response.RegisterInforResponseDTO;
@@ -23,7 +24,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping()
-    public ResponseEntity<GeneralResponse<TokenDTO>> login(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<GeneralResponse<TokenDTO>> login(@RequestBody LoginRequestDTO userDTO) {
         return ResponseEntity.ok(authService.login(userDTO));
     }
 

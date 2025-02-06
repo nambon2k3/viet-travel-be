@@ -4,6 +4,7 @@ import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.TokenDTO;
 import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.request.LoginRequestDTO;
 import com.fpt.capstone.tourism.dto.request.RegisterConfirmRequestDTO;
 import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
 import com.fpt.capstone.tourism.dto.response.RegisterInforResponseDTO;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRoleRepository userRoleRepository;
 
     @Override
-    public GeneralResponse<TokenDTO> login(UserDTO userDTO) {
+    public GeneralResponse<TokenDTO> login(LoginRequestDTO userDTO) {
         Validator.isFieldValid(userDTO.getUsername(), Validator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
         Validator.isFieldValid(userDTO.getPassword(), Validator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
 
@@ -60,6 +62,8 @@ public class AuthServiceImpl implements AuthService {
                     .token(token)
                     .expirationTime("24h")
                     .build();
+
+
             return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.LOGIN_SUCCESS_MESSAGE, tokenDTO);
         } catch (BusinessException be) {
             throw be;

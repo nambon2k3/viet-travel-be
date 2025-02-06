@@ -39,6 +39,14 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
+                )
+                .rememberMe(rememberMe ->
+                        rememberMe.key("tempKey")
+                                .rememberMeCookieName("remember-me")
+                                .tokenValiditySeconds(7 * 24 * 60 * 60)
+                                .rememberMeParameter("remember-me")
+                                .useSecureCookie(false)
+                                .userDetailsService(userDetailsService)
                 );
         return httpSecurity.build();
     }
