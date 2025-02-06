@@ -24,4 +24,7 @@ public interface UserService {
     GeneralResponse<?> deleteUser(int id);
 
     GeneralResponse<PagingDTO<List<UserManageGeneralInformationDTO>>> getAllUser(int page, int size);
+    void createEmailConfirmationToken(User user, String token);
+    User findUserByEmailConfirmationToken(String token);
+    void deleteEmailConfirmationToken(String token);
 }
