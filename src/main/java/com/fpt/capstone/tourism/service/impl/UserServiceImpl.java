@@ -61,10 +61,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-
     public Boolean existsByPhoneNumber(String phone) {
-
         return userRepository.existsByPhone(phone);
     }
 
+
+
+//    @Override
+//    @Transactional
+//    public void createEmailConfirmationToken(User user, String token) {
+//        // First, delete any existing tokens for this user
+//        emailConfirmationTokenRepository.deleteByUser(user);
+//        // Create and save the new token
+//        EmailConfirmationToken confirmationToken = new EmailConfirmationToken();
+//        confirmationToken.setToken(token);
+//        confirmationToken.setUser(user);
+//        confirmationToken.setCreatedAt(LocalDateTime.now());
+//        emailConfirmationTokenRepository.save(confirmationToken);
+//    }
+
+//    @Override
+//    public User findUserByEmailConfirmationToken(String token) {
+//        //Optional<EmailConfirmationToken> confirmationToken = emailConfirmationTokenRepository.findByToken(token);
+//        return confirmationToken.map(EmailConfirmationToken::getUser).orElse(null);
+//    }
+
+//    @Override
+//    @Transactional
+//    public void deleteEmailConfirmationToken(String token) {
+//        emailConfirmationTokenRepository.deleteByToken(token);
+//    }
 }
+

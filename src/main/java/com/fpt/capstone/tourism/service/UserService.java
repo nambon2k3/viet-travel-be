@@ -12,4 +12,9 @@ public interface UserService {
     Boolean existsByUsername(String userName);
     Boolean exitsByEmail(String email);
     Boolean existsByPhoneNumber(String phone);
+
+//    void createEmailConfirmationToken(User user, String token);
+//    User findUserByEmailConfirmationToken(String token);
+//    void deleteEmailConfirmationToken(String token);
+
 }

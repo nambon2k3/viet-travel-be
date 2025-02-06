@@ -36,4 +36,7 @@ public class AuthController {
     public ResponseEntity<GeneralResponse<RegisterInforResponseDTO>> registerConfirm(@RequestBody RegisterConfirmRequestDTO requestDTO) {
         return ResponseEntity.ok(authService.registerConfirm(requestDTO));
     }
+
+
 }
+

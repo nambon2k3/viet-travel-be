@@ -2,6 +2,7 @@ package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
+import com.fpt.capstone.tourism.model.EmailConfirmationToken;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.service.EmailConfirmationService;
 import com.fpt.capstone.tourism.service.EmailService;
@@ -16,12 +17,13 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
     private final EmailService emailService;
 
     @Override
-    public void sendConfirmationEmail(User user, String token) {
+    public void sendConfirmationEmail(User user, EmailConfirmationToken token) {
         try {
+            //Token encryptor when need
+            //String encryptedToken = TokenEncryptorImpl.encrypt(token.getToken());
 
-        String link = "http://localhost:8080/api/auth/confirm-email?token=" + generateTemporaryToken();
-        String subject = "Viet Travel Email Confirmation";
-
+            String link = "http://localhost:8080/api/auth/confirm-email?token=" + token.getToken();
+            String subject = "Viet Travel Email Confirmation";
             String content = "Dear " + user.getFullName() + ",\n\n"
                     + "Welcome to Viet Travel! We are thrilled to have you join our community."
                     + "\nWe hope you have fun and enjoy exploring Viet Nam with us.\n\n"
@@ -51,6 +53,7 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
                     +"\nIgnore this email if you do remember your password, or you have not made the request.";
 
             emailService.sendEmail(user.getEmail(), subject, content);
+
         } catch (Exception e) {
             throw BusinessException.of(Constants.Message.TOKEN_ENCRYPTION_FAILED_MESSAGE, e);
         }
