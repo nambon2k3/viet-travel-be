@@ -4,13 +4,12 @@ package com.fpt.capstone.tourism.controller;
 import com.fpt.capstone.tourism.dto.common.TokenDTO;
 import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
+import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +21,16 @@ public class AuthController {
     @PostMapping()
     public ResponseEntity<GeneralResponse<TokenDTO>> login(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(authService.login(userDTO));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<GeneralResponse<UserInfoResponseDTO>> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
+        return ResponseEntity.ok(authService.register(registerRequestDTO));
+    }
+
+    @GetMapping("/confirm-email")
+    public ResponseEntity<GeneralResponse<String>> confirmEmail(@RequestParam String token) {
+        return ResponseEntity.ok(authService.confirmEmail(token));
     }
 
 }

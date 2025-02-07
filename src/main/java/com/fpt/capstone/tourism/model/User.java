@@ -52,6 +52,7 @@ public class User extends BaseEntity implements UserDetails {
 
     private String address;
 
+
     @Column(name="avatar_img")
     private String avatarImage;
 
@@ -73,3 +74,5 @@ public class User extends BaseEntity implements UserDetails {
     @EqualsAndHashCode.Exclude
     private Set<UserRole> userRoles;
 }
+
+
