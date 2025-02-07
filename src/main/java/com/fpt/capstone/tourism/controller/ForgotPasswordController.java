@@ -2,6 +2,7 @@ package com.fpt.capstone.tourism.controller;
 
 
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.request.ForgotPasswordRequestDTO;
 import com.fpt.capstone.tourism.dto.request.PasswordResetDTO;
 import com.fpt.capstone.tourism.service.ForgotPasswordService;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,8 @@ public class ForgotPasswordController {
     private final ForgotPasswordService forgotPasswordService;
 
     @PostMapping("/forgot-password")
-    public GeneralResponse<String> forgotPassword(@RequestBody String email){
-        return forgotPasswordService.forgotPassword(email);
+    public GeneralResponse<String> forgotPassword(@RequestBody ForgotPasswordRequestDTO email){
+        return forgotPasswordService.forgotPassword(email.getEmail());
     }
 
     @PutMapping("/reset-password")
