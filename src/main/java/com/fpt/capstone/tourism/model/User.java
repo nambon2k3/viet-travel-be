@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;

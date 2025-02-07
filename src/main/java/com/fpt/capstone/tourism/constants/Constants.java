@@ -35,6 +35,14 @@ public class Constants {
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
         public static final String INVALID_REGISTER_INFO= "Register information is invalid";
         public static final String INVALID_CONFIRMATION_TOKEN = "Invalid confirmation token, please check again";
+
+
+        public static final String CREATE_BLOG_SUCCESS_MESSAGE = "Blog created successfully";
+        public static final String CREATE_BLOG_FAIL_MESSAGE = "Blog created failed";
+
+        public static final String GENERAL_SUCCESS_MESSAGE = "Successfully";
+        public static final String GENERAL_FAIL_MESSAGE = "Failed";
+
     }
 
 
