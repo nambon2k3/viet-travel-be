@@ -11,7 +11,7 @@ import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
 import com.fpt.capstone.tourism.helper.TokenEncryptorImpl;
 import com.fpt.capstone.tourism.helper.validator.*;
-import com.fpt.capstone.tourism.model.EmailConfirmationToken;
+import com.fpt.capstone.tourism.model.Token;
 import com.fpt.capstone.tourism.model.Role;
 import com.fpt.capstone.tourism.helper.validator.CommonValidator;
 import com.fpt.capstone.tourism.model.User;
@@ -137,7 +137,7 @@ public class AuthServiceImpl implements AuthService {
         userRoleRepository.save(newUserRole);
 
         // Send email confirmation
-        EmailConfirmationToken token = emailConfirmationService.createEmailConfirmationToken(savedUser);
+        Token token = emailConfirmationService.createEmailConfirmationToken(savedUser);
         try {
             emailConfirmationService.sendConfirmationEmail(savedUser, token);
         } catch (Exception e) {
@@ -158,7 +158,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public GeneralResponse<String> confirmEmail(String token) {
-        EmailConfirmationToken emailToken = emailConfirmationService.validateConfirmationToken(token);
+        Token emailToken = emailConfirmationService.validateConfirmationToken(token);
 
         User user = emailToken.getUser();
         user.setEmailConfirmed(true);

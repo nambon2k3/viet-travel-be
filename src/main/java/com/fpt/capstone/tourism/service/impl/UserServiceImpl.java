@@ -2,7 +2,7 @@ package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
-import com.fpt.capstone.tourism.model.EmailConfirmationToken;
+import com.fpt.capstone.tourism.model.Token;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.repository.EmailConfirmationTokenRepository;
 import com.fpt.capstone.tourism.repository.UserRepository;
@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.FAIL_TO_SAVE_USER_MESSAGE;
-import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -72,7 +71,7 @@ public class UserServiceImpl implements UserService {
         // First, delete any existing tokens for this user
         emailConfirmationTokenRepository.deleteByUser(user);
         // Create and save the new token
-        EmailConfirmationToken confirmationToken = new EmailConfirmationToken();
+        Token confirmationToken = new Token();
         confirmationToken.setToken(token);
         confirmationToken.setUser(user);
         confirmationToken.setCreatedAt(LocalDateTime.now());
@@ -81,8 +80,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByEmailConfirmationToken(String token) {
-        Optional<EmailConfirmationToken> confirmationToken = emailConfirmationTokenRepository.findByToken(token);
-        return confirmationToken.map(EmailConfirmationToken::getUser).orElse(null);
+        Optional<Token> confirmationToken = emailConfirmationTokenRepository.findByToken(token);
+        return confirmationToken.map(Token::getUser).orElse(null);
     }
 
     @Override
