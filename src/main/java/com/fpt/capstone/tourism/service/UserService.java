@@ -18,10 +18,10 @@ public interface UserService {
     Boolean exitsByEmail(String email);
     Boolean existsByPhoneNumber(String phone);
     //CRUD User
-    GeneralResponse<?> getUserById(int id);
+    GeneralResponse<?> getUserById(Long id);
     GeneralResponse<?> createUser(UserCreationRequestDTO userDTO);
-    GeneralResponse<?> updateUser(int id, UserCreationRequestDTO userDTO);
-    GeneralResponse<?> deleteUser(int id);
+    GeneralResponse<?> updateUser(Long id, UserCreationRequestDTO userDTO);
+    GeneralResponse<?> deleteUser(Long id);
 
     GeneralResponse<PagingDTO<List<UserManageGeneralInformationResponseDTO>>> getAllUser(int page, int size);
     void createEmailConfirmationToken(User user, String token);

@@ -7,7 +7,7 @@ import com.fpt.capstone.tourism.dto.response.UserFullInformationResponseDTO;
 import com.fpt.capstone.tourism.dto.response.UserManageGeneralInformationResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
-import com.fpt.capstone.tourism.helper.validator.UserCreationValidator;
+import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.mapper.UserCreationMapper;
 import com.fpt.capstone.tourism.mapper.UserFullInformationMapper;
 import com.fpt.capstone.tourism.mapper.UserManageGeneralInformationMapper;
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GeneralResponse<?> getUserById(int id) {
+    public GeneralResponse<?> getUserById(Long id) {
         try {
             UserFullInformationResponseDTO response = userRepository.findById(id)
                     .map(user -> {
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
     public GeneralResponse<?> createUser(UserCreationRequestDTO userDTO) {
         try {
             // Validate user input
-            UserCreationValidator.validateUserCreation(userDTO.getFullName(), userDTO.getUsername(),
+            Validator.validateUserCreation(userDTO.getFullName(), userDTO.getUsername(),
                     userDTO.getPassword(), userDTO.getRePassword(), userDTO.getEmail(), String.valueOf(userDTO.getGender()),
                     userDTO.getPhone(), userDTO.getAddress(), userDTO.getAvatarImage(), userDTO.getRoleNames());
 
@@ -197,10 +197,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public GeneralResponse<?> updateUser(int id, UserCreationRequestDTO userDTO) {
+    public GeneralResponse<?> updateUser(Long id, UserCreationRequestDTO userDTO) {
         try {
             // Validate user input
-            UserCreationValidator.validateUserUpdate(userDTO.getFullName(), userDTO.getUsername(),
+            Validator.validateUserUpdate(userDTO.getFullName(), userDTO.getUsername(),
                     userDTO.getPassword(), userDTO.getRePassword(), userDTO.getEmail(), String.valueOf(userDTO.getGender()),
                     userDTO.getPhone(), userDTO.getAddress(), userDTO.getAvatarImage(), userDTO.getRoleNames());
             // Find user by ID
@@ -273,7 +273,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public GeneralResponse<?> deleteUser(int id) {
+    public GeneralResponse<?> deleteUser(Long id) {
         try {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND,USER_NOT_FOUND_MESSAGE));

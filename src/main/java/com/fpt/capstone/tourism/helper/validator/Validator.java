@@ -5,10 +5,81 @@ import com.fpt.capstone.tourism.exception.common.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.function.Predicate;
+
+import static com.fpt.capstone.tourism.constants.Constants.Message.PASSWORDS_DO_NOT_MATCH_MESSAGE;
+import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
+import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.PASSWORD_INVALID;
 
 
 public class Validator {
+    public static void validateUserCreation(String fullName, String username, String password, String rePassword,
+                                            String email, String gender, String phone, String address, String avatarImage, List<String> roleNames) {
+        // Ensure fields are not null or empty
+        Validator.isNullOrEmpty(fullName);
+        Validator.isNullOrEmpty(username);
+        Validator.isNullOrEmpty(password);
+        Validator.isNullOrEmpty(rePassword);
+        Validator.isNullOrEmpty(email);
+        Validator.isNullOrEmpty(gender);
+        Validator.isNullOrEmpty(phone);
+        Validator.isNullOrEmpty(address);
+        Validator.isNullOrEmpty(avatarImage);
+        Validator.isNullOrEmpty(roleNames.toString());
+
+        // Validate fields based on specific rules
+        Validator.isFieldValid(username, Validator::isUsernameValid, USERNAME_INVALID);
+        Validator.isFieldValid(password, Validator::isPasswordValid, PASSWORD_INVALID);
+        Validator.isFieldValid(rePassword, Validator::isPasswordValid, PASSWORD_INVALID);
+        Validator.isFieldValid(fullName, Validator::isFullNameValid, FULL_NAME_INVALID);
+        Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
+        Validator.isFieldValid(phone, Validator::isPhoneValid, PHONE_INVALID);
+
+        if (!password.equals(rePassword)) {
+            throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
+        }
+
+        if (!"male".equalsIgnoreCase(gender) && !"female".equalsIgnoreCase(gender)) {
+            throw BusinessException.of(GENDER_INVALID);
+        }
+
+        if (roleNames.isEmpty()) {
+            throw BusinessException.of(ROLES_NAME_INVALID);
+        }
+    }
+
+    public static void validateUserUpdate(String fullName, String username, String password, String rePassword,
+                                          String email, String gender, String phone, String address, String avatarImage, List<String> roleNames) {
+        // Ensure fields are not null or empty
+        Validator.isNullOrEmpty(fullName);
+        Validator.isNullOrEmpty(username);
+        Validator.isNullOrEmpty(password);
+        Validator.isNullOrEmpty(rePassword);
+        Validator.isNullOrEmpty(email);
+        Validator.isNullOrEmpty(gender);
+        Validator.isNullOrEmpty(phone);
+        Validator.isNullOrEmpty(address);
+        Validator.isNullOrEmpty(avatarImage);
+        Validator.isNullOrEmpty(roleNames.toString());
+
+        // Validate fields based on specific rules
+        Validator.isFieldValid(username, Validator::isUsernameValid, USERNAME_INVALID);
+        Validator.isFieldValid(password, Validator::isPasswordValid, PASSWORD_INVALID);
+        Validator.isFieldValid(rePassword, Validator::isPasswordValid, PASSWORD_INVALID);
+        Validator.isFieldValid(fullName, Validator::isFullNameValid, FULL_NAME_INVALID);
+        Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
+        Validator.isFieldValid(phone, Validator::isPhoneValid, PHONE_INVALID);
+
+        if (!password.equals(rePassword)) {
+            throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
+        }
+
+        // Validate password only if provided
+        if (password != null && !password.isEmpty()) {
+            Validator.isFieldValid(password, Validator::isPasswordValid, PASSWORD_INVALID);
+        }
+    }
     public static boolean isRegisterValid(String username, String password, String rePassword, String fullName, String phone, String address, String email) {
         return Validator.isFieldValid(username, Validator::isUsernameValid, Constants.UserExceptionInformation.USERNAME_INVALID) &&
                 Validator.isFieldValid(password, Validator::isPasswordValid, Constants.UserExceptionInformation.PASSWORD_INVALID) &&
