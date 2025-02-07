@@ -89,19 +89,13 @@ public class AuthServiceImpl implements AuthService {
             if (userService.exitsByEmail(registerRequestDTO.getEmail())) {
                 throw BusinessException.of(Constants.UserExceptionInformation.EMAIL_ALREADY_EXISTS_MESSAGE);
             }
-
-
-
             if(userService.existsByPhoneNumber(registerRequestDTO.getPhone())){
-
                 throw BusinessException.of(Constants.UserExceptionInformation.PHONE_ALREADY_EXISTS_MESSAGE);
             }
             if (!registerRequestDTO.getPassword().equals(registerRequestDTO.getRePassword())) {
                 throw BusinessException.of(Constants.Message.PASSWORDS_DO_NOT_MATCH_MESSAGE);
             }
-
         }
-
         // Ensure "CUSTOMER" role exists, otherwise create it
         Role userRole = roleRepository.findByRoleName("CUSTOMER")
                 .orElseGet(() -> {
