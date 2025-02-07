@@ -28,6 +28,11 @@ public class BusinessException extends RuntimeException {
                 .build();
     }
 
+    @Override
+    public String getMessage() {
+        return responseMessage;
+    }
+
     public static BusinessException of(HttpStatus status, String responseMessage) {
         return BusinessException.builder()
                 .httpCode(status.value())
