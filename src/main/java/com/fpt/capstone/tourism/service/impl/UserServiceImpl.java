@@ -29,7 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
-import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.FAIL_TO_SAVE_USER_MESSAGE;
+import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -110,42 +110,47 @@ public class UserServiceImpl implements UserService {
     @Override
     public GeneralResponse<UserProfileResponseDTO> updateUserProfile(String token, Integer userId, UserProfileRequestDTO newUser) {
 
-        String jwt = token.substring(7);
+        try{
+            String jwt = token.substring(7);
 
-        String username = jwtHelper.extractUsername(jwt);
+            String username = jwtHelper.extractUsername(jwt);
 
-        User currentUser = findUserByUsername(username);
+            User currentUser = findUserByUsername(username);
 
-        if(!userId.equals(currentUser.getId())){
-            throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
+            if(!userId.equals(currentUser.getId())){
+                throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
 
+            }
+
+            User existingUser = findUserById(userId.toString());
+
+            //Check valid users field need to update
+            UserProfileValidator.isProfileValid(newUser.getFullName(), newUser.getEmail(),
+                    newUser.getPhone(), newUser.getAddress());
+
+            //Update user follow by userProfileRequestDTO
+            existingUser.setFullName(newUser.getFullName());
+            existingUser.setEmail(newUser.getEmail());
+            existingUser.setGender(newUser.getGender());
+            existingUser.setPhone(newUser.getPhone());
+            existingUser.setAddress(newUser.getAddress());
+
+            userRepository.save(existingUser);
+
+            UserProfileResponseDTO userProfileResponseDTO = UserProfileResponseDTO.builder()
+                    .id(existingUser.getId())
+                    .username(existingUser.getUsername())
+                    .fullName(newUser.getFullName())
+                    .email(newUser.getEmail())
+                    .gender(newUser.getGender())
+                    .phone(newUser.getPhone())
+                    .address(newUser.getAddress())
+                    .build();
+            return GeneralResponse.of(userProfileResponseDTO, UPDATE_PROFILE_SUCCESS);
+        } catch (Exception ex){
+            throw BusinessException.of(UPDATE_PROFILE_FAIL, ex);
         }
 
-        User existingUser = findUserById(userId.toString());
-
-        //Check valid users field need to update
-        UserProfileValidator.isProfileValid(newUser.getFullName(), newUser.getEmail(),
-                newUser.getPhone(), newUser.getAddress());
-
-        //Update user follow by userProfileRequestDTO
-        existingUser.setFullName(newUser.getFullName());
-        existingUser.setEmail(newUser.getEmail());
-        existingUser.setGender(newUser.getGender());
-        existingUser.setPhone(newUser.getPhone());
-        existingUser.setAddress(newUser.getAddress());
-
-        userRepository.save(existingUser);
-
-        UserProfileResponseDTO userProfileResponseDTO = UserProfileResponseDTO.builder()
-                .id(existingUser.getId())
-                .username(existingUser.getUsername())
-                .fullName(newUser.getFullName())
-                .email(newUser.getEmail())
-                .gender(newUser.getGender())
-                .phone(newUser.getPhone())
-                .address(newUser.getAddress())
-                .build();
-        return GeneralResponse.of(userProfileResponseDTO, Constants.Message.USER_UPDATE_SUCCESS);
 
     }
 
@@ -160,8 +165,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String changePassword(String token, String currentPassword, String newPassword, String newRePassword) {
-//        try{
+    public GeneralResponse<String> changePassword(String token, String currentPassword, String newPassword, String newRePassword) {
+        try{
             String jwt = token.substring(7);
             String username = jwtHelper.extractUsername(jwt);
 
@@ -185,9 +190,9 @@ public class UserServiceImpl implements UserService {
             currentUser.setPassword(passwordEncoder.encode(newPassword));
             saveUser(currentUser);
 
-            return Constants.Message.CHANGE_PASSWORD_SUCCESS_MESSAGE;
-//        } catch (Exception e){
-//            throw BusinessException.of(Constants.Message.CHANGE_PASSWORD_FAIL_MESSAGE);
-//        }
+            return new GeneralResponse<>(HttpStatus.OK.value(), CHANGE_PASSWORD_SUCCESS_MESSAGE, token);
+        } catch (Exception e){
+            throw BusinessException.of(Constants.Message.CHANGE_PASSWORD_FAIL_MESSAGE);
+        }
     }
 }

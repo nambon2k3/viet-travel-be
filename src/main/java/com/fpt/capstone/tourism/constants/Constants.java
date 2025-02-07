@@ -38,8 +38,8 @@ public class Constants {
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
 
         public static final String USER_NOT_AUTHENTICATED = "User is not authenticated";
-        public static final String PROFILE_UPDATE_SUCCESS = "Successfully update user profile";
-        public static final String PROFILE_UPDATE_FAIL = "Update user profile fail";
+        public static final String UPDATE_PROFILE_SUCCESS = "Successfully update user profile";
+        public static final String UPDATE_PROFILE_FAIL = "Update user profile fail";
         public static final String GET_PROFILE_SUCCESS = "Successfully get user profile";
         public static final String GET_PROFILE_FAIL = "Get user profile fail";
 
