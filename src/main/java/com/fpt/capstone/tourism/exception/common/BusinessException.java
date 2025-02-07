@@ -28,4 +28,8 @@ public class BusinessException extends RuntimeException {
                 .build();
     }
 
+    @Override
+    public String getMessage() {
+        return responseMessage;
+    }
 }

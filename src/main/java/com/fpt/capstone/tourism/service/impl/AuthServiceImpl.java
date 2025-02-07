@@ -13,7 +13,7 @@ import com.fpt.capstone.tourism.helper.TokenEncryptorImpl;
 import com.fpt.capstone.tourism.helper.validator.*;
 import com.fpt.capstone.tourism.model.EmailConfirmationToken;
 import com.fpt.capstone.tourism.model.Role;
-import com.fpt.capstone.tourism.helper.validator.CommonValidator;
+import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.model.UserRole;
 import com.fpt.capstone.tourism.repository.RoleRepository;
@@ -43,14 +43,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public GeneralResponse<TokenDTO> login(UserDTO userDTO) {
-        CommonValidator.isFieldValid(userDTO.getUsername(), CommonValidator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
-        CommonValidator.isFieldValid(userDTO.getPassword(), CommonValidator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
 
         try {
+            Validator.isLoginValid(userDTO.getUsername(), userDTO.getPassword());
+
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     userDTO.getUsername(), userDTO.getPassword()
             ));
             User user = userService.findUserByUsername(userDTO.getUsername());
+
+            if(user.isDeleted()){
+                throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
+            }
 
             // Check if the user's email is confirmed
             if (!user.isEmailConfirmed()) {
@@ -74,14 +78,14 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public GeneralResponse<UserInfoResponseDTO> register(RegisterRequestDTO registerRequestDTO) {
         // Validate input data
-        if (RegisterValidator.isRegisterValid(
+        Validator.isRegisterValid(
                 registerRequestDTO.getUsername(),
                 registerRequestDTO.getPassword(),
                 registerRequestDTO.getRePassword(),
                 registerRequestDTO.getFullName(),
                 registerRequestDTO.getPhone(),
                 registerRequestDTO.getAddress(),
-                registerRequestDTO.getEmail())) {
+                registerRequestDTO.getEmail());
 
             if (userService.existsByUsername(registerRequestDTO.getUsername())) {
                 throw BusinessException.of(Constants.UserExceptionInformation.USERNAME_ALREADY_EXISTS_MESSAGE);
@@ -100,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
                 throw BusinessException.of(Constants.Message.PASSWORDS_DO_NOT_MATCH_MESSAGE);
             }
 
-        }
+
 
         // Ensure "CUSTOMER" role exists, otherwise create it
         Role userRole = roleRepository.findByRoleName("CUSTOMER")
