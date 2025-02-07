@@ -2,22 +2,39 @@ package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
-import com.fpt.capstone.tourism.model.EmailConfirmationToken;
+import com.fpt.capstone.tourism.model.Token;
 import com.fpt.capstone.tourism.model.User;
+import com.fpt.capstone.tourism.repository.EmailConfirmationTokenRepository;
 import com.fpt.capstone.tourism.service.EmailConfirmationService;
 import com.fpt.capstone.tourism.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import static com.fpt.capstone.tourism.constants.Constants.Message.INVALID_CONFIRMATION_TOKEN_MESSAGE;
+import static com.fpt.capstone.tourism.constants.Constants.Message.TOKEN_USED_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
 public class EmailConfirmationServiceImpl implements EmailConfirmationService {
+    private final EmailConfirmationTokenRepository tokenRepository;
     private final EmailService emailService;
 
     @Override
-    public void sendConfirmationEmail(User user, EmailConfirmationToken token) {
+    public Token createEmailConfirmationToken(User user) {
+        Token token = new Token();
+        token.setToken(UUID.randomUUID().toString());
+        token.setUser(user);
+        token.setCreatedAt(LocalDateTime.now());
+        token.setExpiresAt(LocalDateTime.now().plusHours(1));
+        token.setUsed(false);
+        return tokenRepository.save(token);
+    }
+
+    @Override
+    public void sendConfirmationEmail(User user, Token token) {
         try {
             //Token encryptor when need
             //String encryptedToken = TokenEncryptorImpl.encrypt(token.getToken());
@@ -59,5 +76,25 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
         }
     }
 
+
+
+    @Override
+    public Token validateConfirmationToken(String token) {
+        Token emailToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> BusinessException.of(INVALID_CONFIRMATION_TOKEN_MESSAGE));
+
+        if (emailToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw BusinessException.of(INVALID_CONFIRMATION_TOKEN_MESSAGE);
+        }
+
+        if (emailToken.isUsed()) {
+            throw BusinessException.of(TOKEN_USED_MESSAGE);
+        }
+
+        emailToken.setUsed(true);
+        tokenRepository.save(emailToken);
+
+        return emailToken;
+    }
 
 }

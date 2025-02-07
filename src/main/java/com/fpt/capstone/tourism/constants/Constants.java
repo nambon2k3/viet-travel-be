@@ -34,17 +34,13 @@ public class Constants {
         public static final String TOKEN_USED_MESSAGE = "Email had already been confirmed before. Do not need to confirm again";
         public static final String EMAIL_CONFIRMED_SUCCESS_MESSAGE = "Registration successfully! Please log in to continue.";
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
-<<<<<<< HEAD
 
         public static final String TOKEN_EXPIRED_MESSAGE = "Token expired.";
 
         public static final String INVALID_REGISTER_INFO= "Register information is invalid";
         public static final String INVALID_CONFIRMATION_TOKEN = "Invalid confirmation token, please check again";
 
-=======
-        public static final String INVALID_REGISTER_INFO= "Register information is invalid";
-        public static final String INVALID_CONFIRMATION_TOKEN = "Invalid confirmation token, please check again";
->>>>>>> register
+        public static final String CONFIRM_EMAIL_FAILED = "Confirm email failed";
     }
 
 

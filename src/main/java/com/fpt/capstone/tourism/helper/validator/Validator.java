@@ -2,6 +2,7 @@ package com.fpt.capstone.tourism.helper.validator;
 
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
 import java.util.function.Predicate;
@@ -10,11 +11,28 @@ import java.util.function.Predicate;
 public class Validator {
 
 
+    public static boolean isRegisterValid(String username, String password, String rePassword, String fullName, String phone, String address, String email) {
+        return Validator.isFieldValid(username, Validator::isUsernameValid, Constants.UserExceptionInformation.USERNAME_INVALID) &&
+                Validator.isFieldValid(password, Validator::isPasswordValid, Constants.UserExceptionInformation.PASSWORD_INVALID) &&
+                Validator.isFieldValid(rePassword, Validator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
+                Validator.isFieldValid(fullName, Validator::isFullNameValid, Constants.UserExceptionInformation.FULL_NAME_INVALID) &&
+                Validator.isFieldValid(phone, Validator::isPhoneValid, Constants.UserExceptionInformation.PHONE_INVALID) &&
+                Validator.isFieldValid(address, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
+                Validator.isFieldValid(email, Validator::isEmailValid, Constants.UserExceptionInformation.EMAIL_INVALID);
+
+    }
+
+    public static boolean isLoginValid(String username, String password) {
+        return Validator.isFieldValid(username, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
+                Validator.isFieldValid(password, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+
+    }
 
 
     public static boolean isNullOrEmpty(String value){
         if(!(StringUtils.hasText(value))){
-            throw BusinessException.of(Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+
+            throw BusinessException.of(HttpStatus.BAD_REQUEST,Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
         }
         return true;
     }
@@ -38,9 +56,10 @@ public class Validator {
     public static boolean isFieldValid(String value, Predicate<String> validation, String message) {
 
         if (Validator.isNullOrEmpty(value)) {
-            if (validation != null && !validation.test(value)) {
-                throw BusinessException.of(message);
-            }
+            return false;
+        }
+        if (validation != null && !validation.test(value)) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, message);
         }
         return true;
     }
