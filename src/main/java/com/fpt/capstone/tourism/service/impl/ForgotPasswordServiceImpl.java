@@ -1,8 +1,9 @@
 package com.fpt.capstone.tourism.service.impl;
 
-import com.fpt.capstone.tourism.constants.Constants;
+import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.validator.Validator;
+import com.fpt.capstone.tourism.model.Token;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.service.EmailConfirmationService;
 import com.fpt.capstone.tourism.service.ForgotPasswordService;
@@ -11,10 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+
+import static com.fpt.capstone.tourism.constants.Constants.Message.*;
+import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,62 +25,65 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     private final UserService userService;
     private final EmailConfirmationService emailConfirmationService;
     private final PasswordEncoder passwordEncoder;
+
     @Override
-    public String forgotPassword(String email) {
+    public GeneralResponse<String> forgotPassword(String email) {
+        try {
+            User user = userService.findUserByEmail(email);
 
-        User user = userService.findUserByEmail(email);
+            //Check email valid or not
+            if (!userService.exitsByEmail(email)) {
+                throw BusinessException.of(HttpStatus.BAD_REQUEST, EMAIL_INVALID);
+            }
 
-        //Check email valid or not
-        if(!userService.exitsByEmail(email)){
-            return Constants.UserExceptionInformation.EMAIL_INVALID;
+            //Generate token
+            Token token = emailConfirmationService.createEmailConfirmationToken(user);
+
+            //Send email to reset password
+            emailConfirmationService.sendForgotPasswordEmail(user, token);
+            return new GeneralResponse<>(HttpStatus.OK.value(), RESET_PASSWORD_REQUEST_SUCCESS, token.getToken());
+        } catch (BusinessException be) {
+            throw be;
+        } catch (Exception ex) {
+            throw BusinessException.of(RESET_PASSWORD_REQUEST_FAIL, ex);
         }
 
-        //Generate token
-        String token = generateToken(email);
 
-        //Send email to reset password
-        emailConfirmationService.sendForgotPasswordEmail(user, token);
-        return token;
     }
 
     @Override
-    public String resetPassword(String token, String email, String newPassword, String newRePassword) {
+    public GeneralResponse<String> resetPassword(String token, String email, String newPassword, String newRePassword) {
+        try {
+            Token emailToken = emailConfirmationService.validateConfirmationToken(token);
 
-            //Check token expired
-            byte[] decodedByte = Base64.getDecoder().decode(token);
-            String decodedString = new String(decodedByte, StandardCharsets.UTF_8);
-            String[] parts = decodedString.split(":");
+            User user = emailToken.getUser();
 
-            String tokenEmail = parts[0];
-            Long createdTime = Long.parseLong(parts[1]);
-            Long currentTime = System.currentTimeMillis();
-
-            if(!email.equals(tokenEmail)){
+            if (!email.equals(user.getEmail())) {
                 throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
             }
 
-            if(currentTime > createdTime + 10 * 60 * 1000){
-                throw BusinessException.of(Constants.Message.TOKEN_EXPIRED_MESSAGE);
-            }
-
             //Check valid password
-            if(!(Validator.isPasswordValid(newPassword))){
-                throw BusinessException.of(Constants.UserExceptionInformation.PASSWORD_INVALID);
+            if (!(Validator.isPasswordValid(newPassword))) {
+                throw BusinessException.of(PASSWORD_INVALID);
             }
 
-            if(!newPassword.equals(newRePassword)){
-                throw BusinessException.of(Constants.Message.PASSWORDS_DO_NOT_MATCH_MESSAGE);
+            if (!newPassword.equals(newRePassword)) {
+                throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
             }
 
-            User user = userService.findUserByEmail(email);
+            //Change password
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.saveUser(user);
+            return new GeneralResponse<>(HttpStatus.OK.value(), PASSWORD_UPDATED_SUCCESS_MESSAGE, email);
+        } catch (BusinessException be) {
+            throw be;
+        } catch (Exception ex) {
+            throw BusinessException.of(PASSWORD_UPDATED_FAIL_MESSAGE, ex);
+        }
 
-
-        return Constants.Message.PASSWORD_UPDATED_SUCCESS_MESSAGE;
     }
 
-    public String generateToken(String email){
+    public String generateToken(String email) {
         Long currentTimes = System.currentTimeMillis();
         String tokenRaw = email + ":" + currentTimes;
         return Base64.getEncoder().encodeToString(tokenRaw.getBytes(StandardCharsets.UTF_8));

@@ -57,11 +57,11 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
 
 
     @Override
-    public void sendForgotPasswordEmail(User user, String token) {
+    public void sendForgotPasswordEmail(User user, Token token) {
         try {
 
 
-            String link = "http://localhost:8080/api/reset-password?token=" + token;
+            String link = "http://localhost:8080/api/reset-password?token=" + token.getToken();
             String subject = "Reset Password";
             String content = "Dear " + user.getFullName() + ",\n\n"
                     + "Hello,"

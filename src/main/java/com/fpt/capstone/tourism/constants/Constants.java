@@ -25,6 +25,7 @@ public class Constants {
     public static final class Message {
         public static final String LOGIN_SUCCESS_MESSAGE = "Login successfully";
         public static final String PASSWORD_UPDATED_SUCCESS_MESSAGE = "Your password is updated successfully";
+        public static final String PASSWORD_UPDATED_FAIL_MESSAGE = "Your password is updated fail";
         public static final String LOGIN_FAIL_MESSAGE = "Login Failed! Invalid username or password";
         public static final String EMAIL_CONFIRMATION_REQUEST_MESSAGE = "Thank you for your registration, please check your email to complete verification";
         public static final String REGISTER_FAIL_MESSAGE = "User registered failed due to server error!";
@@ -41,6 +42,8 @@ public class Constants {
         public static final String INVALID_CONFIRMATION_TOKEN = "Invalid confirmation token, please check again";
 
         public static final String CONFIRM_EMAIL_FAILED = "Confirm email failed";
+        public static final String RESET_PASSWORD_REQUEST_SUCCESS = "User request reset password successfully";
+        public static final String RESET_PASSWORD_REQUEST_FAIL = "User request reset password fail";
     }
 
 
