@@ -2,6 +2,7 @@ package com.fpt.capstone.tourism.helper.validator;
 
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
 import java.util.function.Predicate;
@@ -28,7 +29,7 @@ public class Validator {
 
     public static boolean isNullOrEmpty(String value){
         if(!(StringUtils.hasText(value))){
-            throw BusinessException.of(Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+            throw BusinessException.of(HttpStatus.BAD_REQUEST,Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
         }
         return true;
     }
@@ -54,7 +55,7 @@ public class Validator {
             return false;
         }
         if (validation != null && !validation.test(value)) {
-            throw BusinessException.of(message);
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, message);
         }
         return true;
     }

@@ -32,4 +32,19 @@ public class BusinessException extends RuntimeException {
     public String getMessage() {
         return responseMessage;
     }
+
+    public static BusinessException of(HttpStatus status, String responseMessage) {
+        return BusinessException.builder()
+                .httpCode(status.value())
+                .responseMessage(responseMessage)
+                .responseData(null)
+                .build();
+    }
+    public static BusinessException of(HttpStatus status, String responseMessage, Object responseData) {
+        return BusinessException.builder()
+                .httpCode(status.value())
+                .responseMessage(responseMessage)
+                .responseData(responseData)
+                .build();
+    }
 }
