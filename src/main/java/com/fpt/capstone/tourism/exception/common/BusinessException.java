@@ -35,7 +35,6 @@ public class BusinessException extends RuntimeException {
                 .responseData(null)
                 .build();
     }
-
     public static BusinessException of(HttpStatus status, String responseMessage, Object responseData) {
         return BusinessException.builder()
                 .httpCode(status.value())
@@ -43,5 +42,4 @@ public class BusinessException extends RuntimeException {
                 .responseData(responseData)
                 .build();
     }
-
 }

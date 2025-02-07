@@ -1,12 +1,10 @@
 package com.fpt.capstone.tourism.service;
 
-import com.fpt.capstone.tourism.model.User;
-
-import com.fpt.capstone.tourism.model.EmailConfirmationToken;
+import com.fpt.capstone.tourism.model.Token;
 import com.fpt.capstone.tourism.model.User;
 
 public interface EmailConfirmationService {
-    EmailConfirmationToken createEmailConfirmationToken(User user);
-    void sendConfirmationEmail(User user, EmailConfirmationToken token) throws Exception;
-    EmailConfirmationToken validateConfirmationToken(String token);
+    Token createEmailConfirmationToken(User user);
+    void sendConfirmationEmail(User user, Token token) throws Exception;
+    Token validateConfirmationToken(String token);
 }

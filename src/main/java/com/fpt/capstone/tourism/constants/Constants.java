@@ -34,6 +34,7 @@ public class Constants {
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
         public static final String INVALID_REGISTER_INFO= "Register information is invalid";
         public static final String INVALID_CONFIRMATION_TOKEN = "Invalid confirmation token, please check again";
+        public static final String CONFIRM_EMAIL_FAILED = "Confirm email failed";
         public static final String GET_USER_SUCCESS_MESSAGE = "Get user successfully";
         public static final String GET_USER_FAIL_MESSAGE = "Get user failed";
         public static final String DUPLICATE_USERNAME_MESSAGE = "Username already exists, please choose another one";

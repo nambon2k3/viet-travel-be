@@ -37,7 +37,6 @@ public class GlobalExceptionHandler {
         log.error("Business error happened", be);
         return ResponseEntity.status(be.getHttpCode()).body(GeneralResponse.of(be));
     }
-
     /**
      * Handles invalid request parameters and method argument validation errors.
      */
@@ -50,8 +49,6 @@ public class GlobalExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(GeneralResponse.of(errors, "Validation failed"));
     }
-
-
     /**
      * Handles access denied (authorization) errors.
      */
@@ -62,7 +59,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(GeneralResponse.of("You do not have permission to perform this action.", "Forbidden"));
     }
-
     /**
      * Handles invalid request parameters (e.g., incorrect data types).
      */

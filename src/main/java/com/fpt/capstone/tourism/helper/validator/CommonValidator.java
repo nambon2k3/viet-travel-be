@@ -2,13 +2,12 @@ package com.fpt.capstone.tourism.helper.validator;
 
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
+import org.springframework.http.HttpStatus;
 
 import java.util.function.Predicate;
 
 import static com.fpt.capstone.tourism.constants.Constants.Regex.*;
-
 
 public class CommonValidator {
     public static boolean isNullOrEmpty(String value){
@@ -17,6 +16,7 @@ public class CommonValidator {
         }
         return true;
     }
+
     public static boolean isUsernameValid(String value) {
         return value.matches(REGEX_USERNAME);
     }
@@ -25,9 +25,7 @@ public class CommonValidator {
         return value.matches(REGEX_PASSWORD);
     }
 
-    public static boolean isFullNameValid(String value){
-        return value.trim().matches(REGEX_FULLNAME);
-    }
+    public static boolean isFullNameValid(String value){return value.trim().matches(REGEX_FULLNAME);}
 
     public static boolean isEmailValid(String value){
         return value.matches(REGEX_EMAIL);
@@ -42,4 +40,6 @@ public class CommonValidator {
         }
         return true;
     }
+
+
 }
