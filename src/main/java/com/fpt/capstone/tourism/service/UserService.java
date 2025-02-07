@@ -5,7 +5,7 @@ import com.fpt.capstone.tourism.model.User;
 
 public interface UserService {
     String generateToken(User user);
-    User findUserById(String id);
+    User findById(Long id);
     User findUserByUsername(String username);
     User saveUser(User userDTO);
     Boolean existsByUsername(String userName);

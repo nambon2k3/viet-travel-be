@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -25,7 +26,7 @@ import java.util.Set;
 public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
@@ -51,9 +52,6 @@ public class User extends BaseEntity implements UserDetails {
 
     private String address;
 
-    @NotNull(message = "Role cannot be null")
-    private RoleName role;
-
     @Column(name="avatar_img")
     private String avatarImage;
 
@@ -65,7 +63,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return userRoles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRole().getRoleName()))
+                .collect(Collectors.toList());
     }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

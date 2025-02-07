@@ -24,6 +24,8 @@ public class ServiceProvider extends BaseEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    private String name;
+
     private String abbreviation;
 
     private String website;
@@ -38,7 +40,7 @@ public class ServiceProvider extends BaseEntity {
     private boolean isDeleted;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
 

@@ -33,7 +33,7 @@ public class Tag extends BaseEntity {
     @ManyToMany(mappedBy = "tags")
     private List<Tour> tours;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "blogTags")
     private List<Blog> blogs;
 
 }

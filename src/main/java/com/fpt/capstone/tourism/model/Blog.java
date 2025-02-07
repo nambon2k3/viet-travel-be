@@ -39,5 +39,5 @@ public class Blog extends BaseEntity{
             joinColumns = @JoinColumn(name = "blog_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tag> tags;
+    private List<Tag> blogTags;
 }

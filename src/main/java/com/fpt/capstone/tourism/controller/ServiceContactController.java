@@ -1,47 +1,48 @@
 package com.fpt.capstone.tourism.controller;
 
+import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.common.ServiceContactDTO;
+import com.fpt.capstone.tourism.dto.response.GeneralResponse;
+import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.service.ServiceContactService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/service-contacts")
+@RequestMapping("/api/v1/CEO/service-contacts")
 @RequiredArgsConstructor
 public class ServiceContactController {
 
     private final ServiceContactService serviceContactService;
 
     @PostMapping
-    public ResponseEntity<ServiceContactDTO> createServiceContact(@Valid @RequestBody ServiceContactDTO serviceContactDTO) {
-        return new ResponseEntity<>(serviceContactService.createServiceContact(serviceContactDTO), HttpStatus.CREATED);
+    public ResponseEntity<?> createServiceContact(@Valid @RequestBody ServiceContactDTO serviceContactDTO) {
+        return ResponseEntity.ok(serviceContactService.createServiceContact(serviceContactDTO));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ServiceContactDTO> getServiceContactById(@PathVariable Long id) {
+    public ResponseEntity<?> getServiceContactById(@PathVariable Long id) {
         return ResponseEntity.ok(serviceContactService.getServiceContactById(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<ServiceContactDTO>> getAllServiceContacts(Pageable pageable) {
-        return ResponseEntity.ok(serviceContactService.getAllServiceContacts(pageable));
+    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactDTO>>>> getAllServiceContacts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(serviceContactService.getAllServiceContacts(page, size));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ServiceContactDTO> updateServiceContact(@PathVariable Long id, @Valid @RequestBody ServiceContactDTO serviceContactDTO) {
+    public ResponseEntity<?> updateServiceContact(@PathVariable Long id, @Valid @RequestBody ServiceContactDTO serviceContactDTO) {
         return ResponseEntity.ok(serviceContactService.updateServiceContact(id, serviceContactDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteServiceContact(@PathVariable Long id) {
-        serviceContactService.deleteServiceContact(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteServiceContact(@PathVariable Long id) {
+        return ResponseEntity.ok(serviceContactService.deleteServiceContact(id));
     }
 }
-
