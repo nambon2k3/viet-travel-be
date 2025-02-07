@@ -4,12 +4,11 @@ import com.fpt.capstone.tourism.enums.Gender;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
-public class UserManageGeneralInformationDTO {
+public class UserManageGeneralInformationResponseDTO {
     private String fullName;
     private String username;
     private String email;

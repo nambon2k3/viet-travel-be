@@ -1,11 +1,10 @@
 package com.fpt.capstone.tourism.service.impl;
 
-import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.UserCreationRequestDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.dto.response.UserFullInformationResponseDTO;
-import com.fpt.capstone.tourism.dto.response.UserManageGeneralInformationDTO;
+import com.fpt.capstone.tourism.dto.response.UserManageGeneralInformationResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
 import com.fpt.capstone.tourism.helper.validator.UserCreationValidator;
@@ -26,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -153,10 +153,17 @@ public class UserServiceImpl implements UserService {
                     userDTO.getPhone(), userDTO.getAddress(), userDTO.getAvatarImage(), userDTO.getRoleNames());
 
             // Check for duplicate username
-            if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
-                throw BusinessException.of(DUPLICATE_USERNAME_MESSAGE);
+            if (userRepository.existsByUsername(userDTO.getUsername())) {
+                throw BusinessException.of(HttpStatus.CONFLICT,DUPLICATE_USERNAME_MESSAGE);
             }
-
+            //Check for duplicate email
+            if(userRepository.existsByEmail(userDTO.getEmail())){
+                throw BusinessException.of(HttpStatus.CONFLICT,EMAIL_ALREADY_EXISTS_MESSAGE);
+            }
+            //Check for duplicate phone number
+            if (userRepository.existsByPhone(userDTO.getPhone())) {
+                throw BusinessException.of(HttpStatus.CONFLICT,PHONE_ALREADY_EXISTS_MESSAGE);
+            }
             // Hash password before saving
             String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
 
@@ -164,6 +171,7 @@ public class UserServiceImpl implements UserService {
             User user = userCreationMapper.toEntity(userDTO);
             user.setPassword(encodedPassword);
             user.setDeleted(false);
+            user.setEmailConfirmed(true);
 
             User savedUser = userRepository.save(user);
 
@@ -171,12 +179,15 @@ public class UserServiceImpl implements UserService {
             Set<UserRole> userRoles = new HashSet<>();
             for (String roleName : userDTO.getRoleNames()) {
                 Role role = roleRepository.findByRoleName(roleName)
-                        .orElseThrow(() -> BusinessException.of(ROLE_NOT_FOUND));
+                        .orElseThrow(() -> BusinessException.of(HttpStatus.CONFLICT,ROLE_NOT_FOUND));
                 userRoles.add(new UserRole(null, savedUser, false, role));
             }
             userRoleRepository.saveAll(userRoles);
+            savedUser.setUserRoles(userRoles);
 
-            return GeneralResponse.of(userCreationMapper.toDTO(savedUser), CREATE_USER_SUCCESS_MESSAGE);
+            UserManageGeneralInformationResponseDTO responseDTO = userCreationMapper.toResponseDTO(savedUser);
+
+            return GeneralResponse.of(responseDTO, CREATE_USER_SUCCESS_MESSAGE);
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
@@ -189,77 +200,104 @@ public class UserServiceImpl implements UserService {
     public GeneralResponse<?> updateUser(int id, UserCreationRequestDTO userDTO) {
         try {
             // Validate user input
-            UserCreationValidator.validateUserUpdate(userDTO.getFullName(), userDTO.getPhone(),
-                    userDTO.getAddress(), userDTO.getEmail(), userDTO.getPassword());
-
+            UserCreationValidator.validateUserUpdate(userDTO.getFullName(), userDTO.getUsername(),
+                    userDTO.getPassword(), userDTO.getRePassword(), userDTO.getEmail(), String.valueOf(userDTO.getGender()),
+                    userDTO.getPhone(), userDTO.getAddress(), userDTO.getAvatarImage(), userDTO.getRoleNames());
             // Find user by ID
             User user = userRepository.findById(id)
-                    .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND_MESSAGE));
+                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, USER_NOT_FOUND_MESSAGE));
 
             // Check for duplicate username (except for the current user)
             Optional<User> existingUser = userRepository.findByUsername(userDTO.getUsername());
             if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
-                throw BusinessException.of(DUPLICATE_USERNAME_MESSAGE);
+                throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_USERNAME_MESSAGE);
             }
 
-            // Update user details
-            user.setFullName(userDTO.getFullName());
-            user.setEmail(userDTO.getEmail());
-            user.setPhone(userDTO.getPhone());
-            user.setAddress(userDTO.getAddress());
+            // Check for duplicate email (except for the current user)
+            Optional<User> existingEmailUser = userRepository.findByEmail(userDTO.getEmail());
+            if (existingEmailUser.isPresent() && !existingEmailUser.get().getId().equals(id)) {
+                throw BusinessException.of(HttpStatus.CONFLICT, EMAIL_ALREADY_EXISTS_MESSAGE);
+            }
 
-            // If password is provided, hash and update it
-            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+            // Check for duplicate phone number (except for the current user)
+            Optional<User> existingPhoneUser = userRepository.findByPhone(userDTO.getPhone());
+            if (existingPhoneUser.isPresent() && !existingPhoneUser.get().getId().equals(id)) {
+                throw BusinessException.of(HttpStatus.CONFLICT, PHONE_ALREADY_EXISTS_MESSAGE);
+            }
+
+            //Only update fields if they have changed
+            if (!user.getFullName().equals(userDTO.getFullName())) {
+                user.setFullName(userDTO.getFullName());
+            }
+            if (!user.getEmail().equals(userDTO.getEmail())) {
+                user.setEmail(userDTO.getEmail());
+            }
+            if (!user.getPhone().equals(userDTO.getPhone())) {
+                user.setPhone(userDTO.getPhone());
+            }
+            if (!user.getAddress().equals(userDTO.getAddress())) {
+                user.setAddress(userDTO.getAddress());
+            }
+            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()
+                    && !passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
 
-            // Update roles
-            Set<UserRole> newRoles = new HashSet<>();
-            for (String roleName : userDTO.getRoleNames()) {
-                Role role = roleRepository.findByRoleName(roleName)
-                        .orElseThrow(() -> BusinessException.of(ROLE_NOT_FOUND));
-                newRoles.add(new UserRole(null, user, false, role));
+            //Only update roles if they have changed
+            Set<String> currentRoleNames = user.getUserRoles().stream()
+                    .map(userRole -> userRole.getRole().getRoleName())
+                    .collect(Collectors.toSet());
+
+            Set<String> newRoleNames = new HashSet<>(userDTO.getRoleNames());
+
+            if (!currentRoleNames.equals(newRoleNames)) {
+                Set<UserRole> newRoles = new HashSet<>();
+                for (String roleName : userDTO.getRoleNames()) {
+                    Role role = roleRepository.findByRoleName(roleName)
+                            .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, ROLE_NOT_FOUND));
+                    newRoles.add(new UserRole(null, user, false, role));
+                }
+                userRoleRepository.deleteByUserId(user.getId());
+                userRoleRepository.saveAll(newRoles);
+                user.setUserRoles(newRoles);
             }
-
-            // Clear and update roles
-            userRoleRepository.deleteByUserId(user.getId());
-            userRoleRepository.saveAll(newRoles);
-
-            return GeneralResponse.of(userCreationMapper.toDTO(userRepository.save(user)), UPDATE_USER_SUCCESS_MESSAGE);
+            // Convert to response DTO
+            UserManageGeneralInformationResponseDTO responseDTO = userCreationMapper.toResponseDTO(userRepository.save(user));
+            return GeneralResponse.of(responseDTO, UPDATE_USER_SUCCESS_MESSAGE);
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            throw BusinessException.of(UPDATE_USER_FAIL_MESSAGE, e);
+            throw BusinessException.of(HttpStatus.INTERNAL_SERVER_ERROR, UPDATE_USER_FAIL_MESSAGE, e);
         }
     }
-
-
 
     @Override
     @Transactional
     public GeneralResponse<?> deleteUser(int id) {
         try {
             User user = userRepository.findById(id)
-                    .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND_MESSAGE));
+                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND,USER_NOT_FOUND_MESSAGE));
             if (!user.isDeleted()) {
                 user.setDeleted(true);
                 userRepository.saveAndFlush(user);
             }
-            return GeneralResponse.of(null, DELETE_USER_SUCCESS_MESSAGE);
+            return GeneralResponse.of(DELETE_USER_SUCCESS_MESSAGE);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             throw BusinessException.of(DELETE_USER_FAIL_MESSAGE, e);
         }
     }
 
     @Override
-    public GeneralResponse<PagingDTO<List<UserManageGeneralInformationDTO>>> getAllUser(int page, int size) {
+    public GeneralResponse<PagingDTO<List<UserManageGeneralInformationResponseDTO>>> getAllUser(int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<User> userPage = userRepository.findAll(pageable);
-            List<UserManageGeneralInformationDTO> users = userPage.getContent().stream()
+            List<UserManageGeneralInformationResponseDTO> users = userPage.getContent().stream()
                     .map(user -> {
                         List<Role> roles = roleRepository.findRolesByUserId(user.getId());
-                        UserManageGeneralInformationDTO userDTO = userManageGeneralInformationMapper.toDTO(user);
+                        UserManageGeneralInformationResponseDTO userDTO = userManageGeneralInformationMapper.toDTO(user);
                         // Map role names to DTO
                         userDTO.setRoles(roles.stream()
                                 .map(Role::getRoleName)
@@ -267,7 +305,7 @@ public class UserServiceImpl implements UserService {
                         return userDTO;
                     })
                     .collect(Collectors.toList());
-            PagingDTO<List<UserManageGeneralInformationDTO>> pagingDTO = PagingDTO.<List<UserManageGeneralInformationDTO>>builder()
+            PagingDTO<List<UserManageGeneralInformationResponseDTO>> pagingDTO = PagingDTO.<List<UserManageGeneralInformationResponseDTO>>builder()
                     .page(page)
                     .size(size)
                     .total(userPage.getTotalElements())
