@@ -5,6 +5,7 @@ import com.fpt.capstone.tourism.dto.common.ServiceContactDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
+import com.fpt.capstone.tourism.helper.validator.ServiceContactInformationValidator;
 import com.fpt.capstone.tourism.mapper.ServiceContactMapper;
 import com.fpt.capstone.tourism.model.ServiceContact;
 import com.fpt.capstone.tourism.repository.ServiceContactRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
@@ -33,44 +35,85 @@ public class ServiceContactServiceImpl implements ServiceContactService {
     @Transactional
     public GeneralResponse<?> createServiceContact(ServiceContactDTO serviceContactDTO) {
         try {
-            // Validate duplicate phone number
+            // Validate required fields
+            ServiceContactInformationValidator.validateServiceContact(serviceContactDTO.getFullName(), serviceContactDTO.getPhoneNumber(),
+                    serviceContactDTO.getEmail(), serviceContactDTO.getPosition());
+
+            // Check for duplicate phone number
             if (serviceContactRepository.existsByPhoneNumber(serviceContactDTO.getPhoneNumber())) {
                 throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_SERVICE_CONTACT_PHONE);
+            }
+
+            // Check for duplicate email
+            if (serviceContactRepository.existsByEmail(serviceContactDTO.getEmail())) {
+                throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_SERVICE_CONTACT_EMAIL);
             }
 
             // Convert DTO to entity and save
             ServiceContact serviceContact = serviceContactMapper.toEntity(serviceContactDTO);
             serviceContact.setDeleted(false);
-            ServiceContact savedServiceContact = serviceContactRepository.save(serviceContact);
 
+            ServiceContact savedServiceContact = serviceContactRepository.save(serviceContact);
             return GeneralResponse.of(serviceContactMapper.toDTO(savedServiceContact), CREATE_SERVICE_CONTACT_SUCCESS);
-        }catch(BusinessException e) {
+        } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            throw BusinessException.of(CREATE_SERVICE_CONTACT_FAIL, e);
+            throw BusinessException.of(HttpStatus.INTERNAL_SERVER_ERROR, CREATE_SERVICE_CONTACT_FAIL, e);
         }
     }
+
 
     @Override
     @Transactional
     public GeneralResponse<?> updateServiceContact(Long id, ServiceContactDTO serviceContactDTO) {
         try {
+            // Validate input fields
+            ServiceContactInformationValidator.validateServiceContact(serviceContactDTO.getFullName(), serviceContactDTO.getPhoneNumber(),
+                    serviceContactDTO.getEmail(), serviceContactDTO.getPosition());
+
+            // Find the existing service contact
             ServiceContact serviceContact = serviceContactRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
 
-            // Update fields
-            serviceContact.setFullName(serviceContactDTO.getFullName());
-            serviceContact.setPosition(serviceContactDTO.getPosition());
-            serviceContact.setPhoneNumber(serviceContactDTO.getPhoneNumber());
-            serviceContact.setEmail(serviceContactDTO.getEmail());
-            serviceContact.setGender(serviceContactDTO.getGender());
+            // Check for duplicate phone number (excluding current contact)
+            Optional<ServiceContact> existingPhoneContact = serviceContactRepository.findByPhoneNumber(serviceContactDTO.getPhoneNumber());
+            if (existingPhoneContact.isPresent() && !existingPhoneContact.get().getId().equals(id)) {
+                throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_SERVICE_CONTACT_PHONE);
+            }
 
+            // Check for duplicate email (excluding current contact)
+            Optional<ServiceContact> existingEmailContact = serviceContactRepository.findByEmail(serviceContactDTO.getEmail());
+            if (existingEmailContact.isPresent() && !existingEmailContact.get().getId().equals(id)) {
+                throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_SERVICE_CONTACT_EMAIL);
+            }
+
+            // Update only changed fields
+            if (!serviceContact.getFullName().equals(serviceContactDTO.getFullName())) {
+                serviceContact.setFullName(serviceContactDTO.getFullName());
+            }
+            if (!serviceContact.getPhoneNumber().equals(serviceContactDTO.getPhoneNumber())) {
+                serviceContact.setPhoneNumber(serviceContactDTO.getPhoneNumber());
+            }
+            if (!serviceContact.getEmail().equals(serviceContactDTO.getEmail())) {
+                serviceContact.setEmail(serviceContactDTO.getEmail());
+            }
+            if (!serviceContact.getPosition().equals(serviceContactDTO.getPosition())) {
+                serviceContact.setPosition(serviceContactDTO.getPosition());
+            }
+            if (serviceContact.getGender() != serviceContactDTO.getGender()) {
+                serviceContact.setGender(serviceContactDTO.getGender());
+            }
+
+            // Save updated service contact
             ServiceContact updatedServiceContact = serviceContactRepository.save(serviceContact);
             return GeneralResponse.of(serviceContactMapper.toDTO(updatedServiceContact), UPDATE_SERVICE_CONTACT_SUCCESS);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
-            throw BusinessException.of(UPDATE_SERVICE_CONTACT_FAIL, e);
+            throw BusinessException.of(HttpStatus.INTERNAL_SERVER_ERROR, UPDATE_SERVICE_CONTACT_FAIL, e);
         }
     }
+
 
     @Override
     public GeneralResponse<?> getServiceContactById(Long id) {
