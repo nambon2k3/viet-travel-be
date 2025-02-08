@@ -1,16 +1,14 @@
 package com.fpt.capstone.tourism.constants;
 
 public class Constants {
-
-
     public static final class UserExceptionInformation {
-
         public static final String USER_NOT_FOUND_CODE = "000100";
         public static final String USER_NOT_FOUND_MESSAGE = "User not found";
         public static final String USERNAME_ALREADY_EXISTS_MESSAGE = "Username already exists";
         public static final String EMAIL_ALREADY_EXISTS_MESSAGE = "Email already exists";
         public static final String PHONE_ALREADY_EXISTS_MESSAGE = "Phone already exists";
         public static final String FAIL_TO_SAVE_USER_MESSAGE = "Fail to save user";
+        public static final String GENDER_INVALID = "Gender is invalid";
         public static final String USER_INFORMATION_NULL_OR_EMPTY = "This section is required";
         public static final String USERNAME_INVALID = "Username contains only letters, numbers, -, _ with range from 8 to 30";
         public static final String PASSWORD_INVALID = "Password contains 8 characters or more (must contain 1 uppercase letter, " +
@@ -18,6 +16,7 @@ public class Constants {
         public static final String FULL_NAME_INVALID = "Full name starts with a letter, use only letters and white space";
         public static final String PHONE_INVALID = "Phone must contain 10 characters";
         public static final String EMAIL_INVALID = "Email is invalid";
+        public static final String ROLES_NAME_INVALID = "Role name is invalid";
         public static final String USER_NOT_FOUND = "User not found, please login with a valid account to see your profile";
     }
 
@@ -55,6 +54,18 @@ public class Constants {
         public static final String GENERAL_FAIL_MESSAGE = "Failed";
         public static final String RESET_PASSWORD_REQUEST_SUCCESS = "User request reset password successfully";
         public static final String RESET_PASSWORD_REQUEST_FAIL = "User request reset password fail";
+        public static final String GET_USER_SUCCESS_MESSAGE = "Get user successfully";
+        public static final String GET_USER_FAIL_MESSAGE = "Get user failed";
+        public static final String DUPLICATE_USERNAME_MESSAGE = "Username already exists, please choose another one";
+        public static final String ROLE_NOT_FOUND = "Role not found";
+        public static final String CREATE_USER_SUCCESS_MESSAGE = "User created successfully";
+        public static final String CREATE_USER_FAIL_MESSAGE = "User created failed";
+        public static final String UPDATE_USER_SUCCESS_MESSAGE = "User updated successfully";
+        public static final String UPDATE_USER_FAIL_MESSAGE = "User updated failed";
+        public static final String DELETE_USER_SUCCESS_MESSAGE = "User deleted successfully";
+        public static final String DELETE_USER_FAIL_MESSAGE = "User deleted failed";
+        public static final String GET_ALL_USER_SUCCESS_MESSAGE = "Get all users successfully";
+        public static final String GET_ALL_USER_FAIL_MESSAGE = "Get all users failed";
     }
 
 
