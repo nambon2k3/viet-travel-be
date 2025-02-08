@@ -37,6 +37,11 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
                 throw BusinessException.of(HttpStatus.BAD_REQUEST, EMAIL_INVALID);
             }
 
+            //Check email is confirm or not
+            if(!user.isEmailConfirmed()){
+                throw BusinessException.of(HttpStatus.BAD_REQUEST, EMAIL_INVALID);
+            }
+
             //Generate token
             Token token = emailConfirmationService.createEmailConfirmationToken(user);
 
