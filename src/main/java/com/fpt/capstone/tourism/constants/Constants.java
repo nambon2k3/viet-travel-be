@@ -30,28 +30,29 @@ public class Constants {
         public static final String EMAIL_CONFIRMATION_REQUEST_MESSAGE = "Thank you for your registration, please check your email to complete verification";
         public static final String REGISTER_FAIL_MESSAGE = "User registered failed due to server error!";
         public static final String PASSWORDS_DO_NOT_MATCH_MESSAGE = "Passwords do not match";
+        public static final String PASSWORDS_INCORRECT_MESSAGE = "Current password is incorrect";
+        public static final String CHANGE_PASSWORD_SUCCESS_MESSAGE = "Change password successfully";
+        public static final String CHANGE_PASSWORD_FAIL_MESSAGE = "Change password fail";
         public static final String EMAIL_NOT_CONFIRMED_MESSAGE = "Email not confirmed. Please check your email for the confirmation link.";
         public static final String INVALID_CONFIRMATION_TOKEN_MESSAGE = "Invalid or expired confirmation link.";
         public static final String TOKEN_USED_MESSAGE = "Email had already been confirmed before. Do not need to confirm again";
         public static final String EMAIL_CONFIRMED_SUCCESS_MESSAGE = "Registration successfully! Please log in to continue.";
         public static final String TOKEN_ENCRYPTION_FAILED_MESSAGE = "Encrypted token has failed.";
-
         public static final String TOKEN_EXPIRED_MESSAGE = "Token expired.";
-
+        public static final String USER_NOT_AUTHENTICATED = "User is not authenticated";
+        public static final String UPDATE_PROFILE_SUCCESS = "Successfully update user profile";
+        public static final String UPDATE_PROFILE_FAIL = "Update user profile fail";
+        public static final String UPDATE_AVATAR_SUCCESS = "Update avatar successfully";
+        public static final String UPDATE_AVATAR_FAIL = "Update avatar fail";
+        public static final String GET_PROFILE_SUCCESS = "Successfully get user profile";
+        public static final String GET_PROFILE_FAIL = "Get user profile fail";
         public static final String INVALID_REGISTER_INFO= "Register information is invalid";
         public static final String INVALID_CONFIRMATION_TOKEN = "Invalid confirmation token, please check again";
-
         public static final String CONFIRM_EMAIL_FAILED = "Confirm email failed";
-
-
-
         public static final String CREATE_BLOG_SUCCESS_MESSAGE = "Blog created successfully";
         public static final String CREATE_BLOG_FAIL_MESSAGE = "Blog created failed";
-
         public static final String GENERAL_SUCCESS_MESSAGE = "Successfully";
         public static final String GENERAL_FAIL_MESSAGE = "Failed";
-
-
         public static final String RESET_PASSWORD_REQUEST_SUCCESS = "User request reset password successfully";
         public static final String RESET_PASSWORD_REQUEST_FAIL = "User request reset password fail";
     }

@@ -29,7 +29,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     @Override
     public GeneralResponse<String> forgotPassword(String email) {
         try {
-
+            System.out.println(email);
             User user = userService.findUserByEmail(email);
 
             //Check email valid or not

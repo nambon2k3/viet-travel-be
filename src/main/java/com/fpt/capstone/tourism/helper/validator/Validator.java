@@ -1,16 +1,17 @@
 package com.fpt.capstone.tourism.helper.validator;
-
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
-
 import java.util.function.Predicate;
-
-
 public class Validator {
+    public static boolean isProfileValid(String fullName, String email, String phone, String address) {
+        return  Validator.isFieldValid(address, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
+                Validator.isFieldValid(phone, Validator::isPhoneValid, Constants.UserExceptionInformation.PHONE_INVALID) &&
+                Validator.isFieldValid(fullName, Validator::isFullNameValid, Constants.UserExceptionInformation.FULL_NAME_INVALID) &&
+                Validator.isFieldValid(email, Validator::isEmailValid, Constants.UserExceptionInformation.EMAIL_INVALID);
 
-
+    }
     public static boolean isRegisterValid(String username, String password, String rePassword, String fullName, String phone, String address, String email) {
         return Validator.isFieldValid(username, Validator::isUsernameValid, Constants.UserExceptionInformation.USERNAME_INVALID) &&
                 Validator.isFieldValid(password, Validator::isPasswordValid, Constants.UserExceptionInformation.PASSWORD_INVALID) &&
@@ -27,12 +28,9 @@ public class Validator {
                 Validator.isFieldValid(password, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
 
     }
-
-
     public static boolean isNullOrEmpty(String value){
         if(!(StringUtils.hasText(value))){
-
-            throw BusinessException.of(HttpStatus.BAD_REQUEST,Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+            throw BusinessException.of(Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
         }
         return true;
     }
@@ -54,7 +52,6 @@ public class Validator {
     public static boolean isPhoneValid(String value) { return value.matches(Constants.Regex.REGEX_PHONE);}
 
     public static boolean isFieldValid(String value, Predicate<String> validation, String message) {
-
         if (Validator.isNullOrEmpty(value)) {
             return false;
         }
@@ -63,6 +60,4 @@ public class Validator {
         }
         return true;
     }
-
-
 }

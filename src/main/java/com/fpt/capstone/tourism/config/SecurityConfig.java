@@ -31,7 +31,7 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**").permitAll()
-                        .requestMatchers("/api/v1/auth/**", "/public/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/public/**", "api/v1/user-profile/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/api/v1/forgot-password", "/api/v1/reset-password").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
@@ -40,6 +40,14 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
+                )
+                .rememberMe(rememberMe ->
+                        rememberMe.key("tempKey")
+                                .rememberMeCookieName("remember-me")
+                                .tokenValiditySeconds(7 * 24 * 60 * 60)
+                                .rememberMeParameter("remember-me")
+                                .useSecureCookie(false)
+                                .userDetailsService(userDetailsService)
                 );
         return httpSecurity.build();
     }

@@ -73,4 +73,3 @@ public class User extends BaseEntity implements UserDetails {
     @EqualsAndHashCode.Exclude
     private Set<UserRole> userRoles;
 }
-
