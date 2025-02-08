@@ -16,7 +16,7 @@ public class ForgotPasswordController {
 
     @PostMapping("/forgot-password")
     public GeneralResponse<String> forgotPassword(@RequestBody ForgotPasswordRequestDTO email){
-        return forgotPasswordService.forgotPassword(email.getEmail());
+        return forgotPasswordService.forgotPassword(email.getEmail().trim().toLowerCase());
     }
 
     @PutMapping("/reset-password")

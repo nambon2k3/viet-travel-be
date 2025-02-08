@@ -29,6 +29,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     @Override
     public GeneralResponse<String> forgotPassword(String email) {
         try {
+
             User user = userService.findUserByEmail(email);
 
             //Check email valid or not
@@ -74,6 +75,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
             //Change password
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.saveUser(user);
+
             return new GeneralResponse<>(HttpStatus.OK.value(), PASSWORD_UPDATED_SUCCESS_MESSAGE, email);
         } catch (BusinessException be) {
             throw be;

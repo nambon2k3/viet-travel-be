@@ -118,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
             User user = User.builder()
                     .username(registerRequestDTO.getUsername())
                     .fullName(registerRequestDTO.getFullName())
-                    .email(registerRequestDTO.getEmail())
+                    .email(registerRequestDTO.getEmail().trim().toLowerCase())
                     .password(passwordEncoder.encode(registerRequestDTO.getPassword()))
                     .gender(registerRequestDTO.getGender())
                     .phone(registerRequestDTO.getPhone())
