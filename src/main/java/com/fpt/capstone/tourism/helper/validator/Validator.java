@@ -9,6 +9,8 @@ import java.util.function.Predicate;
 
 
 public class Validator {
+
+
     public static boolean isRegisterValid(String username, String password, String rePassword, String fullName, String phone, String address, String email) {
         return Validator.isFieldValid(username, Validator::isUsernameValid, Constants.UserExceptionInformation.USERNAME_INVALID) &&
                 Validator.isFieldValid(password, Validator::isPasswordValid, Constants.UserExceptionInformation.PASSWORD_INVALID) &&
@@ -29,6 +31,7 @@ public class Validator {
 
     public static boolean isNullOrEmpty(String value){
         if(!(StringUtils.hasText(value))){
+
             throw BusinessException.of(HttpStatus.BAD_REQUEST,Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
         }
         return true;
@@ -51,6 +54,7 @@ public class Validator {
     public static boolean isPhoneValid(String value) { return value.matches(Constants.Regex.REGEX_PHONE);}
 
     public static boolean isFieldValid(String value, Predicate<String> validation, String message) {
+
         if (Validator.isNullOrEmpty(value)) {
             return false;
         }

@@ -33,4 +33,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.confirmEmail(token));
     }
 
+
 }
+
+

@@ -40,6 +40,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username).orElseThrow();
     }
 
+    @Transactional
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow();
+    }
+
 
     @Override
     public User saveUser(User user) {
@@ -64,6 +70,7 @@ public class UserServiceImpl implements UserService {
     public Boolean existsByPhoneNumber(String phone) {
         return userRepository.existsByPhone(phone);
     }
+
 
     @Override
     @Transactional
