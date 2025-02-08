@@ -40,6 +40,8 @@ public class Constants {
         public static final String USER_NOT_AUTHENTICATED = "User is not authenticated";
         public static final String UPDATE_PROFILE_SUCCESS = "Successfully update user profile";
         public static final String UPDATE_PROFILE_FAIL = "Update user profile fail";
+        public static final String UPDATE_AVATAR_SUCCESS = "Update avatar successfully";
+        public static final String UPDATE_AVATAR_FAIL = "Update avatar fail";
         public static final String GET_PROFILE_SUCCESS = "Successfully get user profile";
         public static final String GET_PROFILE_FAIL = "Get user profile fail";
 

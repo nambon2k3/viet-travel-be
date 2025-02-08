@@ -42,5 +42,21 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         }
     }
 
-
+    @Override
+    public String uploadAvatar(MultipartFile file, Integer userId) {
+        try {
+                Map result  = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                        "folder", "avatar",
+                        "use_filename", true,
+                        "unique_filename", false,
+                        "public_id", "avatar_" + userId,
+                        "resource_type", "auto",
+                        "chunk_size", 5 * 1024 * 1024,
+                        "quality", "auto"
+                ));
+                return result.get("url").toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CloudinaryService {
     List<String> uploadFile(MultipartFile[] file);
+    String uploadAvatar(MultipartFile file, Integer userId);
 }

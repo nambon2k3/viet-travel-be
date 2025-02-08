@@ -12,6 +12,7 @@ import com.fpt.capstone.tourism.service.CloudinaryService;
 import com.fpt.capstone.tourism.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,18 +45,15 @@ public class UserProfileController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<String> changePassword(@RequestHeader("Authorization") String token,
+    public ResponseEntity<GeneralResponse<String>> changePassword(@RequestHeader("Authorization") String token,
                                  @RequestBody PasswordChangeDTO passwordChangeDTO){
         return ResponseEntity.ok(userService.changePassword(token, passwordChangeDTO.getCurrentPassword(),
                 passwordChangeDTO.getNewPassword(), passwordChangeDTO.getNewRePassword()));
     }
-    @PostMapping("/avatar")
-    public ResponseEntity<List<String>> uploadFile(@RequestParam("avatar")MultipartFile[] file){
-        return ResponseEntity.ok(cloudinaryService.uploadFile(file));
+    @PostMapping(value = "/avatar/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadAvatar(@PathVariable Integer userId,
+                                          @RequestParam("avatar")MultipartFile file
+                                          ){
+        return ResponseEntity.ok(userService.updateAvatar(userId, file));
     }
-
-
-
-
-
 }

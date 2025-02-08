@@ -15,6 +15,7 @@ import com.fpt.capstone.tourism.helper.validator.UserProfileValidator;
 import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.repository.UserRepository;
+import com.fpt.capstone.tourism.service.CloudinaryService;
 import com.fpt.capstone.tourism.service.UserService;
 
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -27,6 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
@@ -39,6 +41,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtHelper jwtHelper;
     private final PasswordEncoder passwordEncoder;
+    private final CloudinaryService cloudinaryService;
 
     @Override
     public String generateToken(User user) {
@@ -193,6 +196,22 @@ public class UserServiceImpl implements UserService {
             return new GeneralResponse<>(HttpStatus.OK.value(), CHANGE_PASSWORD_SUCCESS_MESSAGE, token);
         } catch (Exception e){
             throw BusinessException.of(Constants.Message.CHANGE_PASSWORD_FAIL_MESSAGE);
+        }
+    }
+
+    @Override
+    public GeneralResponse<String> updateAvatar(Integer userId, MultipartFile file) {
+        try {
+            User user = findUserById(userId.toString());
+
+            String imageURL = cloudinaryService.uploadAvatar(file, userId);
+
+            //Update imageURL in database
+            user.setAvatarImage(imageURL);
+            userRepository.save(user);
+            return new GeneralResponse<>(HttpStatus.OK.value(), UPDATE_AVATAR_SUCCESS, imageURL);
+        } catch (Exception ex){
+            throw BusinessException.of(UPDATE_AVATAR_FAIL, ex);
         }
     }
 }
