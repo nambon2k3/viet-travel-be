@@ -156,6 +156,8 @@ public class AuthServiceImpl implements AuthService {
                     .build();
 
             return new GeneralResponse<>(HttpStatus.CREATED.value(), Constants.Message.EMAIL_CONFIRMATION_REQUEST_MESSAGE, userResponseDTO);
+        } catch (BusinessException be){
+            throw be;
         } catch (Exception e) {
             throw BusinessException.of(REGISTER_FAIL_MESSAGE);
         }
