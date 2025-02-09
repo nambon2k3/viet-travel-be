@@ -10,9 +10,17 @@ import static com.fpt.capstone.tourism.constants.Constants.Message.*;
 import static com.fpt.capstone.tourism.constants.Constants.Regex.*;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
-import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
+
 
 public class Validator {
+
+    //Regex validation
+    public static void validateRegex(String value, String regex, String errorMessage) {
+        if (!value.matches(regex)) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, errorMessage);
+        }
+    }
+
     public static boolean isProfileValid(String fullName, String email, String phone, String address) {
         return Validator.isFieldValid(address, null, USER_INFORMATION_NULL_OR_EMPTY) &&
                 Validator.isFieldValid(phone, Validator::isPhoneValid, PHONE_INVALID) &&
@@ -20,13 +28,6 @@ public class Validator {
                 Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
 
 
-    }
-
-    //Regex validation
-    public static void validateRegex(String value, String regex, String errorMessage) {
-        if (!value.matches(regex)) {
-            throw BusinessException.of(HttpStatus.BAD_REQUEST, errorMessage);
-        }
     }
 
     public static void validateUserCreation(String fullName, String username, String password, String rePassword,
@@ -111,6 +112,17 @@ public class Validator {
                 Validator.isFieldValid(password, null, USER_INFORMATION_NULL_OR_EMPTY);
 
     }
+
+    public static void validateServiceContact(String fullName, String phoneNumber, String email, String position) {
+        Validator.isNullOrEmpty(fullName);
+        Validator.isNullOrEmpty(phoneNumber);
+        validateRegex(phoneNumber, REGEX_PHONE, PHONE_INVALID);
+        Validator.isNullOrEmpty(email);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+        Validator.isNullOrEmpty(position);
+    }
+
+
     public static boolean isNullOrEmpty(String value){
         if(!(StringUtils.hasText(value))){
             throw BusinessException.of(USER_INFORMATION_NULL_OR_EMPTY);

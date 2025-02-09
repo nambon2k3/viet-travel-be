@@ -52,6 +52,26 @@ public class Constants {
         public static final String CREATE_BLOG_FAIL_MESSAGE = "Blog created failed";
         public static final String GENERAL_SUCCESS_MESSAGE = "Successfully";
         public static final String GENERAL_FAIL_MESSAGE = "Failed";
+        public static final String DUPLICATE_SERVICE_CONTACT_PHONE = "Phone number already exists.";
+        public static final String SERVICE_CONTACT_NOT_FOUND = "Service contact not found.";
+        public static final String CREATE_SERVICE_CONTACT_SUCCESS = "Service contact created successfully.";
+        public static final String CREATE_SERVICE_CONTACT_FAIL = "Failed to create service contact.";
+        public static final String GET_SERVICE_CONTACT_SUCCESS = "Service contact retrieved successfully.";
+        public static final String GET_SERVICE_CONTACT_FAIL = "Failed to retrieve service contact.";
+        public static final String GET_ALL_SERVICE_CONTACTS_SUCCESS = "Service contacts retrieved successfully.";
+        public static final String GET_ALL_SERVICE_CONTACTS_FAIL = "Failed to retrieve service contacts.";
+        public static final String UPDATE_SERVICE_CONTACT_SUCCESS = "Service contact updated successfully.";
+        public static final String UPDATE_SERVICE_CONTACT_FAIL = "Failed to update service contact.";
+        public static final String DELETE_SERVICE_CONTACT_SUCCESS = "Service contact deleted successfully.";
+        public static final String DELETE_SERVICE_CONTACT_FAIL = "Failed to delete service contact.";
+        public static final String EMPTY_FULL_NAME = "Full name cannot be empty";
+        public static final String EMPTY_PHONE_NUMBER = "Phone number cannot be empty";
+        public static final String INVALID_PHONE_NUMBER = "Invalid phone number format. Must be 10-15 digits.";
+        public static final String EMPTY_EMAIL = "Email cannot be empty";
+        public static final String INVALID_EMAIL = "Invalid email format";
+        public static final String EMPTY_POSITION = "Position cannot be empty";
+        public static final String DUPLICATE_SERVICE_CONTACT_EMAIL= "This contact email already exists.";
+        public static final String SERVICE_PROVIDER_NOT_FOUND = "Service provider not found. Please try again.";
         public static final String RESET_PASSWORD_REQUEST_SUCCESS = "User request reset password successfully";
         public static final String RESET_PASSWORD_REQUEST_FAIL = "User request reset password fail";
         public static final String GET_USER_SUCCESS_MESSAGE = "Get user successfully";
@@ -78,6 +98,4 @@ public class Constants {
         public static final String REGEX_PHONE = "^[0-9]{10}$";
 
     }
-
-
 }
