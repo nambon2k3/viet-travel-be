@@ -7,14 +7,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ServiceContactDTO {
-    private Long id;
+public class ServiceContactManagementRequestDTO {
     private String position;
     private String fullName;
     private String phoneNumber;
     private String email;
     private Gender gender;
-    private Long serviceProviderId;
-    private boolean isDeleted;
+    private String serviceProviderName;
 }
 

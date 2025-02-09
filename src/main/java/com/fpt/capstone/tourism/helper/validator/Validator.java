@@ -7,6 +7,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.function.Predicate;
 
+import static com.fpt.capstone.tourism.constants.Constants.Message.*;
+import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
+
 
 public class Validator {
     public static boolean isRegisterValid(String username, String password, String rePassword, String fullName, String phone, String address, String email) {
@@ -16,7 +19,7 @@ public class Validator {
                 Validator.isFieldValid(fullName, Validator::isFullNameValid, Constants.UserExceptionInformation.FULL_NAME_INVALID) &&
                 Validator.isFieldValid(phone, Validator::isPhoneValid, Constants.UserExceptionInformation.PHONE_INVALID) &&
                 Validator.isFieldValid(address, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
-                Validator.isFieldValid(email, Validator::isEmailValid, Constants.UserExceptionInformation.EMAIL_INVALID);
+                Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
 
     }
 
@@ -24,6 +27,15 @@ public class Validator {
         return Validator.isFieldValid(username, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
                 Validator.isFieldValid(password, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
 
+    }
+
+    public static void validateServiceContact(String fullName, String phoneNumber, String email, String position) {
+        Validator.isNullOrEmpty(fullName);
+        Validator.isNullOrEmpty(phoneNumber);
+        Validator.isFieldValid(phoneNumber, Validator::isPhoneValid, PHONE_INVALID);
+        Validator.isNullOrEmpty(email);
+        Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
+        Validator.isNullOrEmpty(position);
     }
 
 

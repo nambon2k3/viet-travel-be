@@ -60,6 +60,7 @@ public class Constants {
         public static final String INVALID_EMAIL = "Invalid email format";
         public static final String EMPTY_POSITION = "Position cannot be empty";
         public static final String DUPLICATE_SERVICE_CONTACT_EMAIL= "This contact email already exists.";
+        public static final String SERVICE_PROVIDER_NOT_FOUND = "Service provider not found. Please try again.";
     }
 
 

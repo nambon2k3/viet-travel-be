@@ -1,14 +1,15 @@
 package com.fpt.capstone.tourism.service.impl;
 
-import com.fpt.capstone.tourism.constants.Constants;
-import com.fpt.capstone.tourism.dto.common.ServiceContactDTO;
+import com.fpt.capstone.tourism.dto.common.ServiceContactManagementRequestDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
-import com.fpt.capstone.tourism.helper.validator.ServiceContactInformationValidator;
+import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.mapper.ServiceContactMapper;
 import com.fpt.capstone.tourism.model.ServiceContact;
+import com.fpt.capstone.tourism.model.ServiceProvider;
 import com.fpt.capstone.tourism.repository.ServiceContactRepository;
+import com.fpt.capstone.tourism.repository.ServiceProviderRepository;
 import com.fpt.capstone.tourism.service.ServiceContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,31 +31,45 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
     private final ServiceContactRepository serviceContactRepository;
     private final ServiceContactMapper serviceContactMapper;
+    private final ServiceProviderRepository serviceProviderRepository;
 
     @Override
     @Transactional
-    public GeneralResponse<?> createServiceContact(ServiceContactDTO serviceContactDTO) {
+    public GeneralResponse<?> createServiceContact(ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
         try {
             // Validate required fields
-            ServiceContactInformationValidator.validateServiceContact(serviceContactDTO.getFullName(), serviceContactDTO.getPhoneNumber(),
-                    serviceContactDTO.getEmail(), serviceContactDTO.getPosition());
+            Validator.validateServiceContact(
+                    serviceContactManagementRequestDTO.getFullName(),
+                    serviceContactManagementRequestDTO.getPhoneNumber(),
+                    serviceContactManagementRequestDTO.getEmail(),
+                    serviceContactManagementRequestDTO.getPosition()
+            );
+
+            // Find service provider by name
+            ServiceProvider serviceProvider = serviceProviderRepository.findByName(serviceContactManagementRequestDTO.getServiceProviderName())
+                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_PROVIDER_NOT_FOUND));
 
             // Check for duplicate phone number
-            if (serviceContactRepository.existsByPhoneNumber(serviceContactDTO.getPhoneNumber())) {
+            if (serviceContactRepository.existsByPhoneNumber(serviceContactManagementRequestDTO.getPhoneNumber())) {
                 throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_SERVICE_CONTACT_PHONE);
             }
 
             // Check for duplicate email
-            if (serviceContactRepository.existsByEmail(serviceContactDTO.getEmail())) {
+            if (serviceContactRepository.existsByEmail(serviceContactManagementRequestDTO.getEmail())) {
                 throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_SERVICE_CONTACT_EMAIL);
             }
 
-            // Convert DTO to entity and save
-            ServiceContact serviceContact = serviceContactMapper.toEntity(serviceContactDTO);
+            // Convert DTO to entity
+            ServiceContact serviceContact = serviceContactMapper.toEntity(serviceContactManagementRequestDTO);
             serviceContact.setDeleted(false);
-
+            serviceContact.setServiceProvider(serviceProvider);
             ServiceContact savedServiceContact = serviceContactRepository.save(serviceContact);
-            return GeneralResponse.of(serviceContactMapper.toDTO(savedServiceContact), CREATE_SERVICE_CONTACT_SUCCESS);
+
+            // Convert to DTO and set service provider name
+            ServiceContactManagementRequestDTO responseDTO = serviceContactMapper.toDTO(savedServiceContact);
+            responseDTO.setServiceProviderName(serviceProvider.getName());
+
+            return GeneralResponse.of(responseDTO, CREATE_SERVICE_CONTACT_SUCCESS);
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
@@ -65,48 +80,62 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
     @Override
     @Transactional
-    public GeneralResponse<?> updateServiceContact(Long id, ServiceContactDTO serviceContactDTO) {
+    public GeneralResponse<?> updateServiceContact(Long id, ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
         try {
-            // Validate input fields
-            ServiceContactInformationValidator.validateServiceContact(serviceContactDTO.getFullName(), serviceContactDTO.getPhoneNumber(),
-                    serviceContactDTO.getEmail(), serviceContactDTO.getPosition());
+            // Validate required fields
+            Validator.validateServiceContact(
+                    serviceContactManagementRequestDTO.getFullName(),
+                    serviceContactManagementRequestDTO.getPhoneNumber(),
+                    serviceContactManagementRequestDTO.getEmail(),
+                    serviceContactManagementRequestDTO.getPosition()
+            );
 
-            // Find the existing service contact
+            // Find existing service contact
             ServiceContact serviceContact = serviceContactRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
 
+            // Find service provider by name
+            ServiceProvider serviceProvider = serviceProviderRepository.findByName(serviceContactManagementRequestDTO.getServiceProviderName())
+                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_PROVIDER_NOT_FOUND));
+
             // Check for duplicate phone number (excluding current contact)
-            Optional<ServiceContact> existingPhoneContact = serviceContactRepository.findByPhoneNumber(serviceContactDTO.getPhoneNumber());
+            Optional<ServiceContact> existingPhoneContact = serviceContactRepository.findByPhoneNumber(serviceContactManagementRequestDTO.getPhoneNumber());
             if (existingPhoneContact.isPresent() && !existingPhoneContact.get().getId().equals(id)) {
                 throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_SERVICE_CONTACT_PHONE);
             }
 
             // Check for duplicate email (excluding current contact)
-            Optional<ServiceContact> existingEmailContact = serviceContactRepository.findByEmail(serviceContactDTO.getEmail());
+            Optional<ServiceContact> existingEmailContact = serviceContactRepository.findByEmail(serviceContactManagementRequestDTO.getEmail());
             if (existingEmailContact.isPresent() && !existingEmailContact.get().getId().equals(id)) {
                 throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_SERVICE_CONTACT_EMAIL);
             }
 
             // Update only changed fields
-            if (!serviceContact.getFullName().equals(serviceContactDTO.getFullName())) {
-                serviceContact.setFullName(serviceContactDTO.getFullName());
+            if (!serviceContact.getFullName().equals(serviceContactManagementRequestDTO.getFullName())) {
+                serviceContact.setFullName(serviceContactManagementRequestDTO.getFullName());
             }
-            if (!serviceContact.getPhoneNumber().equals(serviceContactDTO.getPhoneNumber())) {
-                serviceContact.setPhoneNumber(serviceContactDTO.getPhoneNumber());
+            if (!serviceContact.getPhoneNumber().equals(serviceContactManagementRequestDTO.getPhoneNumber())) {
+                serviceContact.setPhoneNumber(serviceContactManagementRequestDTO.getPhoneNumber());
             }
-            if (!serviceContact.getEmail().equals(serviceContactDTO.getEmail())) {
-                serviceContact.setEmail(serviceContactDTO.getEmail());
+            if (!serviceContact.getEmail().equals(serviceContactManagementRequestDTO.getEmail())) {
+                serviceContact.setEmail(serviceContactManagementRequestDTO.getEmail());
             }
-            if (!serviceContact.getPosition().equals(serviceContactDTO.getPosition())) {
-                serviceContact.setPosition(serviceContactDTO.getPosition());
+            if (!serviceContact.getPosition().equals(serviceContactManagementRequestDTO.getPosition())) {
+                serviceContact.setPosition(serviceContactManagementRequestDTO.getPosition());
             }
-            if (serviceContact.getGender() != serviceContactDTO.getGender()) {
-                serviceContact.setGender(serviceContactDTO.getGender());
+            if (serviceContact.getGender() != serviceContactManagementRequestDTO.getGender()) {
+                serviceContact.setGender(serviceContactManagementRequestDTO.getGender());
             }
 
-            // Save updated service contact
+            //Update service provider ID
+            serviceContact.setServiceProvider(serviceProvider);
+
             ServiceContact updatedServiceContact = serviceContactRepository.save(serviceContact);
-            return GeneralResponse.of(serviceContactMapper.toDTO(updatedServiceContact), UPDATE_SERVICE_CONTACT_SUCCESS);
+
+            ServiceContactManagementRequestDTO responseDTO = serviceContactMapper.toDTO(updatedServiceContact);
+            responseDTO.setServiceProviderName(serviceProvider.getName());
+
+            return GeneralResponse.of(responseDTO, UPDATE_SERVICE_CONTACT_SUCCESS);
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
@@ -120,33 +149,52 @@ public class ServiceContactServiceImpl implements ServiceContactService {
         try {
             ServiceContact serviceContact = serviceContactRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
-            return GeneralResponse.of(serviceContactMapper.toDTO(serviceContact), GET_SERVICE_CONTACT_SUCCESS);
+
+            // Convert entity to DTO
+            ServiceContactManagementRequestDTO responseDTO = serviceContactMapper.toDTO(serviceContact);
+            // Set the service provider name
+            if (serviceContact.getServiceProvider() != null) {
+                responseDTO.setServiceProviderName(serviceContact.getServiceProvider().getName());
+            }
+            return GeneralResponse.of(responseDTO, GET_SERVICE_CONTACT_SUCCESS);
+        } catch (BusinessException be) {
+            throw be;
         } catch (Exception e) {
             throw BusinessException.of(GET_SERVICE_CONTACT_FAIL, e);
         }
     }
 
+
     @Override
-    public GeneralResponse<PagingDTO<List<ServiceContactDTO>>> getAllServiceContacts(int page, int size) {
+    public GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>> getAllServiceContacts(int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<ServiceContact> serviceContactPage = serviceContactRepository.findAll(pageable);
 
-            List<ServiceContactDTO> serviceContacts = serviceContactPage.getContent().stream()
-                    .map(serviceContactMapper::toDTO)
+            List<ServiceContactManagementRequestDTO> serviceContacts = serviceContactPage.getContent().stream()
+                    .map(serviceContact -> {
+                        ServiceContactManagementRequestDTO dto = serviceContactMapper.toDTO(serviceContact);
+
+                        if (serviceContact.getServiceProvider() != null) {
+                            dto.setServiceProviderName(serviceContact.getServiceProvider().getName());
+                        }
+                        return dto;
+                    })
                     .collect(Collectors.toList());
 
-            PagingDTO<List<ServiceContactDTO>> pagingDTO = PagingDTO.<List<ServiceContactDTO>>builder()
+            PagingDTO<List<ServiceContactManagementRequestDTO>> pagingDTO = PagingDTO.<List<ServiceContactManagementRequestDTO>>builder()
                     .page(page)
                     .size(size)
                     .total(serviceContactPage.getTotalElements())
                     .items(serviceContacts)
                     .build();
+
             return GeneralResponse.of(pagingDTO, GET_ALL_SERVICE_CONTACTS_SUCCESS);
         } catch (Exception e) {
             throw BusinessException.of(GET_ALL_SERVICE_CONTACTS_FAIL, e);
         }
     }
+
 
     @Override
     @Transactional

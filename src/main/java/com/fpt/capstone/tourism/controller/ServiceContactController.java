@@ -1,8 +1,7 @@
 package com.fpt.capstone.tourism.controller;
 
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
-import com.fpt.capstone.tourism.dto.common.ServiceContactDTO;
-import com.fpt.capstone.tourism.dto.response.GeneralResponse;
+import com.fpt.capstone.tourism.dto.common.ServiceContactManagementRequestDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.service.ServiceContactService;
 import jakarta.validation.Valid;
@@ -20,8 +19,8 @@ public class ServiceContactController {
     private final ServiceContactService serviceContactService;
 
     @PostMapping
-    public ResponseEntity<?> createServiceContact(@Valid @RequestBody ServiceContactDTO serviceContactDTO) {
-        return ResponseEntity.ok(serviceContactService.createServiceContact(serviceContactDTO));
+    public ResponseEntity<?> createServiceContact(@Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
+        return ResponseEntity.ok(serviceContactService.createServiceContact(serviceContactManagementRequestDTO));
     }
 
     @GetMapping("/{id}")
@@ -30,15 +29,15 @@ public class ServiceContactController {
     }
 
     @GetMapping
-    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactDTO>>>> getAllServiceContacts(
+    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>>> getAllServiceContacts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(serviceContactService.getAllServiceContacts(page, size));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateServiceContact(@PathVariable Long id, @Valid @RequestBody ServiceContactDTO serviceContactDTO) {
-        return ResponseEntity.ok(serviceContactService.updateServiceContact(id, serviceContactDTO));
+    public ResponseEntity<?> updateServiceContact(@PathVariable Long id, @Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
+        return ResponseEntity.ok(serviceContactService.updateServiceContact(id, serviceContactManagementRequestDTO));
     }
 
     @DeleteMapping("/{id}")
