@@ -8,10 +8,19 @@ import org.springframework.util.StringUtils;
 import java.util.function.Predicate;
 
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
+import static com.fpt.capstone.tourism.constants.Constants.Regex.*;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
 
 public class Validator {
+
+    //Regex validation
+    public static void validateRegex(String value, String regex, String errorMessage) {
+        if (!value.matches(regex)) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, errorMessage);
+        }
+    }
+
     public static boolean isRegisterValid(String username, String password, String rePassword, String fullName, String phone, String address, String email) {
         return Validator.isFieldValid(username, Validator::isUsernameValid, Constants.UserExceptionInformation.USERNAME_INVALID) &&
                 Validator.isFieldValid(password, Validator::isPasswordValid, Constants.UserExceptionInformation.PASSWORD_INVALID) &&
@@ -32,9 +41,9 @@ public class Validator {
     public static void validateServiceContact(String fullName, String phoneNumber, String email, String position) {
         Validator.isNullOrEmpty(fullName);
         Validator.isNullOrEmpty(phoneNumber);
-        Validator.isFieldValid(phoneNumber, Validator::isPhoneValid, PHONE_INVALID);
+        validateRegex(phoneNumber, REGEX_PHONE, PHONE_INVALID);
         Validator.isNullOrEmpty(email);
-        Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
         Validator.isNullOrEmpty(position);
     }
 
@@ -60,7 +69,7 @@ public class Validator {
     public static boolean isEmailValid(String value){
         return value.matches(Constants.Regex.REGEX_EMAIL);
     }
-    public static boolean isPhoneValid(String value) { return value.matches(Constants.Regex.REGEX_PHONE);}
+    public static boolean isPhoneValid(String value) { return value.matches(REGEX_PHONE);}
 
     public static boolean isFieldValid(String value, Predicate<String> validation, String message) {
         if (Validator.isNullOrEmpty(value)) {
@@ -71,6 +80,4 @@ public class Validator {
         }
         return true;
     }
-
-
 }
