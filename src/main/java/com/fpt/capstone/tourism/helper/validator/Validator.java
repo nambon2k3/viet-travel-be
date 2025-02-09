@@ -96,24 +96,24 @@ public class Validator {
         }
     }
     public static boolean isRegisterValid(String username, String password, String rePassword, String fullName, String phone, String address, String email) {
-        return Validator.isFieldValid(username, Validator::isUsernameValid, Constants.UserExceptionInformation.USERNAME_INVALID) &&
-                Validator.isFieldValid(password, Validator::isPasswordValid, Constants.UserExceptionInformation.PASSWORD_INVALID) &&
-                Validator.isFieldValid(rePassword, Validator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
-                Validator.isFieldValid(fullName, Validator::isFullNameValid, Constants.UserExceptionInformation.FULL_NAME_INVALID) &&
-                Validator.isFieldValid(phone, Validator::isPhoneValid, Constants.UserExceptionInformation.PHONE_INVALID) &&
-                Validator.isFieldValid(address, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
-                Validator.isFieldValid(email, Validator::isEmailValid, Constants.UserExceptionInformation.EMAIL_INVALID);
+        return Validator.isFieldValid(username, Validator::isUsernameValid, USERNAME_INVALID) &&
+                Validator.isFieldValid(password, Validator::isPasswordValid, PASSWORD_INVALID) &&
+                Validator.isFieldValid(rePassword, Validator::isNullOrEmpty, USER_INFORMATION_NULL_OR_EMPTY) &&
+                Validator.isFieldValid(fullName, Validator::isFullNameValid, FULL_NAME_INVALID) &&
+                Validator.isFieldValid(phone, Validator::isPhoneValid, PHONE_INVALID) &&
+                Validator.isFieldValid(address, null, USER_INFORMATION_NULL_OR_EMPTY) &&
+                Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
 
     }
 
     public static boolean isLoginValid(String username, String password) {
-        return Validator.isFieldValid(username, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
-                Validator.isFieldValid(password, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+        return Validator.isFieldValid(username, null, USER_INFORMATION_NULL_OR_EMPTY) &&
+                Validator.isFieldValid(password, null, USER_INFORMATION_NULL_OR_EMPTY);
 
     }
     public static boolean isNullOrEmpty(String value){
         if(!(StringUtils.hasText(value))){
-            throw BusinessException.of(Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+            throw BusinessException.of(USER_INFORMATION_NULL_OR_EMPTY);
         }
         return true;
     }
@@ -122,17 +122,17 @@ public class Validator {
     }
 
     public static boolean isPasswordValid(String value){
-        return value.matches(Constants.Regex.REGEX_PASSWORD);
+        return value.matches(REGEX_PASSWORD);
     }
 
     public static boolean isFullNameValid(String value){
-        return value.trim().matches(Constants.Regex.REGEX_FULLNAME);
+        return value.trim().matches(REGEX_FULLNAME);
     }
 
     public static boolean isEmailValid(String value){
-        return value.matches(Constants.Regex.REGEX_EMAIL);
+        return value.matches(REGEX_EMAIL);
     }
-    public static boolean isPhoneValid(String value) { return value.matches(Constants.Regex.REGEX_PHONE);}
+    public static boolean isPhoneValid(String value) { return value.matches(REGEX_PHONE);}
 
     public static boolean isFieldValid(String value, Predicate<String> validation, String message) {
         if (Validator.isNullOrEmpty(value)) {
