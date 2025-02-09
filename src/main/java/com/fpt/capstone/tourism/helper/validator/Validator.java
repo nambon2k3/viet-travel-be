@@ -7,20 +7,27 @@ import java.util.function.Predicate;
 import java.util.List;
 import java.util.function.Predicate;
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
+import static com.fpt.capstone.tourism.constants.Constants.Regex.*;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
 public class Validator {
     public static boolean isProfileValid(String fullName, String email, String phone, String address) {
-        return Validator.isFieldValid(address, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
-                Validator.isFieldValid(phone, Validator::isPhoneValid, Constants.UserExceptionInformation.PHONE_INVALID) &&
-                Validator.isFieldValid(fullName, Validator::isFullNameValid, Constants.UserExceptionInformation.FULL_NAME_INVALID) &&
-                Validator.isFieldValid(email, Validator::isEmailValid, Constants.UserExceptionInformation.EMAIL_INVALID);
+        return Validator.isFieldValid(address, null, USER_INFORMATION_NULL_OR_EMPTY) &&
+                Validator.isFieldValid(phone, Validator::isPhoneValid, PHONE_INVALID) &&
+                Validator.isFieldValid(fullName, Validator::isFullNameValid, FULL_NAME_INVALID) &&
+                Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
 
 
     }
 
+    //Regex validation
+    public static void validateRegex(String value, String regex, String errorMessage) {
+        if (!value.matches(regex)) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, errorMessage);
+        }
+    }
 
     public static void validateUserCreation(String fullName, String username, String password, String rePassword,
                                             String email, String gender, String phone, String address, String avatarImage, List<String> roleNames) {
@@ -36,13 +43,13 @@ public class Validator {
         Validator.isNullOrEmpty(avatarImage);
         Validator.isNullOrEmpty(roleNames.toString());
 
-        // Validate fields based on specific rules
-        Validator.isFieldValid(username, Validator::isUsernameValid, USERNAME_INVALID);
-        Validator.isFieldValid(password, Validator::isPasswordValid, PASSWORD_INVALID);
-        Validator.isFieldValid(rePassword, Validator::isPasswordValid, PASSWORD_INVALID);
-        Validator.isFieldValid(fullName, Validator::isFullNameValid, FULL_NAME_INVALID);
-        Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
-        Validator.isFieldValid(phone, Validator::isPhoneValid, PHONE_INVALID);
+        // Validate specific rules
+        validateRegex(username, REGEX_USERNAME, USERNAME_INVALID);
+        validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
+        validateRegex(rePassword, REGEX_PASSWORD, PASSWORD_INVALID);
+        validateRegex(fullName,REGEX_FULLNAME, FULL_NAME_INVALID);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+        validateRegex(phone, REGEX_PHONE, PHONE_INVALID);
 
         if (!password.equals(rePassword)) {
             throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
@@ -71,13 +78,13 @@ public class Validator {
         Validator.isNullOrEmpty(avatarImage);
         Validator.isNullOrEmpty(roleNames.toString());
 
-        // Validate fields based on specific rules
-        Validator.isFieldValid(username, Validator::isUsernameValid, USERNAME_INVALID);
-        Validator.isFieldValid(password, Validator::isPasswordValid, PASSWORD_INVALID);
-        Validator.isFieldValid(rePassword, Validator::isPasswordValid, PASSWORD_INVALID);
-        Validator.isFieldValid(fullName, Validator::isFullNameValid, FULL_NAME_INVALID);
-        Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
-        Validator.isFieldValid(phone, Validator::isPhoneValid, PHONE_INVALID);
+        // Validate specific rules
+        validateRegex(username, REGEX_USERNAME, USERNAME_INVALID);
+        validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
+        validateRegex(rePassword, REGEX_PASSWORD, PASSWORD_INVALID);
+        validateRegex(fullName,REGEX_FULLNAME, FULL_NAME_INVALID);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+        validateRegex(phone, REGEX_PHONE, PHONE_INVALID);
 
         if (!password.equals(rePassword)) {
             throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
@@ -111,7 +118,7 @@ public class Validator {
         return true;
     }
     public static boolean isUsernameValid(String value) {
-        return value.matches(Constants.Regex.REGEX_USERNAME);
+        return value.matches(REGEX_USERNAME);
     }
 
     public static boolean isPasswordValid(String value){

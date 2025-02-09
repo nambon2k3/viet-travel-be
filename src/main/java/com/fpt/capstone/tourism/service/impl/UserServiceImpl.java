@@ -183,6 +183,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     @Transactional
     public GeneralResponse<?> createUser(UserCreationRequestDTO userDTO) {
         try {
