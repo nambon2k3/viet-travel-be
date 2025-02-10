@@ -14,20 +14,16 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class TourSchedule {
+@Table(name = "tour_schedule")
+public class TourSchedule extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Date date;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_date")
-    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tour_id", nullable = false)

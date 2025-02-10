@@ -16,26 +16,21 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Builder
-public class TourBooking {
+@Table(name = "tour_booking")
+public class TourBooking extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "booking_date")
     private Date bookingDate;
 
     private int seats;
 
-
     private String note;
 
-
+    @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @OneToOne
     @JoinColumn(name = "user_id")

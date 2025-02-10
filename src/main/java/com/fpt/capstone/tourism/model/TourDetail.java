@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Builder
+@Table(name = "tour_details")
 public class TourDetail {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,13 +24,8 @@ public class TourDetail {
 
     private String content;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_date")
-    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tour_id")

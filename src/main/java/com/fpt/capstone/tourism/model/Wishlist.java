@@ -14,14 +14,17 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "wishlist")
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String item_id;
+    @Column(name = "item_id")
+    private String itemId;
 
-    private String item_type;
+    @Column(name = "item_type")
+    private String itemType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -29,5 +32,4 @@ public class Wishlist {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
 }

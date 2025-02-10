@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailConfirmationToken {
+@Table(name = "token")
+public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,11 +23,12 @@ public class EmailConfirmationToken {
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
+    @Column(name="created_date")
     private LocalDateTime createdAt;
+    @Column(name="expires_date")
     private LocalDateTime expiresAt;
 
     private boolean used;
 
 }
-
 

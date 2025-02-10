@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "activity")
-public class Activity {
+public class Activity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,15 +25,14 @@ public class Activity {
 
     private String content;
 
-    private double price_per_person;
+    @Column(name = "image_url")
+    private String imageUrl;
 
+    @Column(name="price_per_person")
+    private double pricePerPerson;
+
+    @Column(name="is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_date")
-    private LocalDateTime updatedAt;
 
     @OneToOne
     @JoinColumn(name = "geo_position_id")
@@ -45,5 +44,9 @@ public class Activity {
 
     @OneToMany(mappedBy = "activity")
     private Set<TourDayActivity> tourDayActivities;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private ActivityCategory activityCategory;
 
 }

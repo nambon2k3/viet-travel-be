@@ -15,13 +15,16 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Data
-public class ServiceProvider {
+@Table(name = "service_provider")
+public class ServiceProvider extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    private String name;
 
     private String abbreviation;
 
@@ -33,16 +36,11 @@ public class ServiceProvider {
 
     private String address;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 
-    @Column(name = "updated_date")
-    private LocalDateTime updatedAt;
-
-
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
 

@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
-public class TourDayActivity {
+@Table(name = "tour_day_activity")
+public class TourDayActivity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,14 +28,9 @@ public class TourDayActivity {
     @JoinColumn(name = "activity_id")
     private Activity activity;
 
+    @Column(name = "number_ticket")
     private int numberTicket;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
 }

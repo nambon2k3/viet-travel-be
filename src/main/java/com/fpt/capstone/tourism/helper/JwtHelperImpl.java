@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtHelperImpl implements JwtHelper {
@@ -66,11 +68,18 @@ public class JwtHelperImpl implements JwtHelper {
     @Override
     public  String generateToken(User user) {
         try {
+
+            List<String> roles = user.getUserRoles().stream()
+                    .map(userRole -> userRole.getRole().getRoleName())
+                    .collect(Collectors.toList());
+
             return Jwts
                     .builder()
                     .subject(user.getUsername())
                     .claim("id", user.getId())
-                    .claim("role", user.getRole())
+                    .claim("roles", roles)
+                    .claim("createdAt", new Date())
+                    .claim("expiresAt", new Date(System.currentTimeMillis() + expiredTime))
                     .issuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis() + expiredTime))
                     .signWith(getSignInKey())

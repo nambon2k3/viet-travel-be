@@ -14,7 +14,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Data
-public class TourDay {
+@Table (name = "tour_day")
+public class TourDay extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,25 +26,19 @@ public class TourDay {
 
     private String content;
 
-    private String meal_plan;
+    @Column(name = "meal_plan")
+    private String mealPlan;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdDate;
-
-    @Column(name = "updated_date")
-    private LocalDateTime updatedDate;
 
     @OneToOne
     @JoinColumn(name = "tour_id")
     private Tour tour;
 
-
     @OneToOne
     @JoinColumn(name = "location_id")
     private Location location;
-
 
     @OneToOne
     @JoinColumn(name = "tour_guide_id")

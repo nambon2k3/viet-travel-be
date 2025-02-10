@@ -14,25 +14,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TourBookingCustomer {
+@Table(name = "tour_booking_customer")
+public class TourBookingCustomer extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @ManyToOne
     @JoinColumn(name = "tour_booking_id")
     private TourBooking tourBooking;
 
+    @Column(name = "customer_name")
     private String customerName;
     private String email;
-    private String phone;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     private String note;
+
+    @Column(name = "is_deleted")
     private boolean isDeleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }
