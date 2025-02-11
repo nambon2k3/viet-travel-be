@@ -253,7 +253,7 @@ public class UserServiceImpl implements UserService {
             User existingUser = findById(userId);
 
             //Check valid users field need to update
-            Validator.isProfileValid(newUser.getFullName(), newUser.getEmail(),
+            Validator.validateProfile(newUser.getFullName(), newUser.getEmail(),
                     newUser.getPhone(), newUser.getAddress());
 
             //Update user follow by userProfileRequestDTO

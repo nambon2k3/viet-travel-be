@@ -65,6 +65,10 @@ public class Constants {
         public static final String DELETE_SERVICE_CONTACT_SUCCESS = "Service contact deleted successfully.";
         public static final String DELETE_SERVICE_CONTACT_FAIL = "Failed to delete service contact.";
         public static final String EMPTY_FULL_NAME = "Full name cannot be empty";
+        public static final String EMPTY_USERNAME = "User name cannot be empty";
+        public static final String EMPTY_PASSWORD = "Password cannot be empty";
+        public static final String EMPTY_REPASSWORD = "Re Password cannot be empty";
+        public static final String EMPTY_ADDRESS = "Address cannot be empty";
         public static final String EMPTY_PHONE_NUMBER = "Phone number cannot be empty";
         public static final String INVALID_PHONE_NUMBER = "Invalid phone number format. Must be 10-15 digits.";
         public static final String EMPTY_EMAIL = "Email cannot be empty";

@@ -50,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
     public GeneralResponse<TokenDTO> login(UserDTO userDTO) {
 
         try {
-            Validator.isLoginValid(userDTO.getUsername(), userDTO.getPassword());
+            Validator.validateLogin(userDTO.getUsername(), userDTO.getPassword());
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     userDTO.getUsername(), userDTO.getPassword()
@@ -76,17 +76,16 @@ public class AuthServiceImpl implements AuthService {
         } catch (BusinessException be) {
             throw be;
         } catch (Exception ex) {
-            throw BusinessException.of(LOGIN_FAIL_MESSAGE, ex);
+            throw BusinessException.of(HttpStatus.BAD_REQUEST,LOGIN_FAIL_MESSAGE, ex);
         }
     }
 
     @Override
     @Transactional
     public GeneralResponse<UserInfoResponseDTO> register(RegisterRequestDTO registerRequestDTO) {
-
         try {
             // Validate input data
-            Validator.isRegisterValid(
+            Validator.validateRegister(
                     registerRequestDTO.getUsername(),
                     registerRequestDTO.getPassword(),
                     registerRequestDTO.getRePassword(),
@@ -94,8 +93,6 @@ public class AuthServiceImpl implements AuthService {
                     registerRequestDTO.getPhone(),
                     registerRequestDTO.getAddress(),
                     registerRequestDTO.getEmail());
-
-
             if (userService.existsByUsername(registerRequestDTO.getUsername())) {
                 throw BusinessException.of(HttpStatus.CONFLICT, USERNAME_ALREADY_EXISTS_MESSAGE);
             }
