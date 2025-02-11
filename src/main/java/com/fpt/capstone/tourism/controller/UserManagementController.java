@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/CEO/users")
+@RequestMapping("${api.prefix}/CEO/users")
 @RequiredArgsConstructor
 public class UserManagementController {
 

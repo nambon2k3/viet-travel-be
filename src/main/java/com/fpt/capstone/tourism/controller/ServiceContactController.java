@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/CEO/service-contacts")
+@RequestMapping("${api.prefix}/CEO/service-contacts")
 @RequiredArgsConstructor
 public class ServiceContactController {
 
