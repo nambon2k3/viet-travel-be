@@ -3,6 +3,7 @@ package com.fpt.capstone.tourism.service.impl;
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.common.BlogDTO;
+import com.fpt.capstone.tourism.dto.common.TagDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.mapper.BlogMapper;
@@ -41,8 +42,9 @@ public class BlogServiceImpl implements BlogService {
     @Transactional
     public GeneralResponse<BlogDTO> saveBlog(BlogDTO blogDTO) {
         try {
-            User user = userService.findById(blogDTO.getAuthorId());
-            List<Tag> tags = tagService.findAllById(blogDTO.getTagIds());
+            User user = userService.findById(blogDTO.getAuthor().getId());
+
+            List<Tag> tags = tagService.findAllById(blogDTO.getTags().stream().map(TagDTO::getId).collect(Collectors.toList()));
 
             Blog blog = blogMapper.toEntity(blogDTO, user, tags);
 
