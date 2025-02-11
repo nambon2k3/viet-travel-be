@@ -102,7 +102,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
         }
 
         if (serviceProvider.getServiceCategories() != null) {
-            dto.setServiceCategories(serviceProvider.getServiceCategories().stream()
+             dto.setServiceCategories(serviceProvider.getServiceCategories().stream()
                     .map(category -> {
                         ServiceCategoryDTO categoryDTO = new ServiceCategoryDTO();
                         categoryDTO.setId(category.getId());

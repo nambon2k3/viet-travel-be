@@ -13,21 +13,13 @@ import java.util.Set;
 @AllArgsConstructor
 public class ChangableServiceProviderDTO {
     private String imageUrl;
-
     private String abbreviation;
-
     private String website;
-
     private String email;
-
     private String phone;
-
     private String address;
-
     private LocationDTO location;
-
     private GeoPositionDTO geoPosition;
-
     private Set<ServiceCategoryDTO> serviceCategories;
 }
 
