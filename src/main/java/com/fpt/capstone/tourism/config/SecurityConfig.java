@@ -33,12 +33,21 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**").permitAll()
                         .requestMatchers("/api/v1/**", "/public/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/api/v1/forgot-password", "/api/v1/reset-password").permitAll()
+                        .requestMatchers("/api/v1/CEO/**").hasAnyAuthority("CEO")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
+                )
+                .rememberMe(rememberMe ->
+                        rememberMe.key("tempKey")
+                                .rememberMeCookieName("remember-me")
+                                .tokenValiditySeconds(7 * 24 * 60 * 60)
+                                .rememberMeParameter("remember-me")
+                                .useSecureCookie(false)
+                                .userDetailsService(userDetailsService)
                 );
         return httpSecurity.build();
     }
