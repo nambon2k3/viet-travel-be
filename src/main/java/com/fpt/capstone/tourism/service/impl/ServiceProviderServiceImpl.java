@@ -2,6 +2,7 @@ package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.dto.common.*;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
+import com.fpt.capstone.tourism.mapper.ServiceProviderMapper;
 import com.fpt.capstone.tourism.model.GeoPosition;
 import com.fpt.capstone.tourism.model.Location;
 import com.fpt.capstone.tourism.model.ServiceCategory;
@@ -11,152 +12,97 @@ import com.fpt.capstone.tourism.service.ServiceProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.USER_NOT_FOUND_MESSAGE;
+import static com.fpt.capstone.tourism.constants.Constants.Message.*;
+import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
 @Service
 @RequiredArgsConstructor
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 
     private final ServiceProviderRepository serviceProviderRepository;
-
-    @Override
-    @Transactional
-    public ServiceProviderDTO createServiceProvider(ChangableServiceProviderDTO changableServiceProviderDTO) {
-        ServiceProvider serviceProvider = mapToEntity(changableServiceProviderDTO);
-        serviceProvider.setCreatedAt(LocalDateTime.now());
-        serviceProvider.setUpdatedAt(LocalDateTime.now());
-        ServiceProvider savedServiceProvider = serviceProviderRepository.save(serviceProvider);
-        return mapToDTO(savedServiceProvider);
-    }
+    private final ServiceProviderMapper serviceProviderMapper;
 
     @Override
     public GeneralResponse<ServiceProviderDTO> save(ServiceProviderDTO serviceProviderDTO) {
+        try{
+            ServiceProvider serviceProvider = serviceProviderMapper.toEntity(serviceProviderDTO);
+            serviceProviderRepository.save(serviceProvider);
+            return new GeneralResponse<>(HttpStatus.OK.value(), CREATE_SERVICE_PROVIDER_SUCCESS, serviceProviderDTO);
+        } catch (BusinessException be){
+            throw be;
+        } catch (Exception ex){
+            throw BusinessException.of(CREATE_SERVICE_PROVIDER_FAIL, ex);
+        }
 
-        return null;
     }
 
     @Override
-    public ServiceProviderDTO getServiceProviderById(Long id) {
-        ServiceProvider serviceProvider = serviceProviderRepository.findById(id)
-                .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND_MESSAGE));
-        return mapToDTO(serviceProvider);
+    public GeneralResponse<ServiceProviderDTO> getServiceProviderById(Long id) {
+        try{
+            ServiceProvider serviceProvider = serviceProviderRepository.findById(id).orElseThrow();
+            ServiceProviderDTO serviceProviderDTO = serviceProviderMapper.toDTO(serviceProvider);
+            return new GeneralResponse<>(HttpStatus.OK.value(), GENERAL_SUCCESS_MESSAGE, serviceProviderDTO);
+        } catch (BusinessException be){
+            throw be;
+        } catch (Exception ex){
+            throw BusinessException.of(GENERAL_FAIL_MESSAGE, ex);
+        }
     }
 
+//    @Override
+//    public Page<ServiceProviderDTO> getAllServiceProviders(java.awt.print.Pageable pageable) {
+//        Page<ServiceProvider> serviceProviders = serviceProviderRepository.findAll((Pageable) pageable);
+//        return serviceProviders.map(this::mapToDTO);
+//    }
+
     @Override
-    public Page<ServiceProviderDTO> getAllServiceProviders(java.awt.print.Pageable pageable) {
-        Page<ServiceProvider> serviceProviders = serviceProviderRepository.findAll((Pageable) pageable);
-        return serviceProviders.map(this::mapToDTO);
+    @Transactional
+    public GeneralResponse<ServiceProviderDTO> updateServiceProvider(Long id, ServiceProviderDTO serviceProviderDTO) {
+        try{
+            //Find in database
+            ServiceProvider serviceProvider = serviceProviderRepository.findById(id).orElseThrow();
+
+            //Update service provider information
+            ServiceProvider newServiceProvider = serviceProviderMapper.toEntity(serviceProviderDTO);
+            newServiceProvider.setId(serviceProvider.getId());
+
+            serviceProviderRepository.save(newServiceProvider);
+            serviceProviderDTO.setId(serviceProvider.getId());
+            return new GeneralResponse<>(HttpStatus.OK.value(), UPDATE_SERVICE_PROVIDER_SUCCESS, serviceProviderDTO);
+        } catch (BusinessException be){
+            throw be;
+        } catch (Exception ex){
+            throw BusinessException.of(UPDATE_SERVICE_PROVIDER_FAIL, ex);
+        }
+
     }
 
     @Override
     @Transactional
-    public ServiceProviderDTO updateServiceProvider(Long id, ChangableServiceProviderDTO serviceProviderDTO) {
-        ServiceProvider serviceProvider = serviceProviderRepository.findById(id)
-                .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND_MESSAGE));
+    public GeneralResponse<ServiceProviderDTO> deleteServiceProvider(Long id, boolean isDeleted) {
+        try{
+            ServiceProvider serviceProvider = serviceProviderRepository.findById(id).orElseThrow();
 
-        ServiceProvider updatedServiceProvider = mapToEntity(serviceProviderDTO);
-        updatedServiceProvider.setId(serviceProvider.getId());
-        updatedServiceProvider.setCreatedAt(serviceProvider.getCreatedAt());
-        updatedServiceProvider.setUpdatedAt(LocalDateTime.now());
+            serviceProvider.setDeleted(isDeleted);
+            serviceProvider.setUpdatedAt(LocalDateTime.now());
+            serviceProviderRepository.save(serviceProvider);
 
-        ServiceProvider savedServiceProvider = serviceProviderRepository.save(updatedServiceProvider);
-        return mapToDTO(savedServiceProvider);
+            ServiceProviderDTO serviceProviderDTO = serviceProviderMapper.toDTO(serviceProvider);
+            return new GeneralResponse<>(HttpStatus.OK.value(), UPDATE_SERVICE_PROVIDER_SUCCESS, serviceProviderDTO);
+        }catch (BusinessException be){
+            throw be;
+        } catch (Exception ex){
+            throw BusinessException.of(UPDATE_SERVICE_PROVIDER_FAIL, ex);
+        }
     }
 
-    @Override
-    @Transactional
-    public void deleteServiceProvider(Long id) {
-        ServiceProvider serviceProvider = serviceProviderRepository.findById(id)
-                .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND_MESSAGE));
-        serviceProvider.setDeleted(true);
-        serviceProvider.setUpdatedAt(LocalDateTime.now());
-        serviceProviderRepository.save(serviceProvider);
-    }
 
-    private ServiceProviderDTO mapToDTO(ServiceProvider serviceProvider) {
-        ServiceProviderDTO dto = new ServiceProviderDTO();
-        dto.setId(serviceProvider.getId());
-        dto.setImageUrl(serviceProvider.getImageUrl());
-        dto.setAbbreviation(serviceProvider.getAbbreviation());
-        dto.setWebsite(serviceProvider.getWebsite());
-        dto.setEmail(serviceProvider.getEmail());
-        dto.setPhone(serviceProvider.getPhone());
-        dto.setAddress(serviceProvider.getAddress());
-        dto.setDeleted(serviceProvider.isDeleted());
-        dto.setCreatedAt(serviceProvider.getCreatedAt());
-        dto.setUpdatedAt(serviceProvider.getUpdatedAt());
-
-        if (serviceProvider.getLocation() != null) {
-            LocationDTO locationDTO = new LocationDTO();
-            locationDTO.setId(serviceProvider.getLocation().getId());
-            locationDTO.setName(serviceProvider.getLocation().getName());
-            dto.setLocation(locationDTO);
-        }
-
-        if (serviceProvider.getGeoPosition() != null) {
-            GeoPositionDTO geoPositionDTO = new GeoPositionDTO();
-            geoPositionDTO.setId(serviceProvider.getGeoPosition().getId());
-            geoPositionDTO.setLatitude(serviceProvider.getGeoPosition().getLatitude());
-            geoPositionDTO.setLongitude(serviceProvider.getGeoPosition().getLongitude());
-            dto.setGeoPosition(geoPositionDTO);
-        }
-
-        if (serviceProvider.getServiceCategories() != null) {
-             dto.setServiceCategories(serviceProvider.getServiceCategories().stream()
-                    .map(category -> {
-                        ServiceCategoryDTO categoryDTO = new ServiceCategoryDTO();
-                        categoryDTO.setId(category.getId());
-                        categoryDTO.setName(category.getCategoryName());
-                        return categoryDTO;
-                    })
-                    .collect(Collectors.toSet()));
-        }
-
-        return dto;
-    }
-
-    private ServiceProvider mapToEntity(ChangableServiceProviderDTO dto) {
-        ServiceProvider serviceProvider = new ServiceProvider();
-        serviceProvider.setImageUrl(dto.getImageUrl());
-        serviceProvider.setAbbreviation(dto.getAbbreviation());
-        serviceProvider.setWebsite(dto.getWebsite());
-        serviceProvider.setEmail(dto.getEmail());
-        serviceProvider.setPhone(dto.getPhone());
-        serviceProvider.setAddress(dto.getAddress());
-
-        if (dto.getLocation() != null) {
-            Location location = new Location();
-            location.setId(dto.getLocation().getId());
-            location.setName(dto.getLocation().getName());
-            serviceProvider.setLocation(location);
-        }
-
-        if (dto.getGeoPosition() != null) {
-            GeoPosition geoPosition = new GeoPosition();
-            geoPosition.setId(dto.getGeoPosition().getId());
-            geoPosition.setLatitude(dto.getGeoPosition().getLatitude());
-            geoPosition.setLongitude(dto.getGeoPosition().getLongitude());
-            serviceProvider.setGeoPosition(geoPosition);
-        }
-
-        if (dto.getServiceCategories() != null) {
-            serviceProvider.setServiceCategories(dto.getServiceCategories().stream()
-                    .map(categoryDTO -> {
-                        ServiceCategory category = new ServiceCategory();
-                        category.setId(categoryDTO.getId());
-                        category.setCategoryName(categoryDTO.getName());
-                        return category;
-                    })
-                    .collect(Collectors.toSet()));
-        }
-
-        return serviceProvider;
-    }
 }
 

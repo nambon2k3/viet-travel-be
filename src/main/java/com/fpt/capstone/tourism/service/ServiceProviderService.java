@@ -10,8 +10,8 @@ import org.springframework.data.domain.Page;
 
 public interface ServiceProviderService {
         GeneralResponse<ServiceProviderDTO> save(ServiceProviderDTO serviceProviderDTO);
-        ServiceProviderDTO getServiceProviderById(Long id);
+        GeneralResponse<ServiceProviderDTO> getServiceProviderById(Long id);
         Page<ServiceProviderDTO> getAllServiceProviders(Pageable pageable);
-        ServiceProviderDTO updateServiceProvider(Long id, ChangableServiceProviderDTO serviceProviderDTO);
-        void deleteServiceProvider(Long id);
+        GeneralResponse<ServiceProviderDTO> updateServiceProvider(Long id, ServiceProviderDTO serviceProviderDTO);
+        GeneralResponse<ServiceProviderDTO> deleteServiceProvider(Long id, boolean isDeleted);
 }

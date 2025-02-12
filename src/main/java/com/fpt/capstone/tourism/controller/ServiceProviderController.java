@@ -25,28 +25,25 @@ public class ServiceProviderController {
         return ResponseEntity.ok(serviceProviderService.save(serviceProviderDTO));
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<ServiceProviderDTO> getServiceProviderById(@PathVariable Long id) {
-//        ServiceProviderDTO serviceProviderDTO = serviceProviderService.getServiceProviderById(id);
-//        return ResponseEntity.ok(serviceProviderDTO);
-//    }
-//
+    @GetMapping("/details/{id}")
+    public ResponseEntity<GeneralResponse<ServiceProviderDTO>> getDetail(@PathVariable Long id) {
+        return ResponseEntity.ok(serviceProviderService.getServiceProviderById(id));
+    }
+
 //    @GetMapping
 //    public ResponseEntity<Page<ServiceProviderDTO>> getAllServiceProviders(Pageable pageable) {
 //        Page<ServiceProviderDTO> serviceProviders = serviceProviderService.getAllServiceProviders((java.awt.print.Pageable) pageable);
 //        return ResponseEntity.ok(serviceProviders);
 //    }
 //
-//    @PutMapping("/{id}")
-//    public ResponseEntity<ServiceProviderDTO> updateServiceProvider(@PathVariable Long id, @Valid @RequestBody ChangableServiceProviderDTO serviceProviderDTO) {
-//        ServiceProviderDTO updatedServiceProvider = serviceProviderService.updateServiceProvider(id, serviceProviderDTO);
-//        return ResponseEntity.ok(updatedServiceProvider);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteServiceProvider(@PathVariable Long id) {
-//        serviceProviderService.deleteServiceProvider(id);
-//        return ResponseEntity.noContent().build();
-//    }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<GeneralResponse<ServiceProviderDTO>> updateServiceProvider(@PathVariable Long id, @RequestBody ServiceProviderDTO serviceProviderDTO) {
+        return ResponseEntity.ok(serviceProviderService.updateServiceProvider(id, serviceProviderDTO));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<GeneralResponse<ServiceProviderDTO>> deleteServiceProvider(@PathVariable Long id, @RequestParam boolean isDeleted) {
+        return ResponseEntity.ok(serviceProviderService.deleteServiceProvider(id, isDeleted));
+    }
 }
 

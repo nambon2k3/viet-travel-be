@@ -32,6 +32,12 @@ public class Constants {
         public static final String INVALID_REGISTER_INFO= "Register information is invalid";
         public static final String INVALID_CONFIRMATION_TOKEN = "Invalid confirmation token, please check again";
         public static final String CONFIRM_EMAIL_FAILED = "Confirm email failed";
+        public static final String CREATE_SERVICE_PROVIDER_SUCCESS = "Create Service Provider successfully";
+        public static final String CREATE_SERVICE_PROVIDER_FAIL = "Create Service Provider fail";
+        public static final String UPDATE_SERVICE_PROVIDER_SUCCESS = "Update Service Provider successfully";
+        public static final String UPDATE_SERVICE_PROVIDER_FAIL = "Update Service Provider fail";
+        public static final String GENERAL_SUCCESS_MESSAGE = "Successfully";
+        public static final String GENERAL_FAIL_MESSAGE = "Failed";
     }
 
 
