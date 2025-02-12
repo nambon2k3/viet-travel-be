@@ -11,7 +11,7 @@
 	<groupId>com.fpt.capstone</groupId>
 	<artifactId>tourism</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>tourism</name>
 	<description>Project for tourism in Viet Nam</description>
 	<url/>
@@ -69,14 +69,11 @@
 			<version>2.7.0</version>
 		</dependency>
 
-
-
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5.13</version>
 		</dependency>
-
 
 		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
 		<dependency>
@@ -98,15 +95,10 @@
 			<version>0.12.5</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-
-
-
-
 	</dependencies>
 
 	<build>
