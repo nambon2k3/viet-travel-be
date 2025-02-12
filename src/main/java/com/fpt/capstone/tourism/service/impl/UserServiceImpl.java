@@ -175,6 +175,7 @@ public class UserServiceImpl implements UserService {
                     .phone(currentUser.getPhone())
                     .address(currentUser.getAddress())
                     .avatarImg(currentUser.getAvatarImage())
+                    .createAt(currentUser.getCreatedAt().toString())
                     .build();
 
             return GeneralResponse.of(userProfileResponseDTO, GET_PROFILE_SUCCESS);

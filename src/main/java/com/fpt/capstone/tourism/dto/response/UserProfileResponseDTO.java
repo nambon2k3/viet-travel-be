@@ -16,4 +16,5 @@ public class UserProfileResponseDTO {
     private String phone;
     private String address;
     private String avatarImg;
+    private String createAt;
 }
