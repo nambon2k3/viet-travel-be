@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("${api.prefix}/admin/staffs")
 @RequiredArgsConstructor
-public class UserManagementController {
+public class StaffManagementController {
 
     private final UserService userService;
 
@@ -40,8 +40,14 @@ public class UserManagementController {
         return ResponseEntity.ok(userService.updateUser(id, userDTO));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.deleteUser(id));
     }
+
+    @PutMapping("/recover/{id}")
+    public ResponseEntity<GeneralResponse<?>> recoverStaff(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.recoverStaff(id));
+    }
+
 }

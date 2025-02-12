@@ -27,6 +27,7 @@ public interface UserService {
     GeneralResponse<?> createUser(UserCreationRequestDTO userDTO);
     GeneralResponse<?> updateUser(Long id, UserCreationRequestDTO userDTO);
     GeneralResponse<?> deleteUser(Long id);
+    GeneralResponse<?> recoverStaff(Long id);
 
     GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>> getAllUser(int page, int size);
     void createEmailConfirmationToken(User user, String token);
@@ -39,4 +40,5 @@ public interface UserService {
     GeneralResponse<String> changePassword(String token, String currentPassword, String newPassword, String newRePassword);
 
     GeneralResponse<String> updateAvatar(Long userId, MultipartFile file);
+
 }

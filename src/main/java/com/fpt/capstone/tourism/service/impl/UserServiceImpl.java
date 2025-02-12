@@ -438,6 +438,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public GeneralResponse<?> recoverStaff(Long id) {
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, USER_NOT_FOUND_MESSAGE));
+            if (!user.isDeleted()) {
+                return GeneralResponse.of(HttpStatus.BAD_REQUEST, USER_ALREADY_ACTIVE_MESSAGE);
+            }
+            user.setDeleted(false);
+            userRepository.save(user);
+            return GeneralResponse.of(HttpStatus.OK, RECOVER_USER_SUCCESS_MESSAGE);
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            throw BusinessException.of(HttpStatus.INTERNAL_SERVER_ERROR, RECOVER_USER_FAIL_MESSAGE, e);
+        }
+    }
+
+
+    @Override
     public GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>> getAllUser(int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);

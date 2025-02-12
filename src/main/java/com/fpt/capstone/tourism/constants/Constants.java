@@ -90,6 +90,9 @@ public class Constants {
         public static final String DELETE_USER_FAIL_MESSAGE = "User deleted failed";
         public static final String GET_ALL_USER_SUCCESS_MESSAGE = "Get all users successfully";
         public static final String GET_ALL_USER_FAIL_MESSAGE = "Get all users failed";
+        public static final String USER_ALREADY_ACTIVE_MESSAGE = "The user is already active.";
+        public static final String RECOVER_USER_SUCCESS_MESSAGE = "User successfully recovered.";
+        public static final String RECOVER_USER_FAIL_MESSAGE = "Failed to recover user.";
     }
 
 
