@@ -1,4 +1,4 @@
-name: DEPLOYMENT with GHA
+name: DEPLOYMENT
 
 on:
   workflow_dispatch:
