@@ -36,6 +36,12 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
     }
 
     @Override
+    public GeneralResponse<ServiceProviderDTO> save(ServiceProviderDTO serviceProviderDTO) {
+
+        return null;
+    }
+
+    @Override
     public ServiceProviderDTO getServiceProviderById(Long id) {
         ServiceProvider serviceProvider = serviceProviderRepository.findById(id)
                 .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND_MESSAGE));

@@ -32,3 +32,6 @@ endpoints:
 
 secret-key: ${SECRET_KEY:afd0ad66a5ec99ec457a5c4f9adcd46288a9e3fac01acf77ab1a23c918bd1d0e}
 expired-time: 86400000
+
+api:
+  prefix: api/v1
