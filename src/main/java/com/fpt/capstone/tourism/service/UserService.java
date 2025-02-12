@@ -2,10 +2,10 @@ package com.fpt.capstone.tourism.service;
 
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.UserProfileRequestDTO;
+import com.fpt.capstone.tourism.dto.response.UserFullInformationResponseDTO;
 import com.fpt.capstone.tourism.dto.response.UserProfileResponseDTO;
 import com.fpt.capstone.tourism.dto.request.UserCreationRequestDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
-import com.fpt.capstone.tourism.dto.response.UserManageGeneralInformationResponseDTO;
 import com.fpt.capstone.tourism.model.User;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +28,7 @@ public interface UserService {
     GeneralResponse<?> updateUser(Long id, UserCreationRequestDTO userDTO);
     GeneralResponse<?> deleteUser(Long id);
 
-    GeneralResponse<PagingDTO<List<UserManageGeneralInformationResponseDTO>>> getAllUser(int page, int size);
+    GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>> getAllUser(int page, int size);
     void createEmailConfirmationToken(User user, String token);
     User findUserByEmailConfirmationToken(String token);
     void deleteEmailConfirmationToken(String token);

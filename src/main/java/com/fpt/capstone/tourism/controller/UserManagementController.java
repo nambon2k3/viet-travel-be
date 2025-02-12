@@ -3,7 +3,7 @@ package com.fpt.capstone.tourism.controller;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.UserCreationRequestDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
-import com.fpt.capstone.tourism.dto.response.UserManageGeneralInformationResponseDTO;
+import com.fpt.capstone.tourism.dto.response.UserFullInformationResponseDTO;
 import com.fpt.capstone.tourism.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("${api.prefix}/CEO/users")
+@RequestMapping("${api.prefix}/admin/staffs")
 @RequiredArgsConstructor
 public class UserManagementController {
 
@@ -24,7 +24,7 @@ public class UserManagementController {
     }
 
     @GetMapping()
-    public ResponseEntity<GeneralResponse<PagingDTO<List<UserManageGeneralInformationResponseDTO>>>> getAllUsers(
+    public ResponseEntity<GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(userService.getAllUser(page, size));

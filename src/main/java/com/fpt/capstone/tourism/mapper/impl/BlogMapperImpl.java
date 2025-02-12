@@ -1,6 +1,7 @@
 package com.fpt.capstone.tourism.mapper.impl;
 
 import com.fpt.capstone.tourism.dto.common.BlogDTO;
+import com.fpt.capstone.tourism.dto.request.UserCreationRequestDTO;
 import com.fpt.capstone.tourism.mapper.AuthorMapper;
 import com.fpt.capstone.tourism.mapper.BlogMapper;
 import com.fpt.capstone.tourism.mapper.TagMapper;
