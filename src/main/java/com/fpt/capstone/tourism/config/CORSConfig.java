@@ -10,7 +10,8 @@ public class CORSConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:4200") // Client endpoints
-                .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS") //  HTTP methods allowed to request
-                .allowedHeaders("*");
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") //  HTTP methods allowed to request
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }

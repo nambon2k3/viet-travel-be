@@ -24,11 +24,23 @@ spring:
           auth: true
           starttls:
             enable: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
 
 endpoints:
   connect-timeout: 100000
   read-timeout: 100000
 
+cloudinary:
+  cloud-name: deblf9l5e
+  api-key: 223448659871534
+  api-secret: xto-GIFw7MPha4Bx6jVTpt4FmdU
 
 secret-key: ${SECRET_KEY:afd0ad66a5ec99ec457a5c4f9adcd46288a9e3fac01acf77ab1a23c918bd1d0e}
 expired-time: 86400000
+
+api:
+  prefix: api/v1

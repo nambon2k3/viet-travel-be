@@ -8,5 +8,6 @@ public enum RoleName {
     SALESMAN,
     MARKETER,
     OPERATOR,
-    ACCOUNTANT
+    ACCOUNTANT,
+    SYSTEM_ADMIN
 }

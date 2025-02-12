@@ -2,7 +2,6 @@ package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
-import com.fpt.capstone.tourism.helper.TokenEncryptorImpl;
 import com.fpt.capstone.tourism.model.Token;
 import com.fpt.capstone.tourism.model.User;
 import com.fpt.capstone.tourism.repository.EmailConfirmationTokenRepository;
@@ -38,7 +37,7 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
     public void sendConfirmationEmail(User user, Token token) {
         try {
             //Token encryptor when need
-            String encryptedToken = TokenEncryptorImpl.encrypt(token.getToken());
+            //String encryptedToken = TokenEncryptorImpl.encrypt(token.getToken());
 
             String link = "http://localhost:8080/api/auth/confirm-email?token=" + token.getToken();
             String subject = "Viet Travel Email Confirmation";
@@ -52,6 +51,32 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
             throw BusinessException.of(Constants.Message.TOKEN_ENCRYPTION_FAILED_MESSAGE, e);
         }
     }
+    public String generateTemporaryToken() {
+        return UUID.randomUUID().toString();
+    }
+
+
+    @Override
+    public void sendForgotPasswordEmail(User user, Token token) {
+        try {
+
+
+            String link = "http://localhost:8080/api/reset-password?token=" + token.getToken();
+            String subject = "Reset Password";
+            String content = "Dear " + user.getFullName() + ",\n\n"
+                    + "Hello,"
+                    + "\nYou have requested to reset your password.\n\n"
+                    + "Click the link below to change your password:\n" + link
+                    +"\nIgnore this email if you do remember your password, or you have not made the request.";
+
+            emailService.sendEmail(user.getEmail(), subject, content);
+
+        } catch (Exception e) {
+            throw BusinessException.of(Constants.Message.TOKEN_ENCRYPTION_FAILED_MESSAGE, e);
+        }
+    }
+
+
 
     @Override
     public Token validateConfirmationToken(String token) {

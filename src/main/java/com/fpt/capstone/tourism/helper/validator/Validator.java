@@ -1,83 +1,139 @@
 package com.fpt.capstone.tourism.helper.validator;
 
-import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
-import java.util.function.Predicate;
+import java.util.List;
 
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
 import static com.fpt.capstone.tourism.constants.Constants.Regex.*;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
-
 public class Validator {
 
-    //Regex validation
+    // General Validation
     public static void validateRegex(String value, String regex, String errorMessage) {
         if (!value.matches(regex)) {
             throw BusinessException.of(HttpStatus.BAD_REQUEST, errorMessage);
         }
     }
 
-    public static boolean isRegisterValid(String username, String password, String rePassword, String fullName, String phone, String address, String email) {
-        return Validator.isFieldValid(username, Validator::isUsernameValid, Constants.UserExceptionInformation.USERNAME_INVALID) &&
-                Validator.isFieldValid(password, Validator::isPasswordValid, Constants.UserExceptionInformation.PASSWORD_INVALID) &&
-                Validator.isFieldValid(rePassword, Validator::isNullOrEmpty, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
-                Validator.isFieldValid(fullName, Validator::isFullNameValid, Constants.UserExceptionInformation.FULL_NAME_INVALID) &&
-                Validator.isFieldValid(phone, Validator::isPhoneValid, Constants.UserExceptionInformation.PHONE_INVALID) &&
-                Validator.isFieldValid(address, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
-                Validator.isFieldValid(email, Validator::isEmailValid, EMAIL_INVALID);
-
-    }
-
-    public static boolean isLoginValid(String username, String password) {
-        return Validator.isFieldValid(username, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY) &&
-                Validator.isFieldValid(password, null, Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
-
-    }
-
-    public static void validateServiceContact(String fullName, String phoneNumber, String email, String position) {
-        Validator.isNullOrEmpty(fullName);
-        Validator.isNullOrEmpty(phoneNumber);
-        validateRegex(phoneNumber, REGEX_PHONE, PHONE_INVALID);
-        Validator.isNullOrEmpty(email);
-        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
-        Validator.isNullOrEmpty(position);
-    }
-
-
-    public static boolean isNullOrEmpty(String value){
-        if(!(StringUtils.hasText(value))){
-            throw BusinessException.of(HttpStatus.BAD_REQUEST,Constants.UserExceptionInformation.USER_INFORMATION_NULL_OR_EMPTY);
+    public static void isNullOrEmpty(String value, String errorMessage) {
+        if (!StringUtils.hasText(value)) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, errorMessage);
         }
-        return true;
     }
-    public static boolean isUsernameValid(String value) {
-        return value.matches(Constants.Regex.REGEX_USERNAME);
-    }
-
     public static boolean isPasswordValid(String value){
-        return value.matches(Constants.Regex.REGEX_PASSWORD);
+        return value.matches(REGEX_PASSWORD);
     }
 
-    public static boolean isFullNameValid(String value){
-        return value.trim().matches(Constants.Regex.REGEX_FULLNAME);
+    // Authentication Validation
+    public static void validateLogin(String username, String password) {
+        isNullOrEmpty(username, EMPTY_USERNAME);
+        validateRegex(username, REGEX_USERNAME, USERNAME_INVALID);
+        isNullOrEmpty(password, EMPTY_PASSWORD);
+        validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
     }
 
-    public static boolean isEmailValid(String value){
-        return value.matches(Constants.Regex.REGEX_EMAIL);
-    }
-    public static boolean isPhoneValid(String value) { return value.matches(REGEX_PHONE);}
+    public static void validateRegister(String username, String password, String rePassword, String fullName,
+                                        String phone, String address, String email) {
+        isNullOrEmpty(username, EMPTY_USERNAME);
+        validateRegex(username, REGEX_USERNAME, USERNAME_INVALID);
 
-    public static boolean isFieldValid(String value, Predicate<String> validation, String message) {
-        if (Validator.isNullOrEmpty(value)) {
-            return false;
+        isNullOrEmpty(password, EMPTY_PASSWORD);
+        validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
+
+        isNullOrEmpty(rePassword, EMPTY_REPASSWORD);
+        if (!password.equals(rePassword)) {
+            throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
         }
-        if (validation != null && !validation.test(value)) {
-            throw BusinessException.of(HttpStatus.BAD_REQUEST, message);
+
+        isNullOrEmpty(fullName, EMPTY_FULL_NAME);
+        validateRegex(fullName, REGEX_FULLNAME, FULL_NAME_INVALID);
+
+        isNullOrEmpty(phone, EMPTY_PHONE_NUMBER);
+        validateRegex(phone, REGEX_PHONE, PHONE_INVALID);
+
+        isNullOrEmpty(address, EMPTY_ADDRESS);
+
+        isNullOrEmpty(email, EMPTY_EMAIL);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+    }
+
+    // Common Feature Validation
+    public static void validateProfile(String fullName, String email, String phone, String address) {
+        isNullOrEmpty(fullName, EMPTY_FULL_NAME);
+        validateRegex(fullName, REGEX_FULLNAME, FULL_NAME_INVALID);
+
+        isNullOrEmpty(email, EMPTY_EMAIL);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+
+        isNullOrEmpty(phone, EMPTY_PHONE_NUMBER);
+        validateRegex(phone, REGEX_PHONE, PHONE_INVALID);
+
+        isNullOrEmpty(address, USER_INFORMATION_NULL_OR_EMPTY);
+    }
+
+    // User Management Validation
+    public static void validateUserCreation(String fullName, String username, String password, String rePassword,
+                                            String email, String gender, String phone, String address,
+                                            String avatarImage, List<String> roleNames) {
+        validateUserFields(fullName, username, password, rePassword, email, gender, phone, address, avatarImage, roleNames);
+    }
+
+    public static void validateUserUpdate(String fullName, String username, String password, String rePassword,
+                                          String email, String gender, String phone, String address,
+                                          String avatarImage, List<String> roleNames) {
+        validateUserFields(fullName, username, password, rePassword, email, gender, phone, address, avatarImage, roleNames);
+
+        // Only validate password if provided
+        if (StringUtils.hasText(password)) {
+            validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
         }
-        return true;
+    }
+
+    private static void validateUserFields(String fullName, String username, String password, String rePassword,
+                                           String email, String gender, String phone, String address,
+                                           String avatarImage, List<String> roleNames) {
+        isNullOrEmpty(fullName, EMPTY_FULL_NAME);
+        validateRegex(fullName, REGEX_FULLNAME, FULL_NAME_INVALID);
+
+        isNullOrEmpty(username, EMPTY_USERNAME);
+        validateRegex(username, REGEX_USERNAME, USERNAME_INVALID);
+
+        isNullOrEmpty(password, EMPTY_PASSWORD);
+        validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
+
+        isNullOrEmpty(rePassword, EMPTY_REPASSWORD);
+        if (!password.equals(rePassword)) {
+            throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
+        }
+        isNullOrEmpty(email, EMPTY_EMAIL);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+
+        isNullOrEmpty(phone, EMPTY_PHONE_NUMBER);
+        validateRegex(phone, REGEX_PHONE, PHONE_INVALID);
+
+        isNullOrEmpty(address, EMPTY_ADDRESS);
+        //isNullOrEmpty(avatarImage, USER_INFORMATION_NULL_OR_EMPTY);
+
+        if (!"male".equalsIgnoreCase(gender) && !"female".equalsIgnoreCase(gender)) {
+            throw BusinessException.of(GENDER_INVALID);
+        }
+
+        if (roleNames == null || roleNames.isEmpty()) {
+            throw BusinessException.of(ROLES_NAME_INVALID);
+        }
+    }
+
+    // Service Contact Validation
+    public static void validateServiceContact(String fullName, String phoneNumber, String email, String position) {
+        isNullOrEmpty(fullName, EMPTY_FULL_NAME);
+        isNullOrEmpty(phoneNumber, EMPTY_PHONE_NUMBER);
+        validateRegex(phoneNumber, REGEX_PHONE, PHONE_INVALID);
+        isNullOrEmpty(email, EMPTY_EMAIL);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+        isNullOrEmpty(position, EMPTY_POSITION);
     }
 }

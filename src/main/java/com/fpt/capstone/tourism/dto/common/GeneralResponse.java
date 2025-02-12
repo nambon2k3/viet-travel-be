@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.mapstruct.Mapper;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -54,6 +55,7 @@ public class GeneralResponse<T> {
                 .build();
     }
 
+
     public static GeneralResponse<Object> of(Exception ex, String customMessageErr) {
         return GeneralResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.value())
@@ -61,4 +63,6 @@ public class GeneralResponse<T> {
                 .data(ex.getMessage())
                 .build();
     }
+
+
 }

@@ -4,6 +4,7 @@ import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.TokenDTO;
 import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
+import com.fpt.capstone.tourism.dto.request.LoginRequestDTO;
 import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.enums.RoleName;
@@ -27,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Service;
 
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
@@ -48,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
     public GeneralResponse<TokenDTO> login(UserDTO userDTO) {
 
         try {
-            Validator.isLoginValid(userDTO.getUsername(), userDTO.getPassword());
+            Validator.validateLogin(userDTO.getUsername(), userDTO.getPassword());
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     userDTO.getUsername(), userDTO.getPassword()
@@ -70,10 +72,11 @@ public class AuthServiceImpl implements AuthService {
                     .expirationTime("24h")
                     .build();
             return new GeneralResponse<>(HttpStatus.OK.value(), LOGIN_SUCCESS_MESSAGE, tokenDTO);
+
         } catch (BusinessException be) {
             throw be;
         } catch (Exception ex) {
-            throw BusinessException.of(LOGIN_FAIL_MESSAGE, ex);
+            throw BusinessException.of(HttpStatus.BAD_REQUEST,LOGIN_FAIL_MESSAGE, ex);
         }
     }
 
@@ -82,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
     public GeneralResponse<UserInfoResponseDTO> register(RegisterRequestDTO registerRequestDTO) {
         try {
             // Validate input data
-            Validator.isRegisterValid(
+            Validator.validateRegister(
                     registerRequestDTO.getUsername(),
                     registerRequestDTO.getPassword(),
                     registerRequestDTO.getRePassword(),
@@ -90,8 +93,6 @@ public class AuthServiceImpl implements AuthService {
                     registerRequestDTO.getPhone(),
                     registerRequestDTO.getAddress(),
                     registerRequestDTO.getEmail());
-
-
             if (userService.existsByUsername(registerRequestDTO.getUsername())) {
                 throw BusinessException.of(HttpStatus.CONFLICT, USERNAME_ALREADY_EXISTS_MESSAGE);
             }
@@ -119,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
             User user = User.builder()
                     .username(registerRequestDTO.getUsername())
                     .fullName(registerRequestDTO.getFullName())
-                    .email(registerRequestDTO.getEmail())
+                    .email(registerRequestDTO.getEmail().trim().toLowerCase())
                     .password(passwordEncoder.encode(registerRequestDTO.getPassword()))
                     .gender(registerRequestDTO.getGender())
                     .phone(registerRequestDTO.getPhone())
@@ -156,6 +157,8 @@ public class AuthServiceImpl implements AuthService {
                     .build();
 
             return new GeneralResponse<>(HttpStatus.CREATED.value(), Constants.Message.EMAIL_CONFIRMATION_REQUEST_MESSAGE, userResponseDTO);
+        } catch (BusinessException be){
+            throw be;
         } catch (Exception e) {
             throw BusinessException.of(REGISTER_FAIL_MESSAGE);
         }
@@ -173,6 +176,7 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             throw BusinessException.of(CONFIRM_EMAIL_FAILED);
         }
+
     }
 
 }
