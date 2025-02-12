@@ -35,7 +35,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
     @Override
     @Transactional
-    public GeneralResponse<?> createServiceContact(ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
+    public GeneralResponse<?> create(ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
         try {
             // Validate required fields
             Validator.validateServiceContact(
@@ -67,6 +67,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
             // Convert to DTO and set service provider name
             ServiceContactManagementRequestDTO responseDTO = serviceContactMapper.toDTO(savedServiceContact);
+            responseDTO.setServiceProviderId(serviceProvider.getId());
             responseDTO.setServiceProviderName(serviceProvider.getName());
 
             return GeneralResponse.of(responseDTO, CREATE_SERVICE_CONTACT_SUCCESS);
@@ -80,7 +81,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
     @Override
     @Transactional
-    public GeneralResponse<?> updateServiceContact(Long id, ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
+    public GeneralResponse<?> update(Long id, ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
         try {
             // Validate required fields
             Validator.validateServiceContact(
@@ -145,7 +146,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
 
     @Override
-    public GeneralResponse<?> getServiceContactById(Long id) {
+    public GeneralResponse<?> getById(Long id) {
         try {
             ServiceContact serviceContact = serviceContactRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
@@ -154,6 +155,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
             ServiceContactManagementRequestDTO responseDTO = serviceContactMapper.toDTO(serviceContact);
             // Set the service provider name
             if (serviceContact.getServiceProvider() != null) {
+                responseDTO.setServiceProviderId(serviceContact.getServiceProvider().getId());
                 responseDTO.setServiceProviderName(serviceContact.getServiceProvider().getName());
             }
             return GeneralResponse.of(responseDTO, GET_SERVICE_CONTACT_SUCCESS);
@@ -166,7 +168,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
 
     @Override
-    public GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>> getAllServiceContacts(int page, int size) {
+    public GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>> getAll(int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<ServiceContact> serviceContactPage = serviceContactRepository.findAll(pageable);
@@ -198,7 +200,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
     @Override
     @Transactional
-    public GeneralResponse<?> deleteServiceContact(Long id) {
+    public GeneralResponse<?> delete(Long id) {
         try {
             ServiceContact serviceContact = serviceContactRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
@@ -211,4 +213,20 @@ public class ServiceContactServiceImpl implements ServiceContactService {
             throw BusinessException.of(DELETE_SERVICE_CONTACT_FAIL, e);
         }
     }
+
+    @Override
+    public GeneralResponse<?> recover(Long id) {
+        try {
+            ServiceContact serviceContact = serviceContactRepository.findById(id)
+                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
+            if (!serviceContact.isDeleted()) {
+                serviceContact.setDeleted(false);
+                serviceContactRepository.save(serviceContact);
+            }
+            return GeneralResponse.of(RECOVER_SERVICE_CONTACT_SUCCESS);
+        } catch (Exception e) {
+            throw BusinessException.of(RECOVER_SERVICE_CONTACT_FAIL, e);
+        }
+    }
+
 }

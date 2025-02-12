@@ -19,29 +19,34 @@ public class ServiceContactController {
     private final ServiceContactService serviceContactService;
 
     @PostMapping
-    public ResponseEntity<?> createServiceContact(@Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
-        return ResponseEntity.ok(serviceContactService.createServiceContact(serviceContactManagementRequestDTO));
+    public ResponseEntity<?> create(@Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
+        return ResponseEntity.ok(serviceContactService.create(serviceContactManagementRequestDTO));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getServiceContactById(@PathVariable Long id) {
-        return ResponseEntity.ok(serviceContactService.getServiceContactById(id));
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(serviceContactService.getById(id));
     }
 
     @GetMapping
-    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>>> getAllServiceContacts(
+    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(serviceContactService.getAllServiceContacts(page, size));
+        return ResponseEntity.ok(serviceContactService.getAll(page, size));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateServiceContact(@PathVariable Long id, @Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
-        return ResponseEntity.ok(serviceContactService.updateServiceContact(id, serviceContactManagementRequestDTO));
+    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
+        return ResponseEntity.ok(serviceContactService.update(id, serviceContactManagementRequestDTO));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteServiceContact(@PathVariable Long id) {
-        return ResponseEntity.ok(serviceContactService.deleteServiceContact(id));
+    @DeleteMapping("/recover/{id}")
+    public ResponseEntity<?> recover(@PathVariable Long id) {
+        return ResponseEntity.ok(serviceContactService.recover(id));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return ResponseEntity.ok(serviceContactService.delete(id));
     }
 }
