@@ -356,13 +356,11 @@ public class UserServiceImpl implements UserService {
             // Find user by ID
             User user = userRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, USER_NOT_FOUND_MESSAGE));
-
             // Check for duplicate username (except for the current user)
             Optional<User> existingUser = userRepository.findByUsername(userDTO.getUsername());
             if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
                 throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_USERNAME_MESSAGE);
             }
-
             // Check for duplicate email (except for the current user)
             Optional<User> existingEmailUser = userRepository.findByEmail(userDTO.getEmail());
             if (existingEmailUser.isPresent() && !existingEmailUser.get().getId().equals(id)) {
