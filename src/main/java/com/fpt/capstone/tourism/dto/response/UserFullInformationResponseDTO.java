@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserFullInformationResponseDTO {
+    private Long id;
     private String fullName;
     private String username;
     private String password;
@@ -20,8 +21,12 @@ public class UserFullInformationResponseDTO {
     private String phone;
     private String address;
     private String avatarImage;
-    private List<String> roles;
+    private List<String> roleNames;
     private boolean isDeleted;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public void setRoles(List<String> roles) {
+        this.roleNames = roles;
+    }
 }

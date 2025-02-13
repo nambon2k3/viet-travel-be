@@ -22,13 +22,13 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/user-profile")
+@RequestMapping("${api.prefix}/user-profile")
 public class UserProfileController {
 
     private final UserService userService;
     private final CloudinaryService cloudinaryService;
 
-    @PostMapping()
+    @GetMapping()
     public ResponseEntity<GeneralResponse<UserProfileResponseDTO>> getUserProfile(
             @RequestHeader("Authorization") String token
     ){

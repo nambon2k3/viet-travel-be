@@ -40,6 +40,15 @@ public class BusinessException extends RuntimeException {
                 .responseData(null)
                 .build();
     }
+
+    public static BusinessException of(HttpStatus status, String responseMessage,Exception e) {
+        return BusinessException.builder()
+                .httpCode(status.value())
+                .responseMessage(responseMessage)
+                .responseData(e.getLocalizedMessage())
+                .build();
+    }
+
     public static BusinessException of(HttpStatus status, String responseMessage, Object responseData) {
         return BusinessException.builder()
                 .httpCode(status.value())

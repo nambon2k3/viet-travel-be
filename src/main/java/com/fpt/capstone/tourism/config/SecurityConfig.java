@@ -2,7 +2,7 @@ package com.fpt.capstone.tourism.config;
 
 import com.fpt.capstone.tourism.service.impl.UserDetailsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,18 +23,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
-
     private final JWTAuthFilter jwtAuthFilter;
+
+    @Value("${api.prefix}")
+    private String apiPrefix;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**").permitAll()
-                        .requestMatchers("/api/v1/**", "/public/**").permitAll()
+                        .requestMatchers(apiPrefix+"/**", "/public/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/api/v1/forgot-password", "/api/v1/reset-password").permitAll()
-                        .requestMatchers("/api/v1/CEO/**").hasAnyAuthority("CEO")
+                        .requestMatchers(apiPrefix+"/forgot-password", apiPrefix+"/reset-password").permitAll()
+                        .requestMatchers(apiPrefix+"/CEO/**").hasAnyAuthority("CEO")
+                        .requestMatchers(apiPrefix+"/admin/**").hasAnyAuthority("System_Admin")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
