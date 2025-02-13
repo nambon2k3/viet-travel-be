@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}/user-profile")
+@RequestMapping("/user-profile")
 public class UserProfileController {
 
     private final UserService userService;

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}")
+@RequestMapping("/")
 public class ForgotPasswordController {
     private final ForgotPasswordService forgotPasswordService;
 

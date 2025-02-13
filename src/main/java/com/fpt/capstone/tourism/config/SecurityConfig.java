@@ -25,19 +25,17 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JWTAuthFilter jwtAuthFilter;
 
-    @Value("${api.prefix}")
-    private String apiPrefix;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**").permitAll()
-                        .requestMatchers(apiPrefix+"/**", "/public/**").permitAll()
-                        .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers(apiPrefix+"/forgot-password", apiPrefix+"/reset-password").permitAll()
-                        .requestMatchers(apiPrefix+"/CEO/**").hasAnyAuthority("CEO")
-                        .requestMatchers(apiPrefix+"/admin/**").hasAnyAuthority("System_Admin")
+                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("**/ws/**").permitAll()
+                        .requestMatchers("**/forgot-password", "/reset-password").permitAll()
+                        .requestMatchers("**/CEO/**").hasAnyAuthority("CEO")
+                        .requestMatchers("**/admin/**").hasAnyAuthority("System_Admin")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

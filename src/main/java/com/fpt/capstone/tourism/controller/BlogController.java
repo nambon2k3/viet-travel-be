@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}/marketing/blog")
+@RequestMapping("marketing/blog")
 public class BlogController {
 
     private final BlogService blogService;
