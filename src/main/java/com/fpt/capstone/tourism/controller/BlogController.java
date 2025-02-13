@@ -35,7 +35,7 @@ public class BlogController {
 
 
     @PostMapping("/change-status/{id}")
-    public ResponseEntity<GeneralResponse<BlogDTO>> delete(@PathVariable Long id, @RequestParam boolean isDeleted) {
+    public ResponseEntity<GeneralResponse<BlogDTO>> delete(@PathVariable Long id, @RequestBody boolean isDeleted) {
         return ResponseEntity.ok(blogService.changeBlogDeletedStatus(id, isDeleted));
     }
 
