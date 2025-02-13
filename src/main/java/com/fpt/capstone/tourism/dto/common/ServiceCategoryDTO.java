@@ -9,6 +9,4 @@ import java.time.LocalDateTime;
 public class ServiceCategoryDTO {
     private Long id;
     private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

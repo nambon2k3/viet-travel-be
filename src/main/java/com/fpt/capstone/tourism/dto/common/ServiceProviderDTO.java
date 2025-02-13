@@ -8,6 +8,7 @@ import lombok.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -31,16 +32,12 @@ public class ServiceProviderDTO {
 
     private String address;
 
-    private boolean isDeleted;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+    private boolean deleted;
 
     private LocationDTO location;
 
     private GeoPositionDTO geoPosition;
 
-    private Set<ServiceCategoryDTO> serviceCategories;
+    private List<ServiceCategoryDTO> serviceCategories;
 }
 

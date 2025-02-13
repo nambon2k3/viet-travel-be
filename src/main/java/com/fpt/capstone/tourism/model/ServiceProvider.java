@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -37,14 +38,14 @@ public class ServiceProvider extends BaseEntity {
     private String address;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private boolean deleted;
 
 
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geo_position_id")
     private GeoPosition geoPosition;
 
@@ -54,5 +55,5 @@ public class ServiceProvider extends BaseEntity {
             joinColumns = @JoinColumn(name = "provider_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<ServiceCategory> serviceCategories;
+    private List<ServiceCategory> serviceCategories;
 }

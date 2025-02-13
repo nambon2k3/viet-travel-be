@@ -11,7 +11,5 @@ public class LocationDTO {
     private String name;
     private String description;
     private String image;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
-    private GeoPosition geoPosition;
+    private GeoPositionDTO geoPosition;
 }

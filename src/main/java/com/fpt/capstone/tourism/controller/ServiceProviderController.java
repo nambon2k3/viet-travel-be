@@ -3,6 +3,7 @@ package com.fpt.capstone.tourism.controller;
 import com.fpt.capstone.tourism.dto.common.ChangableServiceProviderDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.common.ServiceProviderDTO;
+import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.service.ServiceProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,14 +14,16 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("${api.prefix}/CEO/service-provider")
+@RequestMapping("${api.prefix}/ceo/service-provider")
 @RequiredArgsConstructor
 public class ServiceProviderController {
 
     private final ServiceProviderService serviceProviderService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<GeneralResponse<ServiceProviderDTO>> create(@RequestBody ServiceProviderDTO serviceProviderDTO) {
         return ResponseEntity.ok(serviceProviderService.save(serviceProviderDTO));
     }
@@ -30,12 +33,14 @@ public class ServiceProviderController {
         return ResponseEntity.ok(serviceProviderService.getServiceProviderById(id));
     }
 
-//    @GetMapping
-//    public ResponseEntity<Page<ServiceProviderDTO>> getAllServiceProviders(Pageable pageable) {
-//        Page<ServiceProviderDTO> serviceProviders = serviceProviderService.getAllServiceProviders((java.awt.print.Pageable) pageable);
-//        return ResponseEntity.ok(serviceProviders);
-//    }
-//
+    @GetMapping("/list")
+    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceProviderDTO>>>> getAllServiceProviders(@RequestParam(defaultValue = "0") int page,
+                                                                                                       @RequestParam(defaultValue = "10") int size,
+                                                                                                       @RequestParam(required = false) String keyword,
+                                                                                                       @RequestParam(required = false) Boolean isDeleted) {
+        return ResponseEntity.ok(serviceProviderService.getAllServiceProviders(page, size, keyword, isDeleted));
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<GeneralResponse<ServiceProviderDTO>> updateServiceProvider(@PathVariable Long id, @RequestBody ServiceProviderDTO serviceProviderDTO) {
         return ResponseEntity.ok(serviceProviderService.updateServiceProvider(id, serviceProviderDTO));

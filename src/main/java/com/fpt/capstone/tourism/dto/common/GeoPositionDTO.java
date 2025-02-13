@@ -11,6 +11,4 @@ public class GeoPositionDTO {
     private Double latitude;
     private Double longitude;
     private boolean isDeleted;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
 }

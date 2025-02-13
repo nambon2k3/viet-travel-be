@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -28,6 +29,6 @@ public class ServiceCategory extends BaseEntity{
     private boolean isDeleted;
 
     @ManyToMany(mappedBy = "serviceCategories")
-    private Set<ServiceProvider> serviceProviders;
+    private List<ServiceProvider> serviceProviders;
 
 }
