@@ -25,7 +25,7 @@ public class Location extends BaseEntity {
     @Column(name = "is_deleted")
     private boolean deleted;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geo_position_id")
     private GeoPosition geoPosition;
 }

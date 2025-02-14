@@ -2,10 +2,12 @@ package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.common.LocationDTO;
+import com.fpt.capstone.tourism.dto.request.GeoPositionRequestDTO;
 import com.fpt.capstone.tourism.dto.request.LocationRequestDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.validator.Validator;
+import com.fpt.capstone.tourism.mapper.GeoPositionMapper;
 import com.fpt.capstone.tourism.mapper.LocationMapper;
 import com.fpt.capstone.tourism.model.GeoPosition;
 import com.fpt.capstone.tourism.model.Location;
@@ -33,6 +35,7 @@ import static com.fpt.capstone.tourism.constants.Constants.Message.*;
 public class LocationServiceImpl implements LocationService {
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
+    private final GeoPositionMapper geoPositionMapper;
     @Override
     public GeneralResponse<LocationDTO> saveLocation(LocationRequestDTO locationRequestDTO) {
         try{
@@ -111,50 +114,48 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public GeneralResponse<LocationDTO> updateLocation(Long id, LocationRequestDTO locationRequestDTO) {
-//        try{
-//            //Find in database
-//            Location location = locationRepository.findById(id).orElseThrow();
-//
-//            //Validate input data
-//            Validator.validateLocation(locationRequestDTO);
-//
-//            //Update service provider information
-//            if(!locationRequestDTO.getName().equals(location.getName())){
-//                location.setName(locationRequestDTO.getName());
-//            }
-//            if(!locationRequestDTO.getImage().equals(location.getImage())){
-//                location.setImage(locationRequestDTO.getImage());
-//            }
-//            if(!locationRequestDTO.getDescription().equals(location.getDescription())){
-//                location.setDescription(locationRequestDTO.getDescription());
-//            }
-//
-//            if(!locationRequestDTO.getGeoPosition().equals(serviceProvider.getGeoPosition().getId())){
-//                GeoPosition geoPosition = GeoPosition.builder()
-//                        .latitude(locationRequestDTO.getGeoPosition().getLatitude())
-//                        .longitude(locationRequestDTO.getGeoPosition().getLongitude()).build() ;
-//                serviceProvider.setGeoPosition(geoPosition);
-//            }
-//
-//            if(!serviceProviderDTO.getLocation().getId().equals(serviceProvider.getLocation().getId())) {
-//                Location location = locationRepository.findById(serviceProviderDTO.getLocation().getId()).orElseThrow();
-//                serviceProvider.setLocation(location);
-//            }
-//            serviceProvider.setServiceCategories(serviceProviderDTO.getServiceCategories()
-//                    .stream().map(serviceCategoryMapper::toEntity).collect(Collectors.toList()));
-//
-//            serviceProvider.setUpdatedAt(LocalDateTime.now());
-//
-//            serviceProviderRepository.save(serviceProvider);
-//
-//            serviceProviderDTO.setId(serviceProvider.getId());
-//            return new GeneralResponse<>(HttpStatus.OK.value(), UPDATE_SERVICE_PROVIDER_SUCCESS, serviceProviderDTO);
-//        } catch (BusinessException be){
-//            throw be;
-//        } catch (Exception ex){
-//            throw BusinessException.of(UPDATE_SERVICE_PROVIDER_FAIL, ex);
-//        }
-        return null;
+        try{
+            //Find in database
+            Location location = locationRepository.findById(id).orElseThrow();
+
+            //Validate input data
+            Validator.validateLocation(locationRequestDTO);
+
+            //Update service provider information
+            if(!locationRequestDTO.getName().equals(location.getName())){
+                //Check duplicate location
+                if(locationRepository.findByName(locationRequestDTO.getName()) != null){
+                    throw BusinessException.of(EXISTED_LOCATION);
+                }
+                location.setName(locationRequestDTO.getName());
+            }
+            if(!locationRequestDTO.getImage().equals(location.getImage())){
+                location.setImage(locationRequestDTO.getImage());
+            }
+            if(!locationRequestDTO.getDescription().equals(location.getDescription())){
+                location.setDescription(locationRequestDTO.getDescription());
+            }
+
+            GeoPositionRequestDTO currentGeoPosition = GeoPositionRequestDTO.builder()
+                    .latitude(location.getGeoPosition().getLatitude())
+                    .longitude(location.getGeoPosition().getLongitude())
+                    .build();
+            if(!currentGeoPosition.equals(locationRequestDTO.getGeoPosition())){
+                location.setGeoPosition(geoPositionMapper.toEntity(locationRequestDTO.getGeoPosition()));
+            }
+
+            location.setUpdatedAt(LocalDateTime.now());
+
+            locationRepository.save(location);
+
+            LocationDTO locationDTO = locationMapper.toDTO(location);
+
+            return new GeneralResponse<>(HttpStatus.OK.value(), GENERAL_SUCCESS_MESSAGE, locationDTO);
+        } catch (BusinessException be){
+            throw be;
+        } catch (Exception ex){
+            throw BusinessException.of(GENERAL_FAIL_MESSAGE, ex);
+        }
 
     }
 
