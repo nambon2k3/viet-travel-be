@@ -181,20 +181,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public GeneralResponse<UserProfileResponseDTO> updateUserProfile(String token, Long userId, UserProfileRequestDTO newUser) {
+    public GeneralResponse<UserProfileResponseDTO> updateUserProfile(Long userId, UserProfileRequestDTO newUser) {
 
         try{
-            String jwt = token.substring(7);
-
-            String username = jwtHelper.extractUsername(jwt);
-
-            User currentUser = findUserByUsername(username);
-
-            if(!userId.equals(currentUser.getId())){
-                throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
-
-            }
-
             User existingUser = findById(userId);
 
             //Check valid users field need to update
