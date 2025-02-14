@@ -20,6 +20,7 @@ public interface BlogMapper extends EntityMapper<BlogResponseDTO, Blog> {
 
     @Mapping(source = "author", target = "author")
     @Mapping(source = "blogTags", target = "tags")
+    @Mapping(target = "deleted", source = "deleted")
     BlogResponseDTO toDTO(Blog entity);
 }
 

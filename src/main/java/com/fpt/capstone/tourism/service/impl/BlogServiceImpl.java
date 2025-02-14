@@ -115,10 +115,10 @@ public class BlogServiceImpl implements BlogService {
         try {
             Blog blog = blogRepository.findById(id).orElseThrow();
             blog.setDeleted(isDeleted);
-            blogRepository.save(blog);
-
-            BlogResponseDTO blogResponseDTO = blogMapper.toDTO(blog);
-            return new GeneralResponse<>(HttpStatus.OK.value(), GENERAL_SUCCESS_MESSAGE, blogResponseDTO);
+            //blogRepository.save(blog);
+            Blog savedBlog = blogRepository.save(blog);
+            BlogResponseDTO blogResponseDTO = blogMapper.toDTO(savedBlog);
+            return GeneralResponse.of(blogResponseDTO,GENERAL_SUCCESS_MESSAGE);
         } catch (BusinessException be) {
             throw be;
         } catch (Exception ex) {
@@ -152,7 +152,7 @@ public class BlogServiceImpl implements BlogService {
                 predicates.add(cb.or(titlePredicate, descPredicate));
             }
             if (isDeleted != null) {
-                predicates.add(cb.equal(root.get("isDeleted"), isDeleted));
+                predicates.add(cb.equal(root.get("deleted"), isDeleted));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };

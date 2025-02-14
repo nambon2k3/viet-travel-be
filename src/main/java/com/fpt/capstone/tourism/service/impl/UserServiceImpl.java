@@ -26,14 +26,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import jakarta.persistence.criteria.Predicate;
 import java.util.stream.Collectors;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 import org.springframework.security.core.Authentication;
@@ -331,8 +331,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
-
     @Transactional
     public GeneralResponse<?> updateUser(Long id, UserCreationRequestDTO userDTO) {
         try {
@@ -408,67 +406,69 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public GeneralResponse<?> deleteUser(Long id) {
-        try {
-            User user = userRepository.findById(id)
-                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND,USER_NOT_FOUND_MESSAGE));
-            if (!user.isDeleted()) {
-                user.setDeleted(true);
-                userRepository.saveAndFlush(user);
-            }
-            return GeneralResponse.of(DELETE_USER_SUCCESS_MESSAGE);
-        } catch (BusinessException e) {
-            throw e;
-        } catch (Exception e) {
-            throw BusinessException.of(DELETE_USER_FAIL_MESSAGE, e);
-        }
-    }
-
-    @Override
-    @Transactional
-    public GeneralResponse<?> recoverStaff(Long id) {
+    public GeneralResponse<UserFullInformationResponseDTO> deleteUser(Long id, boolean isDeleted) {
         try {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, USER_NOT_FOUND_MESSAGE));
-            if (!user.isDeleted()) {
-                return GeneralResponse.of(HttpStatus.BAD_REQUEST, USER_ALREADY_ACTIVE_MESSAGE);
-            }
-            user.setDeleted(false);
-            userRepository.save(user);
-            return GeneralResponse.of(HttpStatus.OK, RECOVER_USER_SUCCESS_MESSAGE);
+            user.setDeleted(isDeleted);
+            User savedUser = userRepository.save(user);
+            UserFullInformationResponseDTO responseDTO = userFullInformationMapper.toDTO(savedUser);
+            return GeneralResponse.of(responseDTO,GENERAL_SUCCESS_MESSAGE);
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            throw BusinessException.of(HttpStatus.INTERNAL_SERVER_ERROR, RECOVER_USER_FAIL_MESSAGE, e);
+            throw BusinessException.of(GENERAL_FAIL_MESSAGE, e);
         }
     }
 
-
     @Override
-    public GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>> getAllUser(int page, int size) {
+    public GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>> getAllUser(int page, int size, String keyword, Boolean isDeleted) {
         try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<User> userPage = userRepository.findAll(pageable);
+            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+            Specification<User> spec = buildSearchSpecification(keyword, isDeleted);
+
+            Page<User> userPage = userRepository.findAll(spec, pageable);
             List<UserFullInformationResponseDTO> users = userPage.getContent().stream()
                     .map(user -> {
                         List<Role> roles = roleRepository.findRolesByUserId(user.getId());
                         UserFullInformationResponseDTO userDTO = userFullInformationMapper.toDTO(user);
-                        // Map role names to DTO
                         userDTO.setRoles(roles.stream()
                                 .map(Role::getRoleName)
                                 .collect(Collectors.toList()));
                         return userDTO;
                     })
                     .collect(Collectors.toList());
+
             PagingDTO<List<UserFullInformationResponseDTO>> pagingDTO = PagingDTO.<List<UserFullInformationResponseDTO>>builder()
                     .page(page)
                     .size(size)
                     .total(userPage.getTotalElements())
                     .items(users)
                     .build();
+
             return GeneralResponse.of(pagingDTO, GET_ALL_USER_SUCCESS_MESSAGE);
         } catch (Exception e) {
-            throw BusinessException.of(GET_ALL_USER_FAIL_MESSAGE,e);
+            throw BusinessException.of(GET_ALL_USER_FAIL_MESSAGE, e);
         }
+    }
+
+    private Specification<User> buildSearchSpecification(String keyword, Boolean isDeleted) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (keyword != null && !keyword.isEmpty()) {
+                Predicate keywordPredicate = criteriaBuilder.or(
+                        criteriaBuilder.like(root.get("username"), "%" + keyword + "%"),
+                        criteriaBuilder.like(root.get("email"), "%" + keyword + "%"),
+                        criteriaBuilder.like(root.get("fullName"), "%" + keyword + "%"),
+                        criteriaBuilder.like(root.get("phone"), "%" + keyword + "%"),
+                        criteriaBuilder.like(root.get("address"), "%" + keyword + "%")
+                );
+                predicates.add(keywordPredicate);
+            }
+            if (isDeleted != null) {
+                predicates.add(criteriaBuilder.equal(root.get("deleted"), isDeleted));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
     }
 }
