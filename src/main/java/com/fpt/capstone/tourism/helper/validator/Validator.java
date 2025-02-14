@@ -1,5 +1,7 @@
 package com.fpt.capstone.tourism.helper.validator;
 
+import com.fpt.capstone.tourism.dto.common.LocationDTO;
+import com.fpt.capstone.tourism.dto.request.LocationRequestDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -142,5 +144,13 @@ public class Validator {
         isNullOrEmpty(title, EMPTY_BLOG_TITLE);
         isNullOrEmpty(description, EMPTY_BLOG_DESCRIPTION);
         isNullOrEmpty(content, EMPTY_BLOG_CONTENT);
+    }
+
+
+    public static void validateLocation(LocationRequestDTO locationRequestDTO){
+        isNullOrEmpty(locationRequestDTO.getName(), EMPTY_LOCATION_NAME);
+        isNullOrEmpty(locationRequestDTO.getDescription(), EMPTY_LOCATION_DESCRIPTION);
+        isNullOrEmpty(locationRequestDTO.getImage(), EMPTY_LOCATION_IMAGE);
+        isNullOrEmpty(locationRequestDTO.getGeoPosition().toString(), EMPTY_LOCATION_GEO_POSITION);
     }
 }

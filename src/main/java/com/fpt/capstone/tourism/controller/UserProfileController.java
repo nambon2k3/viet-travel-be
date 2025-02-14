@@ -37,11 +37,10 @@ public class UserProfileController {
 
     @PostMapping("/update/{userId}")
     public ResponseEntity<GeneralResponse<UserProfileResponseDTO>> updateUserProfile(
-            @RequestHeader("Authorization") String token,
             @PathVariable Long userId,
             @RequestBody UserProfileRequestDTO userProfileRequestDTO
             ){
-        return ResponseEntity.ok(userService.updateUserProfile(token, userId, userProfileRequestDTO));
+        return ResponseEntity.ok(userService.updateUserProfile(userId, userProfileRequestDTO));
     }
 
     @PostMapping("/change-password")
