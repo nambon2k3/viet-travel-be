@@ -93,6 +93,13 @@ public class Constants {
         public static final String USER_ALREADY_ACTIVE_MESSAGE = "The user is already active.";
         public static final String RECOVER_USER_SUCCESS_MESSAGE = "User successfully recovered.";
         public static final String RECOVER_USER_FAIL_MESSAGE = "Failed to recover user.";
+        public static final String EMPTY_LOCATION_NAME = "Location name cannot be empty";
+        public static final String EMPTY_LOCATION_DESCRIPTION = "Location description cannot be empty";
+        public static final String EMPTY_LOCATION_IMAGE = "Location image cannot be empty";
+        public static final String EMPTY_LOCATION_GEO_POSITION = "Location geography position cannot be empty";
+        public static final String EXISTED_LOCATION = "Location is existed";
+        public static final String CREATE_LOCATION_SUCCESS = "Create location successfully";
+        public static final String CREATE_LOCATION_FAIL = "Create location fail";
     }
 
 

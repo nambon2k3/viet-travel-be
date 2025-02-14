@@ -1,6 +1,7 @@
 package com.fpt.capstone.tourism.dto.common;
 
 
+import com.fpt.capstone.tourism.model.GeoPosition;
 import lombok.Data;
 
 @Data
@@ -9,6 +10,7 @@ public class LocationDTO {
     private String name;
     private String description;
     private String image;
-    private boolean isDeleted;
-    private Long geoPositionId;
+    private boolean deleted;
+    private GeoPosition geoPosition;
+
 }
