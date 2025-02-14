@@ -153,13 +153,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GeneralResponse<UserProfileResponseDTO> getUserProfile(String token) {
+    public GeneralResponse<UserProfileResponseDTO> getUserProfile(Long id) {
         try {
-            String jwt = token.substring(7);
 
-            String username = jwtHelper.extractUsername(jwt);
 
-            User currentUser = userRepository.findByUsername(username).orElseThrow();
+            User currentUser = userRepository.findById(id).orElseThrow();
 
             UserProfileResponseDTO userProfileResponseDTO = UserProfileResponseDTO.builder()
                     .id(currentUser.getId())

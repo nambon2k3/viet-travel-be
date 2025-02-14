@@ -28,11 +28,11 @@ public class UserProfileController {
     private final UserService userService;
     private final CloudinaryService cloudinaryService;
 
-    @GetMapping()
+    @GetMapping("/detail/{id}")
     public ResponseEntity<GeneralResponse<UserProfileResponseDTO>> getUserProfile(
-            @RequestHeader("Authorization") String token
+            @PathVariable Long userId
     ){
-        return ResponseEntity.ok(userService.getUserProfile(token));
+        return ResponseEntity.ok(userService.getUserProfile(userId));
     }
 
     @PostMapping("/update/{userId}")
