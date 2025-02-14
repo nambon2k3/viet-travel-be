@@ -34,7 +34,7 @@ public interface UserService {
     User findUserByEmailConfirmationToken(String token);
     void deleteEmailConfirmationToken(String token);
     GeneralResponse<UserProfileResponseDTO> getUserProfile(String token);
-    GeneralResponse<UserProfileResponseDTO> updateUserProfile(String token, Long userId, UserProfileRequestDTO user);
+    GeneralResponse<UserProfileResponseDTO> updateUserProfile(Long userId, UserProfileRequestDTO user);
     String getCurrentUser();
 
     GeneralResponse<String> changePassword(String token, String currentPassword, String newPassword, String newRePassword);
