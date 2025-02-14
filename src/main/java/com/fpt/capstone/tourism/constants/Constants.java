@@ -108,6 +108,8 @@ public class Constants {
         public static final String UPDATE_BLOG_FAIL_MESSAGE = "Blog failed to update.";
         public static final String DELETE_BLOG_SUCCESS_MESSAGE = "Blog successfully deleted.";
 
+        public static final String GET_LOCATION_SUCCESS = "Get location successfully";
+        public static final String GET_LOCATION_FAIL = "Get location fail";
     }
 
 

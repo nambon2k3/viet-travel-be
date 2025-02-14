@@ -46,3 +46,9 @@ expired-time: 86400000
 server:
   servlet:
     context-path: /v1
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
