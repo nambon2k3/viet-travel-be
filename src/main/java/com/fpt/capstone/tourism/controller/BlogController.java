@@ -22,7 +22,7 @@ public class BlogController {
 
     @PostMapping("/create")
     public ResponseEntity<GeneralResponse<BlogResponseDTO>> create(@RequestBody BlogRequestDTO blogRequestDTO) {
-        return ResponseEntity.ok(blogService.saveBlog(blogRequestDTO));
+        return ResponseEntity.ok(blogService.createBlog(blogRequestDTO));
     }
 
     @GetMapping("/details/{id}")
@@ -30,9 +30,9 @@ public class BlogController {
         return ResponseEntity.ok(blogService.getBlogById(id));
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<GeneralResponse<BlogResponseDTO>> update(@RequestBody BlogRequestDTO blogRequestDTO) {
-        return ResponseEntity.ok(blogService.saveBlog(blogRequestDTO));
+    @PutMapping("/update/{id}")
+    public ResponseEntity<GeneralResponse<BlogResponseDTO>> update(@PathVariable Long id,@RequestBody BlogRequestDTO blogRequestDTO) {
+        return ResponseEntity.ok(blogService.updateBlog(id,blogRequestDTO));
     }
 
     @PostMapping("/change-status/{id}")

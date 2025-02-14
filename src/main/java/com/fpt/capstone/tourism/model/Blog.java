@@ -1,10 +1,8 @@
 package com.fpt.capstone.tourism.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +18,6 @@ public class Blog extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(name = "thumbnail_image_url")
     private String thumbnailImageUrl;
 
@@ -35,6 +32,7 @@ public class Blog extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
+    @ToString.Exclude
     private User author;
 
     @ManyToMany
@@ -43,5 +41,6 @@ public class Blog extends BaseEntity{
             joinColumns = @JoinColumn(name = "blog_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+    @ToString.Exclude
     private List<Tag> blogTags;
 }

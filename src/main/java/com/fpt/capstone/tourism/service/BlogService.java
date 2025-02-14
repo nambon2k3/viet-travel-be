@@ -9,7 +9,8 @@ import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import java.util.List;
 
 public interface BlogService {
-    GeneralResponse<BlogResponseDTO> saveBlog(BlogRequestDTO blogRequestDTO);
+    GeneralResponse<BlogResponseDTO> createBlog(BlogRequestDTO blogRequestDTO);
+    GeneralResponse<BlogResponseDTO> updateBlog(Long id,BlogRequestDTO blogRequestDTO);
     GeneralResponse<BlogResponseDTO> getBlogById(Long id);
     GeneralResponse<BlogResponseDTO> changeBlogDeletedStatus(Long id, boolean isDeleted);
     GeneralResponse<PagingDTO<List<BlogResponseDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted);

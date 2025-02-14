@@ -103,6 +103,11 @@ public class Constants {
         public static final String EXISTED_LOCATION = "Location is existed";
         public static final String CREATE_LOCATION_SUCCESS = "Create location successfully";
         public static final String CREATE_LOCATION_FAIL = "Create location fail";
+        public static final String BLOG_NOT_FOUND = "Blog not found";
+        public static final String UPDATE_BLOG_SUCCESS_MESSAGE = "Blog successfully updated.";
+        public static final String UPDATE_BLOG_FAIL_MESSAGE = "Blog failed to update.";
+        public static final String DELETE_BLOG_SUCCESS_MESSAGE = "Blog successfully deleted.";
+
     }
 
 

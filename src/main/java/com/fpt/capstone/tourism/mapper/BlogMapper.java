@@ -11,12 +11,16 @@ import org.mapstruct.MappingConstants;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {TagMapper.class, AuthorMapper.class})
 public interface BlogMapper extends EntityMapper<BlogResponseDTO, Blog> {
 
-    @Mapping(target = "blogTags", source = "tags")
-    Blog toEntity(BlogRequestDTO dto, User author, List<Tag> tags);
+    @Mapping(source = "author", target = "author")
+    @Mapping(source = "tags", target = "blogTags")
+    Blog toEntity(BlogRequestDTO dto);
 
-    @Mapping(target = "tags", source = "blogTags")
-    BlogResponseDTO toDTO(Blog blog);
+    @Mapping(source = "author", target = "author")
+    @Mapping(source = "blogTags", target = "tags")
+    BlogResponseDTO toDTO(Blog entity);
 }
+
+
