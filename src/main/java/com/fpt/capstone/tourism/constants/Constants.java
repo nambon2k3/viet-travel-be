@@ -100,6 +100,8 @@ public class Constants {
         public static final String EXISTED_LOCATION = "Location is existed";
         public static final String CREATE_LOCATION_SUCCESS = "Create location successfully";
         public static final String CREATE_LOCATION_FAIL = "Create location fail";
+        public static final String GET_LOCATION_SUCCESS = "Get location successfully";
+        public static final String GET_LOCATION_FAIL = "Get location fail";
     }
 
 
