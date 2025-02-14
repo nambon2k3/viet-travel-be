@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/sales/**").hasAnyAuthority("SALESMAN")
                         .requestMatchers("/operator/**").hasAnyAuthority("OPERATOR")
                         .requestMatchers("/accountant/**").hasAnyAuthority("ACCOUNTANT")
+                        .requestMatchers("/service-provider/**").hasAnyAuthority("SERVICE_PROVIDER")
+                        .requestMatchers("/head-of-business/**").hasAnyAuthority("HEAD_OF_BUSINESS")
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
