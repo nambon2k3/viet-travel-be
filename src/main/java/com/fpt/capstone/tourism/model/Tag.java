@@ -4,7 +4,6 @@ package com.fpt.capstone.tourism.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -25,7 +24,7 @@ public class Tag extends BaseEntity {
     private String description;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @ManyToMany(mappedBy = "tags")
     private List<Tour> tours;

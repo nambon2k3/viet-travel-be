@@ -23,7 +23,7 @@ public class Location extends BaseEntity {
     private String image;
 
     @Column(name = "is_deleted")
-    private boolean deleted;
+    private Boolean deleted;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geo_position_id")

@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +31,7 @@ public class Tour extends BaseEntity{
     private String note;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @ManyToMany
     @JoinTable(name = "tour_location",

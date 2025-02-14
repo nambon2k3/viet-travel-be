@@ -32,7 +32,7 @@ public class Meal extends BaseEntity {
     private String imageUrl;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;

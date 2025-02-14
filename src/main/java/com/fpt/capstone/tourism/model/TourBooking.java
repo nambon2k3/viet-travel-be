@@ -7,9 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -30,7 +28,7 @@ public class TourBooking extends BaseEntity {
     private String note;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @OneToOne
     @JoinColumn(name = "user_id")
