@@ -13,6 +13,6 @@ public interface BlogService {
 
     GeneralResponse<BlogDTO> changeBlogDeletedStatus(Long id, boolean isDeleted);
 
-    public GeneralResponse<PagingDTO<List<BlogDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted);
+    GeneralResponse<PagingDTO<List<BlogDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted);
 
 }

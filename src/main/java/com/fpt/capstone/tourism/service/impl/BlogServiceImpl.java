@@ -43,17 +43,11 @@ public class BlogServiceImpl implements BlogService {
     public GeneralResponse<BlogDTO> saveBlog(BlogDTO blogDTO) {
         try {
             User user = userService.findById(blogDTO.getAuthor().getId());
-
             List<Tag> tags = tagService.findAllById(blogDTO.getTags().stream().map(TagDTO::getId).collect(Collectors.toList()));
-
             Blog blog = blogMapper.toEntity(blogDTO, user, tags);
-
             blogRepository.save(blog);
-
             blogDTO.setId(blog.getId());
-
             return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.CREATE_BLOG_SUCCESS_MESSAGE, blogDTO);
-
         } catch (BusinessException be) {
             throw be;
         }catch (Exception ex) {
@@ -64,11 +58,9 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public GeneralResponse<BlogDTO> getBlogById(Long id) {
         try {
-
             Blog blog = blogRepository.findById(id).orElseThrow();
             BlogDTO blogDTO = blogMapper.toDTO(blog);
             return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.GENERAL_SUCCESS_MESSAGE, blogDTO);
-
         } catch (BusinessException be) {
             throw be;
         }catch (Exception ex) {
@@ -79,13 +71,11 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public GeneralResponse<BlogDTO> changeBlogDeletedStatus(Long id, boolean isDeleted) {
         try {
-
             Blog blog = blogRepository.findById(id).orElseThrow();
             blog.setDeleted(isDeleted);
             blogRepository.save(blog);
             BlogDTO blogDTO = blogMapper.toDTO(blog);
             return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.GENERAL_SUCCESS_MESSAGE, blogDTO);
-
         } catch (BusinessException be) {
             throw be;
         }catch (Exception ex) {
@@ -103,7 +93,6 @@ public class BlogServiceImpl implements BlogService {
             List<BlogDTO> blogDTOs = blogPage.getContent().stream()
                     .map(blogMapper::toDTO)
                     .collect(Collectors.toList());
-
             return buildPagedResponse(blogPage, blogDTOs);
         } catch (Exception ex) {
             throw BusinessException.of("toang", ex);
@@ -113,7 +102,6 @@ public class BlogServiceImpl implements BlogService {
     private Specification<Blog> buildSearchSpecification(String keyword, Boolean isDeleted) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-
             if (keyword != null && !keyword.isEmpty()) {
                 Predicate titlePredicate = cb.like(root.get("title"), "%" + keyword + "%");
                 Predicate descPredicate = cb.like(root.get("description"), "%" + keyword + "%");
@@ -123,7 +111,6 @@ public class BlogServiceImpl implements BlogService {
             if (isDeleted != null) {
                 predicates.add(cb.equal(root.get("isDeleted"), isDeleted));
             }
-
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
@@ -135,7 +122,6 @@ public class BlogServiceImpl implements BlogService {
                 .total(blogPage.getTotalElements())
                 .items(blogDTOs)
                 .build();
-
         return new GeneralResponse<>(HttpStatus.OK.value(), "ngon", pagingDTO);
     }
 
