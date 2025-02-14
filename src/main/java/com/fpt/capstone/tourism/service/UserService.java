@@ -33,7 +33,7 @@ public interface UserService {
     void createEmailConfirmationToken(User user, String token);
     User findUserByEmailConfirmationToken(String token);
     void deleteEmailConfirmationToken(String token);
-    GeneralResponse<UserProfileResponseDTO> getUserProfile(String token);
+    GeneralResponse<UserProfileResponseDTO> getUserProfile(Long userId);
     GeneralResponse<UserProfileResponseDTO> updateUserProfile(Long userId, UserProfileRequestDTO user);
     String getCurrentUser();
 
