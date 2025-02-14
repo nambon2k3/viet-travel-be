@@ -31,6 +31,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
@@ -177,6 +179,16 @@ public class AuthServiceImpl implements AuthService {
             throw BusinessException.of(CONFIRM_EMAIL_FAILED);
         }
 
+    }
+
+    @Override
+    public GeneralResponse<List<Role>> getRoles() {
+        try {
+            List<Role> roles = roleRepository.findAll();
+            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.ROLES_RETRIEVED_SUCCESS_MESSAGE, roles);
+        } catch (Exception e) {
+            throw BusinessException.of(ROLES_RETRIEVED_FAIL_MESSAGE);
+        }
     }
 
 }

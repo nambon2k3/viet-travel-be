@@ -110,6 +110,8 @@ public class Constants {
 
         public static final String GET_LOCATION_SUCCESS = "Get location successfully";
         public static final String GET_LOCATION_FAIL = "Get location fail";
+        public static final String ROLES_RETRIEVED_SUCCESS_MESSAGE = "Get roles successfully";
+        public static final String ROLES_RETRIEVED_FAIL_MESSAGE = "Get roles failed";
     }
 
 

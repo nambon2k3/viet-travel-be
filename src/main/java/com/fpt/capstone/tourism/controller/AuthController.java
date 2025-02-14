@@ -6,10 +6,13 @@ import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
+import com.fpt.capstone.tourism.model.Role;
 import com.fpt.capstone.tourism.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +34,11 @@ public class AuthController {
     @GetMapping("/confirm-email")
     public ResponseEntity<GeneralResponse<String>> confirmEmail(@RequestParam String token) {
         return ResponseEntity.ok(authService.confirmEmail(token));
+    }
+
+    @GetMapping("/roles")
+    public ResponseEntity<GeneralResponse<List<Role>>> getUserRoles() {
+        return ResponseEntity.ok(authService.getRoles());
     }
 
 
