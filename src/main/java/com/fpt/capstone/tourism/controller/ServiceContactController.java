@@ -23,7 +23,7 @@ public class ServiceContactController {
         return ResponseEntity.ok(serviceContactService.createServiceContact(serviceContactManagementRequestDTO));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/details/{id}")
     public ResponseEntity<?> getServiceContactById(@PathVariable Long id) {
         return ResponseEntity.ok(serviceContactService.getServiceContactById(id));
     }
@@ -35,12 +35,12 @@ public class ServiceContactController {
         return ResponseEntity.ok(serviceContactService.getAllServiceContacts(page, size));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateServiceContact(@PathVariable Long id, @Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
         return ResponseEntity.ok(serviceContactService.updateServiceContact(id, serviceContactManagementRequestDTO));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteServiceContact(@PathVariable Long id) {
         return ResponseEntity.ok(serviceContactService.deleteServiceContact(id));
     }

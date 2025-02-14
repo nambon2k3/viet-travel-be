@@ -2,8 +2,9 @@ package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
-import com.fpt.capstone.tourism.dto.common.BlogDTO;
 import com.fpt.capstone.tourism.dto.common.TagDTO;
+import com.fpt.capstone.tourism.dto.request.BlogRequestDTO;
+import com.fpt.capstone.tourism.dto.response.BlogResponseDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.validator.Validator;
@@ -41,63 +42,74 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     @Transactional
-    public GeneralResponse<BlogDTO> saveBlog(BlogDTO blogDTO) {
+    public GeneralResponse<BlogResponseDTO> saveBlog(BlogRequestDTO blogRequestDTO) {
         try {
-            Validator.validateBlog(blogDTO.getTitle(), blogDTO.getDescription(), blogDTO.getContent());
-            User user = userService.findById(blogDTO.getAuthor().getId());
-            List<Tag> tags = tagService.findAllById(blogDTO.getTags().stream().map(TagDTO::getId).collect(Collectors.toList()));
-            Blog blog = blogMapper.toEntity(blogDTO, user, tags);
+            // Validate input
+            Validator.validateBlog(blogRequestDTO.getTitle(), blogRequestDTO.getDescription(), blogRequestDTO.getContent());
+
+            // Fetch required entities
+            User author = userService.findById(blogRequestDTO.getAuthor().getId());
+            List<Tag> tags = tagService.findAllById(
+                    blogRequestDTO.getTags().stream().map(TagDTO::getId).collect(Collectors.toList())
+            );
+
+            // Convert DTO to Entity
+            Blog blog = blogMapper.toEntity(blogRequestDTO, author, tags);
             blogRepository.save(blog);
-            blogDTO.setId(blog.getId());
-            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.CREATE_BLOG_SUCCESS_MESSAGE, blogDTO);
+
+            // Convert to response DTO
+            BlogResponseDTO responseDTO = blogMapper.toDTO(blog);
+            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.CREATE_BLOG_SUCCESS_MESSAGE, responseDTO);
         } catch (BusinessException be) {
             throw be;
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw BusinessException.of(Constants.Message.CREATE_BLOG_FAIL_MESSAGE, ex);
         }
     }
 
     @Override
-    public GeneralResponse<BlogDTO> getBlogById(Long id) {
+    public GeneralResponse<BlogResponseDTO> getBlogById(Long id) {
         try {
             Blog blog = blogRepository.findById(id).orElseThrow();
-            BlogDTO blogDTO = blogMapper.toDTO(blog);
-            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.GENERAL_SUCCESS_MESSAGE, blogDTO);
+            BlogResponseDTO blogResponseDTO = blogMapper.toDTO(blog);
+            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.GENERAL_SUCCESS_MESSAGE, blogResponseDTO);
         } catch (BusinessException be) {
             throw be;
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw BusinessException.of(Constants.Message.GENERAL_FAIL_MESSAGE, ex);
         }
     }
 
     @Override
-    public GeneralResponse<BlogDTO> changeBlogDeletedStatus(Long id, boolean isDeleted) {
+    public GeneralResponse<BlogResponseDTO> changeBlogDeletedStatus(Long id, boolean isDeleted) {
         try {
             Blog blog = blogRepository.findById(id).orElseThrow();
             blog.setDeleted(isDeleted);
             blogRepository.save(blog);
-            BlogDTO blogDTO = blogMapper.toDTO(blog);
-            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.GENERAL_SUCCESS_MESSAGE, blogDTO);
+
+            BlogResponseDTO blogResponseDTO = blogMapper.toDTO(blog);
+            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.GENERAL_SUCCESS_MESSAGE, blogResponseDTO);
         } catch (BusinessException be) {
             throw be;
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw BusinessException.of(Constants.Message.GENERAL_FAIL_MESSAGE, ex);
         }
     }
 
     @Override
-    public GeneralResponse<PagingDTO<List<BlogDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted) {
+    public GeneralResponse<PagingDTO<List<BlogResponseDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
             Specification<Blog> spec = buildSearchSpecification(keyword, isDeleted);
 
             Page<Blog> blogPage = blogRepository.findAll(spec, pageable);
-            List<BlogDTO> blogDTOs = blogPage.getContent().stream()
+            List<BlogResponseDTO> blogDTOs = blogPage.getContent().stream()
                     .map(blogMapper::toDTO)
                     .collect(Collectors.toList());
+
             return buildPagedResponse(blogPage, blogDTOs);
         } catch (Exception ex) {
-            throw BusinessException.of("toang", ex);
+            throw BusinessException.of("Error retrieving blogs", ex);
         }
     }
 
@@ -109,7 +121,6 @@ public class BlogServiceImpl implements BlogService {
                 Predicate descPredicate = cb.like(root.get("description"), "%" + keyword + "%");
                 predicates.add(cb.or(titlePredicate, descPredicate));
             }
-
             if (isDeleted != null) {
                 predicates.add(cb.equal(root.get("isDeleted"), isDeleted));
             }
@@ -117,13 +128,13 @@ public class BlogServiceImpl implements BlogService {
         };
     }
 
-    private GeneralResponse<PagingDTO<List<BlogDTO>>> buildPagedResponse(Page<Blog> blogPage, List<BlogDTO> blogDTOs) {
-        PagingDTO<List<BlogDTO>> pagingDTO = PagingDTO.<List<BlogDTO>>builder()
+    private GeneralResponse<PagingDTO<List<BlogResponseDTO>>> buildPagedResponse(Page<Blog> blogPage, List<BlogResponseDTO> blogDTOs) {
+        PagingDTO<List<BlogResponseDTO>> pagingDTO = PagingDTO.<List<BlogResponseDTO>>builder()
                 .page(blogPage.getNumber())
                 .size(blogPage.getSize())
                 .total(blogPage.getTotalElements())
                 .items(blogDTOs)
                 .build();
-        return new GeneralResponse<>(HttpStatus.OK.value(), "ngon", pagingDTO);
+        return new GeneralResponse<>(HttpStatus.OK.value(), "Success", pagingDTO);
     }
 }
