@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,11 +30,14 @@ public class UserProfileController {
     private final UserService userService;
     private final CloudinaryService cloudinaryService;
 
-    @GetMapping("/detail/{id}")
+    @GetMapping()
     public ResponseEntity<GeneralResponse<UserProfileResponseDTO>> getUserProfile(
-            @PathVariable Long userId
+            @AuthenticationPrincipal UserDetails userDetails
     ){
-        return ResponseEntity.ok(userService.getUserProfile(userId));
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(userService.getUserProfile(userDetails.getUsername()));
     }
 
     @PostMapping("/update/{userId}")
