@@ -94,6 +94,9 @@ public class Constants {
         public static final String RECOVER_USER_SUCCESS_MESSAGE = "User successfully recovered.";
         public static final String RECOVER_USER_FAIL_MESSAGE = "Failed to recover user.";
         public static final String EMPTY_LOCATION_NAME = "Location name cannot be empty";
+        public static final String EMPTY_BLOG_TITLE = "Title cannot be empty";
+        public static final String EMPTY_BLOG_DESCRIPTION = "Description cannot be empty";
+        public static final String EMPTY_BLOG_CONTENT = "Content cannot be empty";
         public static final String EMPTY_LOCATION_DESCRIPTION = "Location description cannot be empty";
         public static final String EMPTY_LOCATION_IMAGE = "Location image cannot be empty";
         public static final String EMPTY_LOCATION_GEO_POSITION = "Location geography position cannot be empty";

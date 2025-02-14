@@ -139,6 +139,13 @@ public class Validator {
         isNullOrEmpty(position, EMPTY_POSITION);
     }
 
+    //Blog Validation
+    public static void validateBlog(String title, String description, String content) {
+        isNullOrEmpty(title, EMPTY_BLOG_TITLE);
+        isNullOrEmpty(description, EMPTY_BLOG_DESCRIPTION);
+        isNullOrEmpty(content, EMPTY_BLOG_CONTENT);
+    }
+
 
     public static void validateLocation(LocationRequestDTO locationRequestDTO){
         isNullOrEmpty(locationRequestDTO.getName(), EMPTY_LOCATION_NAME);

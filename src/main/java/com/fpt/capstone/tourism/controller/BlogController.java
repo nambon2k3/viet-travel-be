@@ -3,6 +3,8 @@ package com.fpt.capstone.tourism.controller;
 
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.common.BlogDTO;
+import com.fpt.capstone.tourism.dto.request.BlogRequestDTO;
+import com.fpt.capstone.tourism.dto.response.BlogResponseDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.service.BlogService;
 import lombok.RequiredArgsConstructor;
@@ -19,28 +21,27 @@ public class BlogController {
     private final BlogService blogService;
 
     @PostMapping("/create")
-    public ResponseEntity<GeneralResponse<BlogDTO>> create(@RequestBody BlogDTO blogDTO) {
-        return ResponseEntity.ok(blogService.saveBlog(blogDTO));
+    public ResponseEntity<GeneralResponse<BlogResponseDTO>> create(@RequestBody BlogRequestDTO blogRequestDTO) {
+        return ResponseEntity.ok(blogService.saveBlog(blogRequestDTO));
     }
 
     @GetMapping("/details/{id}")
-    public ResponseEntity<GeneralResponse<BlogDTO>> detail(@PathVariable Long id) {
+    public ResponseEntity<GeneralResponse<BlogResponseDTO>> detail(@PathVariable Long id) {
         return ResponseEntity.ok(blogService.getBlogById(id));
     }
 
     @PostMapping("/update")
-    public ResponseEntity<GeneralResponse<BlogDTO>> update(@RequestBody BlogDTO blogDTO) {
-        return ResponseEntity.ok(blogService.saveBlog(blogDTO));
+    public ResponseEntity<GeneralResponse<BlogResponseDTO>> update(@RequestBody BlogRequestDTO blogRequestDTO) {
+        return ResponseEntity.ok(blogService.saveBlog(blogRequestDTO));
     }
 
-
     @PostMapping("/change-status/{id}")
-    public ResponseEntity<GeneralResponse<BlogDTO>> delete(@PathVariable Long id, @RequestBody boolean isDeleted) {
+    public ResponseEntity<GeneralResponse<BlogResponseDTO>> delete(@PathVariable Long id, @RequestBody boolean isDeleted) {
         return ResponseEntity.ok(blogService.changeBlogDeletedStatus(id, isDeleted));
     }
 
     @GetMapping("/list")
-    public ResponseEntity<GeneralResponse<PagingDTO<List<BlogDTO>>>> getBlogs(
+    public ResponseEntity<GeneralResponse<PagingDTO<List<BlogResponseDTO>>>> getBlogs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
