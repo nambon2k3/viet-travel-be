@@ -136,4 +136,11 @@ public class Validator {
         validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
         isNullOrEmpty(position, EMPTY_POSITION);
     }
+
+    //Blog Validation
+    public static void validateBlog(String title, String description, String content) {
+        isNullOrEmpty(title, EMPTY_BLOG_TITLE);
+        isNullOrEmpty(description, EMPTY_BLOG_DESCRIPTION);
+        isNullOrEmpty(content, EMPTY_BLOG_CONTENT);
+    }
 }

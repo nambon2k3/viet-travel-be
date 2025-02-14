@@ -93,6 +93,9 @@ public class Constants {
         public static final String USER_ALREADY_ACTIVE_MESSAGE = "The user is already active.";
         public static final String RECOVER_USER_SUCCESS_MESSAGE = "User successfully recovered.";
         public static final String RECOVER_USER_FAIL_MESSAGE = "Failed to recover user.";
+        public static final String EMPTY_BLOG_TITLE = "Title cannot be empty";
+        public static final String EMPTY_BLOG_DESCRIPTION = "Description cannot be empty";
+        public static final String EMPTY_BLOG_CONTENT = "Content cannot be empty";
     }
 
 

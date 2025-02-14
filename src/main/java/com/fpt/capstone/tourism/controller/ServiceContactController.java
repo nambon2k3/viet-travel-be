@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/CEO/service-contacts")
+@RequestMapping("/ceo/service-contacts")
 @RequiredArgsConstructor
 public class ServiceContactController {
 

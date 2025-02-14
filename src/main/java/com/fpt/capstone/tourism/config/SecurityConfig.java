@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/forgot-password", "/reset-password").permitAll()
                         .requestMatchers("/ceo/**").hasAnyAuthority("CEO")
-                        .requestMatchers("/admin/**").hasAnyAuthority("System_Admin")
+                        //.requestMatchers("/admin/**").hasAnyAuthority("System_Admin")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

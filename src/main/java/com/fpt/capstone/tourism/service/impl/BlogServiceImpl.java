@@ -6,6 +6,7 @@ import com.fpt.capstone.tourism.dto.common.BlogDTO;
 import com.fpt.capstone.tourism.dto.common.TagDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
+import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.mapper.BlogMapper;
 import com.fpt.capstone.tourism.model.Blog;
 import com.fpt.capstone.tourism.model.Tag;
@@ -42,6 +43,7 @@ public class BlogServiceImpl implements BlogService {
     @Transactional
     public GeneralResponse<BlogDTO> saveBlog(BlogDTO blogDTO) {
         try {
+            Validator.validateBlog(blogDTO.getTitle(), blogDTO.getDescription(), blogDTO.getContent());
             User user = userService.findById(blogDTO.getAuthor().getId());
             List<Tag> tags = tagService.findAllById(blogDTO.getTags().stream().map(TagDTO::getId).collect(Collectors.toList()));
             Blog blog = blogMapper.toEntity(blogDTO, user, tags);
@@ -124,7 +126,4 @@ public class BlogServiceImpl implements BlogService {
                 .build();
         return new GeneralResponse<>(HttpStatus.OK.value(), "ngon", pagingDTO);
     }
-
-
-
 }
