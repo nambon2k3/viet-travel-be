@@ -152,7 +152,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
 
             // Convert entity to DTO
-            ServiceContactManagementRequestDTO responseDTO = serviceContactMapper.toDTO(serviceContact);
+            ServiceContactManagementResponseDTO responseDTO = serviceContactMapper.toResponseDTO(serviceContact);
             // Set the service provider name
             if (serviceContact.getServiceProvider() != null) {
                 responseDTO.setServiceProviderName(serviceContact.getServiceProvider().getName());
@@ -189,25 +189,22 @@ public class ServiceContactServiceImpl implements ServiceContactService {
                     .total(serviceContactPage.getTotalElements())
                     .items(serviceContacts)
                     .build();
-
             return GeneralResponse.of(pagingDTO, GET_ALL_SERVICE_CONTACTS_SUCCESS);
         } catch (Exception e) {
             throw BusinessException.of(GET_ALL_SERVICE_CONTACTS_FAIL, e);
         }
     }
 
-
     @Override
     @Transactional
-    public GeneralResponse<?> deleteServiceContact(Long id) {
+    public GeneralResponse<?> deleteServiceContact(Long id, boolean isDeleted) {
         try {
             ServiceContact serviceContact = serviceContactRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
-            if (!serviceContact.getDeleted()) {
-                serviceContact.setDeleted(true);
-                serviceContactRepository.save(serviceContact);
-            }
-            return GeneralResponse.of(DELETE_SERVICE_CONTACT_SUCCESS);
+            serviceContact.setDeleted(isDeleted);
+            serviceContactRepository.save(serviceContact);
+            ServiceContactManagementResponseDTO responseDTO = serviceContactMapper.toResponseDTO(serviceContact);
+            return GeneralResponse.of(responseDTO,DELETE_SERVICE_CONTACT_SUCCESS);
         } catch (Exception e) {
             throw BusinessException.of(DELETE_SERVICE_CONTACT_FAIL, e);
         }

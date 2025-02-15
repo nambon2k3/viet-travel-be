@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ceo/service-contacts")
+@RequestMapping("/service-provider/service-contacts")
 @RequiredArgsConstructor
 public class ServiceContactController {
 
@@ -40,8 +40,8 @@ public class ServiceContactController {
         return ResponseEntity.ok(serviceContactService.updateServiceContact(id, serviceContactManagementRequestDTO));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteServiceContact(@PathVariable Long id) {
-        return ResponseEntity.ok(serviceContactService.deleteServiceContact(id));
+    @PostMapping("/change-status/{id}")
+    public ResponseEntity<?> deleteServiceContact(@PathVariable Long id,@RequestParam boolean isDeleted) {
+        return ResponseEntity.ok(serviceContactService.deleteServiceContact(id,isDeleted));
     }
 }

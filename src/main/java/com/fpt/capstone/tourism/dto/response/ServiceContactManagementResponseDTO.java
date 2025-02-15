@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,4 +21,7 @@ public class ServiceContactManagementResponseDTO {
     private String email;
     private Gender gender;
     private String serviceProviderName;
+    private Boolean deleted;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

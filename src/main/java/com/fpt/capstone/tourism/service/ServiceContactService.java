@@ -11,5 +11,5 @@ public interface ServiceContactService {
     GeneralResponse<?> getServiceContactById(Long id);
     GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>> getAllServiceContacts(int page, int size);
     GeneralResponse<?> updateServiceContact(Long id, ServiceContactManagementRequestDTO serviceContactManagementRequestDTO);
-    GeneralResponse<?> deleteServiceContact(Long id);
+    GeneralResponse<?> deleteServiceContact(Long id,boolean isDeleted);
 }
