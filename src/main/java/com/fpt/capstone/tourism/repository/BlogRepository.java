@@ -12,6 +12,6 @@ import java.util.List;
 
 @Repository
 public interface BlogRepository extends JpaRepository<Blog, Long>, JpaSpecificationExecutor<Blog> {
-    @Query("SELECT b FROM Blog b WHERE b.isDeleted = FALSE ORDER BY b.createdAt DESC")
+    @Query("SELECT b FROM Blog b WHERE b.deleted = FALSE ORDER BY b.createdAt DESC")
     List<Blog> findTopBlogs(Pageable pageable);
 }

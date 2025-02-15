@@ -57,6 +57,7 @@ public class AuthServiceImpl implements AuthService {
             User user = userService.findUserByUsername(userDTO.getUsername());
 
             if (Boolean.TRUE.equals(user.getDeleted())) {
+
                 throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
             }
 

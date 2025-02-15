@@ -94,4 +94,10 @@ public class JwtHelperImpl implements JwtHelper {
         byte[] keyBytes = Decoders.BASE64URL.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    @Override
+    public boolean isTokenValid(String token, UserDetails user) {
+        String username = extractUsername(token);
+        return username.equals(user.getUsername()) && isTokenExpired(token);
+    }
 }

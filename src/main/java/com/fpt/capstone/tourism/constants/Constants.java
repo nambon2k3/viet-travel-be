@@ -1,5 +1,6 @@
 package com.fpt.capstone.tourism.constants;
 
+
 public class Constants {
     public static final class UserExceptionInformation {
         public static final String USER_NOT_FOUND_CODE = "000100";
@@ -74,6 +75,10 @@ public class Constants {
         public static final String EMPTY_EMAIL = "Email cannot be empty";
         public static final String INVALID_EMAIL = "Invalid email format";
         public static final String EMPTY_POSITION = "Position cannot be empty";
+
+        public static final String EMPTY_IMAGE_URL = "Image URL cannot be empty";
+        public static final String EMPTY_ABBREVIATION = "Abbreviation cannot be empty";
+        public static final String EMPTY_WEBSITE = "Website cannot be empty";
         public static final String DUPLICATE_SERVICE_CONTACT_EMAIL= "This contact email already exists.";
         public static final String SERVICE_PROVIDER_NOT_FOUND = "Service provider not found. Please try again.";
         public static final String RESET_PASSWORD_REQUEST_SUCCESS = "User request reset password successfully";
@@ -112,6 +117,10 @@ public class Constants {
         public static final String GET_LOCATION_FAIL = "Get location fail";
         public static final String ROLES_RETRIEVED_SUCCESS_MESSAGE = "Get roles successfully";
         public static final String ROLES_RETRIEVED_FAIL_MESSAGE = "Get roles failed";
+        public static final String CREATE_SERVICE_PROVIDER_SUCCESS = "Create service provider successfully";
+        public static final String CREATE_SERVICE_PROVIDER_FAIL = "Create service provider fail";
+        public static final String UPDATE_SERVICE_PROVIDER_SUCCESS = "Update service provider successfully";
+        public static final String UPDATE_SERVICE_PROVIDER_FAIL = "Update service provider fail";
     }
 
 

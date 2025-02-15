@@ -1,13 +1,23 @@
 package com.fpt.capstone.tourism.helper.validator;
-
 import com.fpt.capstone.tourism.dto.common.LocationDTO;
 import com.fpt.capstone.tourism.dto.request.LocationRequestDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
-
 import java.util.List;
-
+import com.fpt.capstone.tourism.constants.Constants;
+import com.fpt.capstone.tourism.dto.common.GeoPositionDTO;
+import com.fpt.capstone.tourism.dto.common.LocationDTO;
+import com.fpt.capstone.tourism.dto.common.ServiceCategoryDTO;
+import com.fpt.capstone.tourism.dto.common.ServiceProviderDTO;
+import com.fpt.capstone.tourism.exception.common.BusinessException;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.util.StringUtils;
+import org.springframework.http.HttpStatus;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
 import static com.fpt.capstone.tourism.constants.Constants.Regex.*;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
@@ -153,4 +163,27 @@ public class Validator {
         isNullOrEmpty(locationRequestDTO.getImage(), EMPTY_LOCATION_IMAGE);
         isNullOrEmpty(locationRequestDTO.getGeoPosition().toString(), EMPTY_LOCATION_GEO_POSITION);
     }
+
+    public static void validateServiceProvider(ServiceProviderDTO serviceProviderDTO) {
+        isNullOrEmpty(serviceProviderDTO.getImageUrl(), EMPTY_IMAGE_URL);
+
+        isNullOrEmpty(serviceProviderDTO.getAbbreviation(), EMPTY_ABBREVIATION);
+
+        isNullOrEmpty(serviceProviderDTO.getWebsite(), EMPTY_WEBSITE);
+
+        isNullOrEmpty(serviceProviderDTO.getEmail(), EMPTY_EMAIL);
+        validateRegex(serviceProviderDTO.getEmail(), REGEX_EMAIL, INVALID_EMAIL);
+
+        isNullOrEmpty(serviceProviderDTO.getPhone(), EMPTY_PHONE_NUMBER);
+        validateRegex(serviceProviderDTO.getPhone(), REGEX_PHONE, INVALID_PHONE_NUMBER);
+
+        isNullOrEmpty(serviceProviderDTO.getAddress(), EMPTY_ADDRESS);
+//        private LocationDTO location;
+//
+//        private GeoPositionDTO geoPosition;
+//
+//        private Set<ServiceCategoryDTO> serviceCategorys;
+
+    }
+
 }

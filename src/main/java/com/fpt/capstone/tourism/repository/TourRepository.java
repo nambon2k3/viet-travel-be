@@ -13,17 +13,17 @@ import java.util.List;
 public interface TourRepository  extends JpaRepository<Tour, Long>, JpaSpecificationExecutor<Tour> {
     @Query("SELECT tb.tour.id FROM TourBooking tb " +
             "WHERE YEAR(tb.bookingDate) = YEAR(CURRENT_DATE)" +
-            "AND tb.tour.isDeleted = FALSE " +
+            "AND tb.tour.deleted = FALSE " +
             "GROUP BY tb.tour.id " +
             "ORDER BY COUNT(tb.tour.id) DESC")
     List<Long> findTopTourIdsOfCurrentYear();
 
     @Query("SELECT tb.tour.id FROM TourBooking tb " +
-            "WHERE tb.tour.isDeleted = FALSE " +
+            "WHERE tb.tour.deleted = FALSE " +
             "GROUP BY tb.tour.id " +
             "ORDER BY COUNT(tb.tour.id) DESC")
     List<Long> findTrendingTourIds(Pageable pageable);
 
-    @Query("SELECT t FROM Tour t WHERE t.isDeleted = FALSE ORDER BY t.createdAt DESC LIMIT 1")
+    @Query("SELECT t FROM Tour t WHERE t.deleted = FALSE ORDER BY t.createdAt DESC LIMIT 1")
     Tour findNewestTour();
 }

@@ -1,10 +1,7 @@
 package com.fpt.capstone.tourism.service.impl;
 
-<<<<<<< HEAD
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.BlogDTO;
-=======
->>>>>>> 18fa62271735c7b04a8a8bcf9d30b936029a4c78
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.common.TagDTO;
 import com.fpt.capstone.tourism.dto.request.BlogRequestDTO;

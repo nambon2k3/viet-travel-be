@@ -4,6 +4,7 @@ package com.fpt.capstone.tourism.dto.common;
 import com.fpt.capstone.tourism.model.GeoPosition;
 import lombok.Data;
 
+
 @Data
 public class LocationDTO {
     private Long id;
