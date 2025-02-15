@@ -67,6 +67,6 @@ public class HomepageServiceImpl implements HomepageService {
 
     @Override
     public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> viewAllRestaurant(int page, int size, String keyword) {
-        return null;
+        return providerService.getAllRestaurant(page, size, keyword);
     }
 }
