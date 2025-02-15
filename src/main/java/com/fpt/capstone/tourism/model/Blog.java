@@ -2,9 +2,7 @@ package com.fpt.capstone.tourism.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.commons.lang3.builder.ToStringExclude;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -28,7 +26,7 @@ public class Blog extends BaseEntity{
     private String content;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)

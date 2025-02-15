@@ -18,6 +18,6 @@ public class BlogResponseDTO {
     private String content;
     private AuthorDTO author;
     private List<TagDTO> tags;
-    private boolean isDeleted;
+    private Boolean deleted;
     private LocalDateTime createdAt;
 }

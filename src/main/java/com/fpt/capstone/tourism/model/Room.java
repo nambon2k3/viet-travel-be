@@ -38,7 +38,7 @@ public class Room extends BaseEntity{
     private double rating;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;

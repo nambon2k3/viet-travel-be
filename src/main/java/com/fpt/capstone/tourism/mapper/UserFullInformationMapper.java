@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserFullInformationMapper extends EntityMapper<UserFullInformationResponseDTO, User> {
     @Mapping(target = "roleNames", expression = "java(mapRoles(user.getUserRoles()))")
+    @Mapping(target = "deleted", source = "deleted")
     UserFullInformationResponseDTO toDTO(User user);
 
     User toEntity(UserCreationRequestDTO userDTO);

@@ -1,7 +1,6 @@
 package com.fpt.capstone.tourism.model;
 
 import com.fpt.capstone.tourism.enums.Gender;
-import com.fpt.capstone.tourism.enums.RoleName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -11,9 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,7 +56,7 @@ public class User extends BaseEntity implements UserDetails {
     private boolean emailConfirmed;
 
     @Column(name="is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

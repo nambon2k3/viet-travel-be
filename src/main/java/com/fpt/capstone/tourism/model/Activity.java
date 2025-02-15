@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.print.attribute.standard.Destination;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -32,7 +30,7 @@ public class Activity extends BaseEntity {
     private double pricePerPerson;
 
     @Column(name="is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @OneToOne
     @JoinColumn(name = "geo_position_id")

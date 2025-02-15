@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -36,7 +35,7 @@ public class Transport extends BaseEntity{
     private double price;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @ManyToOne
     @JoinColumn(name = "provider_id", nullable = false)

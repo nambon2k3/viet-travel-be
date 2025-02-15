@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 
 @Entity
 @Data
@@ -23,6 +21,6 @@ public class GeoPosition extends BaseEntity {
     private Double longitude;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
 }

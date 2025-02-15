@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "roles")
 @Data
@@ -23,6 +21,6 @@ public class Role extends BaseEntity {
     @Column(name="role_name")
     private String roleName;
     @Column(name="is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 }
 
