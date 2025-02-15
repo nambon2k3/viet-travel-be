@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,9 +32,6 @@ public class HomepageServiceImpl implements HomepageService {
     private final BlogService blogService;
     private final ActivityService activityService;
     private final ServiceProviderService providerService;
-    private final TourMapper tourMapper;
-    private final ActivityMapper activityMapper;
-    private final BlogMapper blogMapper;
 
     @Override
     public GeneralResponse<HomepageDTO> viewHomepage(int numberTour, int numberBlog, int numberActivity) {
@@ -55,10 +53,7 @@ public class HomepageServiceImpl implements HomepageService {
         return new GeneralResponse<>(HttpStatus.OK.value(), "Homepage loaded successfully", homepageDTO);
     }
 
-    @Override
-    public GeneralResponse<PagingDTO<List<TourDTO>>> viewAllTour(int page, int size, String keyword, Boolean isDeleted) {
-        return null;
-    }
+
 
     @Override
     public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> viewAllHotel(int page, int size, String keyword) {
@@ -68,5 +63,10 @@ public class HomepageServiceImpl implements HomepageService {
     @Override
     public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> viewAllRestaurant(int page, int size, String keyword) {
         return providerService.getAllRestaurant(page, size, keyword);
+    }
+
+    @Override
+    public GeneralResponse<PagingDTO<List<TourDTO>>> viewAllTour(int page, int size, String keyword, Double budgetFrom, Double budgetTo, Integer duration, Date fromDate) {
+        return tourService.getAllPublicTour(page, size, keyword, budgetFrom, budgetTo, duration, fromDate);
     }
 }

@@ -192,6 +192,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
         }
     }
 
+
+
     private Specification<ServiceProvider> buildSearchSpecification(String keyword, Boolean isDeleted) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -243,6 +245,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             throw BusinessException.of("not ok", ex);
         }
     }
+
     private GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> buildPagedResponse(Page<ServiceProvider> serviceProviderPage, List<ServiceProviderDTO> serviceProviders) {
         PagingDTO<List<ServiceProviderDTO>> pagingDTO = PagingDTO.<List<ServiceProviderDTO>>builder()
                 .page(serviceProviderPage.getNumber())
@@ -253,25 +256,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
         return new GeneralResponse<>(HttpStatus.OK.value(), "ok", pagingDTO);
     }
-//    private Specification<ServiceProvider> buildSearchSpecification(String keyword, String categoryName) {
-//        return (root, query, cb) -> {
-//            List<Predicate> predicates = new ArrayList<>();
-//
-//            // Ensure only the specified category is selected
-//            Join<ServiceProvider, ServiceCategory> categoryJoin = root.join("serviceCategories");
-//            predicates.add(cb.equal(categoryJoin.get("categoryName"), categoryName));
-//
-//            // Search by service provider name if a keyword is provided
-//            if (keyword != null && !keyword.trim().isEmpty()) {
-//                predicates.add(cb.like(cb.lower(root.get("name")), "%" + keyword.toLowerCase() + "%"));
-//            }
-//
-//            // Always filter out deleted records
-//            predicates.add(cb.equal(root.get("deleted"), false));
-//
-//            return cb.and(predicates.toArray(new Predicate[0]));
-//        };
-//    }
 
     private Specification<ServiceProvider> buildSearchSpecification(String keyword, String categoryName) {
         return (root, query, cb) -> {
