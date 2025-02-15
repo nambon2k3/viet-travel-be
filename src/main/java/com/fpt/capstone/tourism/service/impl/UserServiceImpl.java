@@ -21,6 +21,8 @@ import com.fpt.capstone.tourism.repository.UserRepository;
 import com.fpt.capstone.tourism.service.CloudinaryService;
 import com.fpt.capstone.tourism.repository.UserRoleRepository;
 import com.fpt.capstone.tourism.service.UserService;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -110,12 +112,10 @@ public class UserServiceImpl implements UserService {
                     .map(user -> {
                         // Fetch all roles of the user
                         List<Role> roles = roleRepository.findRolesByUserId(user.getId());
-
                         UserFullInformationResponseDTO userDTO = userFullInformationMapper.toDTO(user);
                         userDTO.setRoles(roles.stream()
                                 .map(Role::getRoleName)
                                 .collect(Collectors.toList()));
-
                         return userDTO;
                     })
                     .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND_MESSAGE));
@@ -422,10 +422,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>> getAllUser(int page, int size, String keyword, Boolean isDeleted) {
+    public GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>> getAllUser(
+            int page, int size, String keyword, Boolean isDeleted, String roleName,
+            String sortField, String sortDirection) {
         try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-            Specification<User> spec = buildSearchSpecification(keyword, isDeleted);
+            // Validate sortField to prevent invalid field names
+            List<String> allowedSortFields = Arrays.asList("id", "createdAt", "username", "email");
+            if (!allowedSortFields.contains(sortField)) {
+                sortField = "createdAt";
+            }
+            Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+            // Build search specification
+            Specification<User> spec = buildSearchSpecification(keyword, isDeleted, roleName);
 
             Page<User> userPage = userRepository.findAll(spec, pageable);
             List<UserFullInformationResponseDTO> users = userPage.getContent().stream()
@@ -452,9 +462,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private Specification<User> buildSearchSpecification(String keyword, Boolean isDeleted) {
+
+    private Specification<User> buildSearchSpecification(String keyword, Boolean isDeleted,String roleName) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            // Keyword search in multiple fields
             if (keyword != null && !keyword.isEmpty()) {
                 Predicate keywordPredicate = criteriaBuilder.or(
                         criteriaBuilder.like(root.get("username"), "%" + keyword + "%"),
@@ -465,9 +478,19 @@ public class UserServiceImpl implements UserService {
                 );
                 predicates.add(keywordPredicate);
             }
+
+            // Filter by deleted status
             if (isDeleted != null) {
                 predicates.add(criteriaBuilder.equal(root.get("deleted"), isDeleted));
             }
+
+            // Filter by role name
+            if (roleName != null && !roleName.isEmpty()) {
+                Join<User, UserRole> userRoleJoin = root.join("userRoles", JoinType.INNER);
+                Join<UserRole, Role> roleJoin = userRoleJoin.join("role", JoinType.INNER);
+                predicates.add(criteriaBuilder.equal(roleJoin.get("roleName"), roleName));
+            }
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
