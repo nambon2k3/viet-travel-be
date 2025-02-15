@@ -210,7 +210,7 @@ public class AuthServiceImplTest {
                 .phone("0987654321")
                 .email("testuser123@gmail.com")
                 .build();
-        Role customerRole = Role.builder().roleName("CUSTOMER").isDeleted(false).build();
+        Role customerRole = Role.builder().roleName("CUSTOMER").deleted(false).build();
         User user = User.builder()
                 .username(registerRequestDTO.getUsername())
                 .fullName(registerRequestDTO.getFullName())

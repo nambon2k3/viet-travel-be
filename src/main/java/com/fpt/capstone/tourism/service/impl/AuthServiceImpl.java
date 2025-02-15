@@ -110,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
                     .orElseGet(() -> {
                         Role newRole = Role.builder()
                                 .roleName("CUSTOMER")
-                                .isDeleted(false)
+                                .deleted(false)
                                 .build();
                         return roleRepository.save(newRole);
                     });
@@ -134,7 +134,7 @@ public class AuthServiceImpl implements AuthService {
             UserRole newUserRole = UserRole.builder()
                     .user(savedUser)
                     .role(userRole)
-                    .isDeleted(false)
+                    .deleted(false)
                     .build();
 
             userRoleRepository.save(newUserRole);
