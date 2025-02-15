@@ -2,21 +2,30 @@ package com.fpt.capstone.tourism.service.impl;
 
 import com.fpt.capstone.tourism.dto.common.*;
 import com.fpt.capstone.tourism.dto.response.BlogResponseDTO;
+import com.fpt.capstone.tourism.dto.response.PagingDTO;
+import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.mapper.ActivityMapper;
 import com.fpt.capstone.tourism.mapper.BlogMapper;
 import com.fpt.capstone.tourism.mapper.TourMapper;
 import com.fpt.capstone.tourism.model.Activity;
 import com.fpt.capstone.tourism.model.Blog;
+import com.fpt.capstone.tourism.model.Location;
 import com.fpt.capstone.tourism.model.Tour;
 import com.fpt.capstone.tourism.service.ActivityService;
 import com.fpt.capstone.tourism.service.BlogService;
 import com.fpt.capstone.tourism.service.HomepageService;
 import com.fpt.capstone.tourism.service.TourService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,5 +55,10 @@ public class HomepageServiceImpl implements HomepageService {
                 .build();
 
         return new GeneralResponse<>(HttpStatus.OK.value(), "Homepage loaded successfully", homepageDTO);
+    }
+
+    @Override
+    public GeneralResponse<PagingDTO<List<TourDTO>>> viewAllTour(int page, int size, String keyword, Boolean isDeleted) {
+        return null;
     }
 }
