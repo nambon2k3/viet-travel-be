@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -30,13 +31,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll()
                         .requestMatchers("/public/**", "/auth/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/forgot-password", "/reset-password").permitAll()
-                        .requestMatchers("/ceo/**").hasAnyAuthority("CEO")
-                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                        .requestMatchers("/marketing/**").hasAnyAuthority("MARKETER")
+                        .requestMatchers("/v1/ceo/**").hasAnyAuthority("CEO")
+                        .requestMatchers("/v1/admin/**").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/v1/marketing/**").hasAnyAuthority("MARKETER")
+                        .requestMatchers("/v1/sales/**").hasAnyAuthority("SALESMAN")
+                        .requestMatchers("/v1/operator/**").hasAnyAuthority("OPERATOR")
+                        .requestMatchers("/v1/accountant/**").hasAnyAuthority("ACCOUNTANT")
+                        .requestMatchers("/v1/service-provider/**").hasAnyAuthority("SERVICE_PROVIDER")
+                        .requestMatchers("/v1/head-of-business/**").hasAnyAuthority("HEAD_OF_BUSINESS")
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

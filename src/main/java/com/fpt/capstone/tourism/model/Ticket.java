@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,7 +20,7 @@ public class Ticket extends BaseEntity {
     private Double price;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false)

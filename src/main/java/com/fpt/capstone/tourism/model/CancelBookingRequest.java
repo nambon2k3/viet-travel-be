@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,5 +31,5 @@ public class CancelBookingRequest extends BaseEntity{
     private String reason;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 }

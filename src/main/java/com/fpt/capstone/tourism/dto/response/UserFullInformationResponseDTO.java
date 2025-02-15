@@ -22,7 +22,7 @@ public class UserFullInformationResponseDTO {
     private String address;
     private String avatarImage;
     private List<String> roleNames;
-    private boolean isDeleted;
+    private boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

@@ -88,7 +88,7 @@ public class AuthServiceImplTest {
                 .address("BG")
                 .avatarImage(null)
                 .emailConfirmed(true)
-                .isDeleted(false).build();
+                .deleted(false).build();
 
         String token = "jwt-token";
 
@@ -147,7 +147,7 @@ public class AuthServiceImplTest {
                 .address("BG")
                 .avatarImage(null)
                 .emailConfirmed(true)
-                .isDeleted(true).build();
+                .deleted(true).build();
 
         when(userService.findUserByUsername(userDTO.getUsername()))
                 .thenReturn(user);
@@ -172,7 +172,7 @@ public class AuthServiceImplTest {
                 .address("BG")
                 .avatarImage(null)
                 .emailConfirmed(false)
-                .isDeleted(false).build();
+                .deleted(false).build();
 
         when(userService.findUserByUsername(userDTO.getUsername()))
                 .thenReturn(user);
@@ -210,7 +210,7 @@ public class AuthServiceImplTest {
                 .phone("0987654321")
                 .email("testuser123@gmail.com")
                 .build();
-        Role customerRole = Role.builder().roleName("CUSTOMER").isDeleted(false).build();
+        Role customerRole = Role.builder().roleName("CUSTOMER").deleted(false).build();
         User user = User.builder()
                 .username(registerRequestDTO.getUsername())
                 .fullName(registerRequestDTO.getFullName())
@@ -219,7 +219,7 @@ public class AuthServiceImplTest {
                 .gender(registerRequestDTO.getGender())
                 .phone(registerRequestDTO.getPhone())
                 .address(registerRequestDTO.getAddress())
-                .isDeleted(false)
+                .deleted(false)
                 .emailConfirmed(false)
                 .build();
 

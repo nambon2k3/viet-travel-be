@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "user_roles")
 @Data
@@ -28,7 +26,7 @@ public class UserRole extends BaseEntity {
     private User user;
 
     @Column(name="is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")

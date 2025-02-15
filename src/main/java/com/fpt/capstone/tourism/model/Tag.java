@@ -3,12 +3,8 @@ package com.fpt.capstone.tourism.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -29,13 +25,14 @@ public class Tag extends BaseEntity {
     private String description;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @ManyToMany(mappedBy = "tags")
     @JsonIgnore
     private List<Tour> tours;
 
     @ManyToMany(mappedBy = "blogTags")
+    @ToString.Exclude
     private List<Blog> blogs;
 
 }

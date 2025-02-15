@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,5 +29,5 @@ public class TourDayTransport extends BaseEntity {
     private int number;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 }

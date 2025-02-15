@@ -1,7 +1,10 @@
 package com.fpt.capstone.tourism.service.impl;
 
+<<<<<<< HEAD
 import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.BlogDTO;
+=======
+>>>>>>> 18fa62271735c7b04a8a8bcf9d30b936029a4c78
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.common.TagDTO;
 import com.fpt.capstone.tourism.dto.request.BlogRequestDTO;
@@ -28,9 +31,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.fpt.capstone.tourism.constants.Constants.Message.*;
 
 @Service
 @RequiredArgsConstructor
@@ -43,41 +49,69 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     @Transactional
-    public GeneralResponse<BlogResponseDTO> saveBlog(BlogRequestDTO blogRequestDTO) {
+    public GeneralResponse<BlogResponseDTO> createBlog(BlogRequestDTO blogRequestDTO) {
+        try {
+            // Validate input
+            Validator.validateBlog(blogRequestDTO.getTitle(), blogRequestDTO.getDescription(), blogRequestDTO.getContent());
+            Blog blog = blogMapper.toEntity(blogRequestDTO);
+            blog.setCreatedAt(LocalDateTime.now());
+            blog.setDeleted(false);
+            Blog savedBlog = blogRepository.save(blog);
+            return new GeneralResponse<>(HttpStatus.CREATED.value(), CREATE_BLOG_SUCCESS_MESSAGE,blogMapper.toDTO(savedBlog));
+        } catch (BusinessException be) {
+            throw be;
+        } catch (Exception ex) {
+            throw BusinessException.of(CREATE_BLOG_FAIL_MESSAGE, ex);
+        }
+    }
+
+    @Override
+    @Transactional
+    public GeneralResponse<BlogResponseDTO> updateBlog(Long id, BlogRequestDTO blogRequestDTO) {
         try {
             // Validate input
             Validator.validateBlog(blogRequestDTO.getTitle(), blogRequestDTO.getDescription(), blogRequestDTO.getContent());
 
+            // Fetch existing blog
+            Blog blog = blogRepository.findById(id).orElseThrow(
+                    () -> BusinessException.of(HttpStatus.NOT_FOUND,BLOG_NOT_FOUND)
+            );
             // Fetch required entities
             User author = userService.findById(blogRequestDTO.getAuthor().getId());
             List<Tag> tags = tagService.findAllById(
                     blogRequestDTO.getTags().stream().map(TagDTO::getId).collect(Collectors.toList())
             );
+            // Update fields
+            blog.setTitle(blogRequestDTO.getTitle());
+            blog.setDescription(blogRequestDTO.getDescription());
+            blog.setContent(blogRequestDTO.getContent());
+            blog.setThumbnailImageUrl(blogRequestDTO.getThumbnailImageUrl());
+            blog.setAuthor(author);
+            blog.setBlogTags(tags);
 
-            // Convert DTO to Entity
-            Blog blog = blogMapper.toEntity(blogRequestDTO, author, tags);
+            // Save updated blog
             blogRepository.save(blog);
-
             // Convert to response DTO
             BlogResponseDTO responseDTO = blogMapper.toDTO(blog);
-            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.CREATE_BLOG_SUCCESS_MESSAGE, responseDTO);
+            return new GeneralResponse<>(HttpStatus.OK.value(), UPDATE_BLOG_SUCCESS_MESSAGE, responseDTO);
         } catch (BusinessException be) {
             throw be;
         } catch (Exception ex) {
-            throw BusinessException.of(Constants.Message.CREATE_BLOG_FAIL_MESSAGE, ex);
+            throw BusinessException.of(UPDATE_BLOG_FAIL_MESSAGE, ex);
         }
     }
+
 
     @Override
     public GeneralResponse<BlogResponseDTO> getBlogById(Long id) {
         try {
             Blog blog = blogRepository.findById(id).orElseThrow();
             BlogResponseDTO blogResponseDTO = blogMapper.toDTO(blog);
-            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.GENERAL_SUCCESS_MESSAGE, blogResponseDTO);
+            return new GeneralResponse<>(HttpStatus.OK.value(), GENERAL_SUCCESS_MESSAGE, blogResponseDTO);
         } catch (BusinessException be) {
             throw be;
         } catch (Exception ex) {
-            throw BusinessException.of(Constants.Message.GENERAL_FAIL_MESSAGE, ex);
+            throw BusinessException.of(GENERAL_FAIL_MESSAGE, ex);
         }
     }
 
@@ -86,14 +120,14 @@ public class BlogServiceImpl implements BlogService {
         try {
             Blog blog = blogRepository.findById(id).orElseThrow();
             blog.setDeleted(isDeleted);
-            blogRepository.save(blog);
-
-            BlogResponseDTO blogResponseDTO = blogMapper.toDTO(blog);
-            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.GENERAL_SUCCESS_MESSAGE, blogResponseDTO);
+            //blogRepository.save(blog);
+            Blog savedBlog = blogRepository.save(blog);
+            BlogResponseDTO blogResponseDTO = blogMapper.toDTO(savedBlog);
+            return GeneralResponse.of(blogResponseDTO,GENERAL_SUCCESS_MESSAGE);
         } catch (BusinessException be) {
             throw be;
         } catch (Exception ex) {
-            throw BusinessException.of(Constants.Message.GENERAL_FAIL_MESSAGE, ex);
+            throw BusinessException.of(GENERAL_FAIL_MESSAGE, ex);
         }
     }
 
@@ -134,7 +168,7 @@ public class BlogServiceImpl implements BlogService {
                 predicates.add(cb.or(titlePredicate, descPredicate));
             }
             if (isDeleted != null) {
-                predicates.add(cb.equal(root.get("isDeleted"), isDeleted));
+                predicates.add(cb.equal(root.get("deleted"), isDeleted));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };

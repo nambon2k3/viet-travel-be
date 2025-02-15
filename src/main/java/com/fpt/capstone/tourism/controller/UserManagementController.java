@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/staffs")
 @RequiredArgsConstructor
-public class StaffManagementController {
+public class UserManagementController {
 
     private final UserService userService;
 
@@ -26,8 +26,10 @@ public class StaffManagementController {
     @GetMapping()
     public ResponseEntity<GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getAllUser(page, size));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Boolean isDeleted) {
+        return ResponseEntity.ok(userService.getAllUser(page, size, keyword, isDeleted));
     }
 
     @GetMapping("/{id}")
@@ -40,14 +42,8 @@ public class StaffManagementController {
         return ResponseEntity.ok(userService.updateUser(id, userDTO));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.deleteUser(id));
+    @PostMapping("/change-status/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, @RequestParam boolean isDeleted) {
+        return ResponseEntity.ok(userService.deleteUser(id, isDeleted));
     }
-
-    @PutMapping("/recover/{id}")
-    public ResponseEntity<GeneralResponse<?>> recoverStaff(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.recoverStaff(id));
-    }
-
 }

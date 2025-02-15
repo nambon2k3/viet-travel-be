@@ -203,7 +203,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
         try {
             ServiceContact serviceContact = serviceContactRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
-            if (!serviceContact.isDeleted()) {
+            if (!serviceContact.getDeleted()) {
                 serviceContact.setDeleted(true);
                 serviceContactRepository.save(serviceContact);
             }

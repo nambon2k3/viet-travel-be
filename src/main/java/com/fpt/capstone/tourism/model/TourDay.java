@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -30,7 +29,7 @@ public class TourDay extends BaseEntity{
     private String mealPlan;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean deleted;
 
     @OneToOne
     @JoinColumn(name = "tour_id")

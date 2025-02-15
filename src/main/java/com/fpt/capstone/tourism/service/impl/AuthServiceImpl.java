@@ -4,14 +4,12 @@ import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.TokenDTO;
 import com.fpt.capstone.tourism.dto.common.UserDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
-import com.fpt.capstone.tourism.dto.request.LoginRequestDTO;
 import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
 import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
 import com.fpt.capstone.tourism.enums.RoleName;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.IHelper.JwtHelper;
 import com.fpt.capstone.tourism.helper.TokenEncryptorImpl;
-import com.fpt.capstone.tourism.helper.validator.*;
 import com.fpt.capstone.tourism.model.Token;
 import com.fpt.capstone.tourism.model.Role;
 import com.fpt.capstone.tourism.helper.validator.Validator;
@@ -28,8 +26,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
 import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
@@ -57,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
             ));
             User user = userService.findUserByUsername(userDTO.getUsername());
 
-            if (user.isDeleted()) {
+            if (Boolean.TRUE.equals(user.getDeleted())) {
                 throw BusinessException.of(HttpStatus.FORBIDDEN.toString());
             }
 
@@ -111,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
                     .orElseGet(() -> {
                         Role newRole = Role.builder()
                                 .roleName("CUSTOMER")
-                                .isDeleted(false)
+                                .deleted(false)
                                 .build();
                         return roleRepository.save(newRole);
                     });
@@ -125,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
                     .gender(registerRequestDTO.getGender())
                     .phone(registerRequestDTO.getPhone())
                     .address(registerRequestDTO.getAddress())
-                    .isDeleted(false)
+                    .deleted(false)
                     .emailConfirmed(false)
                     .build();
 
@@ -135,7 +134,7 @@ public class AuthServiceImpl implements AuthService {
             UserRole newUserRole = UserRole.builder()
                     .user(savedUser)
                     .role(userRole)
-                    .isDeleted(false)
+                    .deleted(false)
                     .build();
 
             userRoleRepository.save(newUserRole);
@@ -177,6 +176,16 @@ public class AuthServiceImpl implements AuthService {
             throw BusinessException.of(CONFIRM_EMAIL_FAILED);
         }
 
+    }
+
+    @Override
+    public GeneralResponse<List<Role>> getRoles() {
+        try {
+            List<Role> roles = roleRepository.findAll();
+            return new GeneralResponse<>(HttpStatus.OK.value(), Constants.Message.ROLES_RETRIEVED_SUCCESS_MESSAGE, roles);
+        } catch (Exception e) {
+            throw BusinessException.of(ROLES_RETRIEVED_FAIL_MESSAGE);
+        }
     }
 
 }
