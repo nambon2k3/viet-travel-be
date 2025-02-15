@@ -14,6 +14,8 @@ public interface ServiceProviderService {
         GeneralResponse<ServiceProviderDTO> save(ServiceProviderDTO serviceProviderDTO);
         GeneralResponse<ServiceProviderDTO> getServiceProviderById(Long id);
         GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> getAllServiceProviders(int page, int size, String keyword, Boolean isDeleted);
+        GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> getAllHotel(int page, int size, String keyword);
+//        GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> getAllRestaurant(int page, int size, String keyword);
         GeneralResponse<ServiceProviderDTO> updateServiceProvider(Long id, ServiceProviderDTO serviceProviderDTO);
         GeneralResponse<ServiceProviderDTO> deleteServiceProvider(Long id, boolean isDeleted);
 }

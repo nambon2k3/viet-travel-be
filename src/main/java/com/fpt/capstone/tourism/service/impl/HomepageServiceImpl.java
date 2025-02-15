@@ -11,10 +11,7 @@ import com.fpt.capstone.tourism.model.Activity;
 import com.fpt.capstone.tourism.model.Blog;
 import com.fpt.capstone.tourism.model.Location;
 import com.fpt.capstone.tourism.model.Tour;
-import com.fpt.capstone.tourism.service.ActivityService;
-import com.fpt.capstone.tourism.service.BlogService;
-import com.fpt.capstone.tourism.service.HomepageService;
-import com.fpt.capstone.tourism.service.TourService;
+import com.fpt.capstone.tourism.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +30,7 @@ public class HomepageServiceImpl implements HomepageService {
     private final TourService tourService;
     private final BlogService blogService;
     private final ActivityService activityService;
+    private final ServiceProviderService providerService;
     private final TourMapper tourMapper;
     private final ActivityMapper activityMapper;
     private final BlogMapper blogMapper;
@@ -59,6 +57,16 @@ public class HomepageServiceImpl implements HomepageService {
 
     @Override
     public GeneralResponse<PagingDTO<List<TourDTO>>> viewAllTour(int page, int size, String keyword, Boolean isDeleted) {
+        return null;
+    }
+
+    @Override
+    public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> viewAllHotel(int page, int size, String keyword) {
+        return providerService.getAllHotel(page, size, keyword);
+    }
+
+    @Override
+    public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> viewAllRestaurant(int page, int size, String keyword) {
         return null;
     }
 }

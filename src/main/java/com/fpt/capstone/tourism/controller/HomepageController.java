@@ -1,9 +1,6 @@
 package com.fpt.capstone.tourism.controller;
 
-import com.fpt.capstone.tourism.dto.common.GeneralResponse;
-import com.fpt.capstone.tourism.dto.common.HomepageDTO;
-import com.fpt.capstone.tourism.dto.common.LocationDTO;
-import com.fpt.capstone.tourism.dto.common.TourDTO;
+import com.fpt.capstone.tourism.dto.common.*;
 import com.fpt.capstone.tourism.dto.response.BlogResponseDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.service.HomepageService;
@@ -32,5 +29,17 @@ public class HomepageController {
                                                                                  @RequestParam(required = false) String keyword,
                                                                                  @RequestParam(required = false) Boolean isDeleted){
         return ResponseEntity.ok(homepageService.viewAllTour(page, size, keyword, isDeleted));
+    }
+    @GetMapping("/list-hotel")
+    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceProviderDTO>>>> viewAllHotel(@RequestParam(defaultValue = "0") int page,
+                                                                                             @RequestParam(defaultValue = "10") int size,
+                                                                                             @RequestParam(required = false) String keyword){
+        return ResponseEntity.ok(homepageService.viewAllHotel(page, size, keyword));
+    }
+    @GetMapping("/list-restaurant")
+    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceProviderDTO>>>> viewAllRestaurant(@RequestParam(defaultValue = "0") int page,
+                                                                                 @RequestParam(defaultValue = "10") int size,
+                                                                                 @RequestParam(required = false) String keyword){
+        return ResponseEntity.ok(homepageService.viewAllRestaurant(page, size, keyword));
     }
 }

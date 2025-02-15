@@ -13,6 +13,7 @@ import com.fpt.capstone.tourism.model.ServiceProvider;
 import com.fpt.capstone.tourism.repository.LocationRepository;
 import com.fpt.capstone.tourism.repository.ServiceProviderRepository;
 import com.fpt.capstone.tourism.service.ServiceProviderService;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -100,6 +101,25 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             throw BusinessException.of("not ok", ex);
         }
     }
+
+
+
+//    @Override
+//    public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> getAllRestaurant(int page, int size, String keyword) {
+//        try {
+//            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+//            Specification<ServiceProvider> spec = buildSearchSpecification(keyword, "Restaurant");
+//
+//            Page<ServiceProvider> serviceProviderPage = serviceProviderRepository.findByCategoryName("Hotel", pageable);
+//            List<ServiceProviderDTO> serviceProviderDTOS = serviceProviderPage.getContent().stream()
+//                    .map(serviceProviderMapper::toDTO)
+//                    .collect(Collectors.toList());
+//
+//            return buildPagedResponse(serviceProviderPage, serviceProviderDTOS);
+//        } catch (Exception ex) {
+//            throw BusinessException.of("not ok", ex);
+//        }
+//    }
 
 
     @Override
@@ -202,7 +222,22 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
+    @Override
+    public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> getAllHotel(int page, int size, String keyword) {
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+            Specification<ServiceProvider> spec = buildSearchSpecification(keyword, "Hotel");
 
+            Page<ServiceProvider> serviceProviderPage = serviceProviderRepository.findAll(spec, pageable);
+            List<ServiceProviderDTO> serviceProviderDTOS = serviceProviderPage.getContent().stream()
+                    .map(serviceProviderMapper::toDTO)
+                    .collect(Collectors.toList());
+
+            return buildPagedResponse(serviceProviderPage, serviceProviderDTOS);
+        } catch (Exception ex) {
+            throw BusinessException.of("not ok", ex);
+        }
+    }
     private GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> buildPagedResponse(Page<ServiceProvider> serviceProviderPage, List<ServiceProviderDTO> serviceProviders) {
         PagingDTO<List<ServiceProviderDTO>> pagingDTO = PagingDTO.<List<ServiceProviderDTO>>builder()
                 .page(serviceProviderPage.getNumber())
@@ -213,6 +248,27 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
         return new GeneralResponse<>(HttpStatus.OK.value(), "ok", pagingDTO);
     }
+    private Specification<ServiceProvider> buildSearchSpecification(String keyword, String categoryName) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Ensure only the specified category is selected
+            Join<ServiceProvider, ServiceCategory> categoryJoin = root.join("serviceCategories");
+            predicates.add(cb.equal(categoryJoin.get("categoryName"), categoryName));
+
+            // Search by service provider name if a keyword is provided
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("name")), "%" + keyword.toLowerCase() + "%"));
+            }
+
+            // Always filter out deleted records
+            predicates.add(cb.equal(root.get("deleted"), false));
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+
 
 
 }
