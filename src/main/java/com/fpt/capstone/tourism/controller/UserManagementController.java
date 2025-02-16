@@ -6,13 +6,15 @@ import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.dto.response.UserFullInformationResponseDTO;
 import com.fpt.capstone.tourism.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/staffs")
+@RequestMapping("/admin/users")
 @RequiredArgsConstructor
 public class UserManagementController {
 
@@ -28,9 +30,15 @@ public class UserManagementController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Boolean isDeleted) {
-        return ResponseEntity.ok(userService.getAllUser(page, size, keyword, isDeleted));
+            @RequestParam(required = false) Boolean isDeleted,
+            @RequestParam(required = false) String roleName,
+            @RequestParam(defaultValue = "createdAt") String sortField,
+            @RequestParam(defaultValue = "desc") String sortDirection
+    ) {
+        return ResponseEntity.ok(userService.getAllUser(page, size, keyword, isDeleted, roleName, sortField, sortDirection));
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {

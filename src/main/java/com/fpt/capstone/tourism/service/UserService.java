@@ -10,6 +10,7 @@ import com.fpt.capstone.tourism.model.User;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -32,7 +33,7 @@ public interface UserService {
     GeneralResponse<?> createUser(UserCreationRequestDTO userDTO);
     GeneralResponse<?> updateUser(Long id, UserCreationRequestDTO userDTO);
     GeneralResponse<?> deleteUser(Long id, boolean isDeleted);
-    GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>> getAllUser(int page, int size, String keyword, Boolean isDeleted);
+    GeneralResponse<PagingDTO<List<UserFullInformationResponseDTO>>> getAllUser(int page, int size, String keyword, Boolean isDeleted,String roleName,String sortField,String sortDirection);
 
     GeneralResponse<UserProfileResponseDTO> getUserProfile(String username);
     GeneralResponse<UserProfileResponseDTO> updateUserProfile(Long userId, UserProfileRequestDTO user);

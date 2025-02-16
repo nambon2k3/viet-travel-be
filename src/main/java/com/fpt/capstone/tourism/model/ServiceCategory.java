@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -27,6 +27,6 @@ public class ServiceCategory extends BaseEntity{
     private Boolean deleted;
 
     @ManyToMany(mappedBy = "serviceCategories")
-    private Set<ServiceProvider> serviceProviders;
+    private List<ServiceProvider> serviceProviders;
 
 }

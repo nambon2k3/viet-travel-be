@@ -1,5 +1,7 @@
 package com.fpt.capstone.tourism.service.impl;
 
+import com.fpt.capstone.tourism.constants.Constants;
+import com.fpt.capstone.tourism.dto.common.BlogDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.common.TagDTO;
 import com.fpt.capstone.tourism.dto.request.BlogRequestDTO;
@@ -140,6 +142,17 @@ public class BlogServiceImpl implements BlogService {
             return buildPagedResponse(blogPage, blogDTOs);
         } catch (Exception ex) {
             throw BusinessException.of("Error retrieving blogs", ex);
+        }
+    }
+
+    @Override
+    public List<BlogResponseDTO> findNewestBlogs(int numberBlog) {
+        try{
+            Pageable pageable = PageRequest.of(0, numberBlog, Sort.by("createdAt").descending());
+            List<Blog> blogList = blogRepository.findTopBlogs(pageable);
+            return blogList.stream().map(blogMapper::toDTO).collect(Collectors.toList());
+        }catch (Exception ex) {
+            throw BusinessException.of("Error retrieving newest blogs", ex);
         }
     }
 

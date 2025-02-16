@@ -1,6 +1,7 @@
 package com.fpt.capstone.tourism.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class Tag extends BaseEntity {
     private Boolean deleted;
 
     @ManyToMany(mappedBy = "tags")
+    @JsonIgnore
     private List<Tour> tours;
 
     @ManyToMany(mappedBy = "blogTags")

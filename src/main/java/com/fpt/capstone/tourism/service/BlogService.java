@@ -15,4 +15,6 @@ public interface BlogService {
     GeneralResponse<BlogResponseDTO> changeBlogDeletedStatus(Long id, boolean isDeleted);
     GeneralResponse<PagingDTO<List<BlogResponseDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted);
 
+    List<BlogResponseDTO> findNewestBlogs(int numberBlog);
+
 }

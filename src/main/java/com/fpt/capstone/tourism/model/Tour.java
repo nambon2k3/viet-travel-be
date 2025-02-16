@@ -37,7 +37,7 @@ public class Tour extends BaseEntity{
     @JoinTable(name = "tour_location",
             joinColumns = @JoinColumn(name = "tour_id"),
             inverseJoinColumns = @JoinColumn(name = "location_id"))
-    private Set<Location> locations;
+    private List<Location> locations;
 
 
     @ManyToMany
@@ -56,4 +56,10 @@ public class Tour extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
+
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Ticket> tickets;
+
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TourSchedule> tourSchedules;
 }

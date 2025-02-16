@@ -3,16 +3,14 @@ package com.fpt.capstone.tourism.dto.common;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Data;
 
-import java.util.Objects;
-
-
 @Data
-public class GeoPositionDTO {
+@Builder
+public class ActivityCategoryDTO {
     private Long id;
-    private Double latitude;
-    private Double longitude;
+    private String name;
     private boolean isDeleted;
-
 }

@@ -18,4 +18,5 @@ public interface JwtHelper {
     Date extractExpiration(String token);
     String generateToken(User user);
     SecretKey getSignInKey();
+    boolean isTokenValid(String token, UserDetails user);
 }
