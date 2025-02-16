@@ -121,6 +121,8 @@ public class Constants {
         public static final String CREATE_SERVICE_PROVIDER_FAIL = "Create service provider fail";
         public static final String UPDATE_SERVICE_PROVIDER_SUCCESS = "Update service provider successfully";
         public static final String UPDATE_SERVICE_PROVIDER_FAIL = "Update service provider fail";
+
+        public static final String GET_TAGS_NOT_FOUND_MESSAGE = "Get tags failed";
     }
 
 

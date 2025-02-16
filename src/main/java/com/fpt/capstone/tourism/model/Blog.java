@@ -23,6 +23,7 @@ public class Blog extends BaseEntity{
 
     private String description;
 
+    @Column(columnDefinition = "text")
     private String content;
 
     @Column(name = "is_deleted")
