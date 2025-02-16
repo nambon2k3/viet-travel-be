@@ -7,6 +7,8 @@ import com.fpt.capstone.tourism.service.ServiceContactService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +36,17 @@ public class ServiceContactController {
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(serviceContactService.getAllServiceContacts(page, size));
     }
+
+//    @GetMapping
+//    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>>> getAllServiceContacts(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @AuthenticationPrincipal UserDetails userDetails) {
+//
+//        String username = userDetails.getUsername();
+//        return ResponseEntity.ok(serviceContactService.getAllServiceContacts(page, size, username));
+//    }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateServiceContact(@PathVariable Long id, @Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {

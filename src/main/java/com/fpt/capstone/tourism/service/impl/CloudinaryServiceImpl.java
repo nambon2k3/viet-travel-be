@@ -59,4 +59,34 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public List<String> uploadFiles(MultipartFile[] files, String folder, Long userId) {
+        List<String> uploadResult = new ArrayList<>();
+        try {
+            for (MultipartFile file : files) {
+                Map<String, Object> uploadParams = ObjectUtils.asMap(
+                        "folder", folder,
+                        "use_filename", true,
+                        "unique_filename", true,
+                        "resource_type", "auto",
+                        "chunk_size", 5 * 1024 * 1024,
+                        "quality", "auto"
+                );
+
+                // If userId is provided, generate a specific public_id
+                if (userId != null) {
+                    uploadParams.put("public_id", folder + "_user_" + userId + "_" + file.getOriginalFilename());
+                    uploadParams.put("unique_filename", false);
+                }
+
+                Map result = cloudinary.uploader().upload(file.getBytes(), uploadParams);
+                uploadResult.add(result.get("url").toString());
+            }
+            return uploadResult;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload files", e);
+        }
+    }
+
 }
