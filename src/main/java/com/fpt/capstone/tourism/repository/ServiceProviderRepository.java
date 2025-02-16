@@ -18,16 +18,5 @@ public interface ServiceProviderRepository extends JpaRepository<ServiceProvider
     ServiceProvider findByPhone(String phoneNumber);
     Optional<ServiceProvider> findByName(String serviceProviderName);
     boolean existsByName(String serviceProviderName);
-
-    @Query("SELECT sp FROM ServiceProvider sp " +
-            "JOIN sp.serviceCategories sc " +
-            "WHERE sc.categoryName = :categoryName AND sp.deleted = FALSE")
-    Page<ServiceProvider> findByCategoryName(String categoryName, Pageable pageable);
-
-
-
-
-
-
 }
 

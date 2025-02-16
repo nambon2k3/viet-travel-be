@@ -14,6 +14,7 @@ import com.fpt.capstone.tourism.repository.LocationRepository;
 import com.fpt.capstone.tourism.repository.ServiceProviderRepository;
 import com.fpt.capstone.tourism.service.ServiceProviderService;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -104,22 +105,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 
 
-//    @Override
-//    public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> getAllRestaurant(int page, int size, String keyword) {
-//        try {
-//            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-//            Specification<ServiceProvider> spec = buildSearchSpecification(keyword, "Restaurant");
-//
-//            Page<ServiceProvider> serviceProviderPage = serviceProviderRepository.findByCategoryName("Hotel", pageable);
-//            List<ServiceProviderDTO> serviceProviderDTOS = serviceProviderPage.getContent().stream()
-//                    .map(serviceProviderMapper::toDTO)
-//                    .collect(Collectors.toList());
-//
-//            return buildPagedResponse(serviceProviderPage, serviceProviderDTOS);
-//        } catch (Exception ex) {
-//            throw BusinessException.of("not ok", ex);
-//        }
-//    }
+
 
 
     @Override
@@ -206,6 +192,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
         }
     }
 
+
+
     private Specification<ServiceProvider> buildSearchSpecification(String keyword, Boolean isDeleted) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -238,6 +226,26 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             throw BusinessException.of("not ok", ex);
         }
     }
+
+
+
+        @Override
+    public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> getAllRestaurant(int page, int size, String keyword) {
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+            Specification<ServiceProvider> spec = buildSearchSpecification(keyword, "Restaurant");
+
+            Page<ServiceProvider> serviceProviderPage = serviceProviderRepository.findAll(spec, pageable);
+            List<ServiceProviderDTO> serviceProviderDTOS = serviceProviderPage.getContent().stream()
+                    .map(serviceProviderMapper::toDTO)
+                    .collect(Collectors.toList());
+
+            return buildPagedResponse(serviceProviderPage, serviceProviderDTOS);
+        } catch (Exception ex) {
+            throw BusinessException.of("not ok", ex);
+        }
+    }
+
     private GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> buildPagedResponse(Page<ServiceProvider> serviceProviderPage, List<ServiceProviderDTO> serviceProviders) {
         PagingDTO<List<ServiceProviderDTO>> pagingDTO = PagingDTO.<List<ServiceProviderDTO>>builder()
                 .page(serviceProviderPage.getNumber())
@@ -248,6 +256,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
         return new GeneralResponse<>(HttpStatus.OK.value(), "ok", pagingDTO);
     }
+
     private Specification<ServiceProvider> buildSearchSpecification(String keyword, String categoryName) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -256,17 +265,25 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             Join<ServiceProvider, ServiceCategory> categoryJoin = root.join("serviceCategories");
             predicates.add(cb.equal(categoryJoin.get("categoryName"), categoryName));
 
-            // Search by service provider name if a keyword is provided
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                predicates.add(cb.like(cb.lower(root.get("name")), "%" + keyword.toLowerCase() + "%"));
-            }
-
             // Always filter out deleted records
             predicates.add(cb.equal(root.get("deleted"), false));
+
+            // Search by service provider name or location name if a keyword is provided
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String likePattern = "%" + keyword.toLowerCase() + "%";
+
+                Predicate providerNamePredicate = cb.like(cb.lower(root.get("name")), likePattern);
+                Join<ServiceProvider, Location> locationJoin = root.join("location", JoinType.LEFT);
+                Predicate locationNamePredicate = cb.like(cb.lower(locationJoin.get("name")), likePattern);
+
+                // Match either ServiceProvider name or Location name
+                predicates.add(cb.or(providerNamePredicate, locationNamePredicate));
+            }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
+
 
 
 
