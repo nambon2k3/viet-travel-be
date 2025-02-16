@@ -47,6 +47,11 @@ public class ServiceProvider extends BaseEntity {
     @JoinColumn(name = "geo_position_id")
     private GeoPosition geoPosition;
 
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @ManyToMany
     @JoinTable(
             name = "provide_service",
