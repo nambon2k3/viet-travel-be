@@ -33,5 +33,4 @@ public class ServiceContact extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "provider_id")
     private ServiceProvider serviceProvider;
-
 }

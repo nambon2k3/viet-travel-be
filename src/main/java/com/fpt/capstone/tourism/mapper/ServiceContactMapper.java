@@ -12,5 +12,8 @@ public interface ServiceContactMapper extends EntityMapper<ServiceContactManagem
     ServiceContact toEntity(ServiceContactManagementRequestDTO dto);
 
     @Mapping(source = "serviceProvider.name", target = "serviceProviderName")
+    @Mapping(target = "deleted", source = "deleted")
+    @Mapping(target = "createdAt", source = "createdAt")
+    @Mapping(target = "updatedAt", source = "updatedAt")
     ServiceContactManagementResponseDTO toResponseDTO(ServiceContact entity);
 }
