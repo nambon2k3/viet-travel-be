@@ -1,18 +1,24 @@
 package com.fpt.capstone.tourism.service.impl;
 
+import com.fpt.capstone.tourism.constants.Constants;
 import com.fpt.capstone.tourism.dto.common.*;
+import com.fpt.capstone.tourism.dto.request.RegisterRequestDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
+import com.fpt.capstone.tourism.dto.response.UserInfoResponseDTO;
+import com.fpt.capstone.tourism.enums.RoleName;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
+import com.fpt.capstone.tourism.helper.PasswordGenerateImpl;
 import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.mapper.ServiceCategoryMapper;
 import com.fpt.capstone.tourism.mapper.ServiceProviderMapper;
-import com.fpt.capstone.tourism.model.GeoPosition;
-import com.fpt.capstone.tourism.model.Location;
-import com.fpt.capstone.tourism.model.ServiceCategory;
-import com.fpt.capstone.tourism.model.ServiceProvider;
+import com.fpt.capstone.tourism.model.*;
 import com.fpt.capstone.tourism.repository.LocationRepository;
+import com.fpt.capstone.tourism.repository.RoleRepository;
 import com.fpt.capstone.tourism.repository.ServiceProviderRepository;
+import com.fpt.capstone.tourism.repository.UserRoleRepository;
+import com.fpt.capstone.tourism.service.EmailConfirmationService;
 import com.fpt.capstone.tourism.service.ServiceProviderService;
+import com.fpt.capstone.tourism.service.UserService;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -24,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +38,6 @@ import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -46,6 +52,13 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
     private final LocationRepository locationRepository;
     private final ServiceProviderMapper serviceProviderMapper;
     private final ServiceCategoryMapper serviceCategoryMapper;
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final EmailConfirmationService emailConfirmationService;
+    private final UserService userService;
+    private final PasswordGenerateImpl passwordGenerate;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Override
     public GeneralResponse<ServiceProviderDTO> save(ServiceProviderDTO serviceProviderDTO) {
@@ -65,7 +78,16 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             serviceProvider.setId(null);
             serviceProvider.setDeleted(false);
             serviceProvider.setCreatedAt(LocalDateTime.now());
+
+
+            User serviceUser = createAccountServiceProvider(serviceProvider.getName(),
+                    serviceProvider.getEmail(),
+                    serviceProvider.getPhone(),
+                    serviceProvider.getAddress());
+
+            serviceProvider.setUser(serviceUser);
             serviceProviderRepository.save(serviceProvider);
+
             return new GeneralResponse<>(HttpStatus.OK.value(), CREATE_SERVICE_PROVIDER_SUCCESS, serviceProviderMapper.toDTO(serviceProvider));
         } catch (BusinessException be){
             throw be;
@@ -303,6 +325,57 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
         Pattern pattern = Pattern.compile("\\p{M}"); // Removes diacritics (accents)
         return pattern.matcher(normalized).replaceAll("");
     }
+
+    public User createAccountServiceProvider(String fullName, String email, String phone, String address) {
+        try {
+
+
+            // Ensure "CUSTOMER" role exists, otherwise create it
+            Role userRole = roleRepository.findByRoleName("SERVICE_PROVIDER")
+                    .orElseGet(() -> {
+                        Role newRole = Role.builder()
+                                .roleName("SERVICE_PROVIDER")
+                                .deleted(false)
+                                .build();
+                        return roleRepository.save(newRole);
+                    });
+
+            String randomPassword = passwordGenerate.generatePassword();
+            System.out.println(randomPassword);
+            // Create new user
+            User user = User.builder()
+                    .username(email.trim().toLowerCase())
+                    .fullName(fullName)
+                    .email(email.trim().toLowerCase())
+                    .password(passwordEncoder.encode(randomPassword))
+                    .phone(phone)
+                    .address(address)
+                    .deleted(false)
+                    .emailConfirmed(true)
+                    .build();
+            System.out.println("create new user finish");
+            User savedUser = userService.saveUser(user);
+
+            // Assign role to user
+            UserRole newUserRole = UserRole.builder()
+                    .user(savedUser)
+                    .role(userRole)
+                    .deleted(false)
+                    .build();
+
+            userRoleRepository.save(newUserRole);
+
+            // Send email account
+            emailConfirmationService.sendAccountServiceProvider(user, randomPassword);
+            return savedUser;
+        } catch (BusinessException be){
+            throw be;
+        } catch (Exception e) {
+            throw BusinessException.of("Create account service provider fail");
+        }
+    }
+
+
 
 
 

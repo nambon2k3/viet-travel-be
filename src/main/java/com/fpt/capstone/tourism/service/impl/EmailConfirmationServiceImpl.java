@@ -97,4 +97,23 @@ public class EmailConfirmationServiceImpl implements EmailConfirmationService {
         return emailToken;
     }
 
+    @Override
+    public void sendAccountServiceProvider(User user, String randomPassword) {
+        try {
+            String subject = "Register to be Service Provide with Viet Travel";
+            String content = "Dear " + user.getFullName() + ",\n\n"
+                    + "Hello,"
+                    + "\nYou have been become a service provider for Viet Travel.\n\n"
+                    + "This is your account to access to web:\n"
+                    + "Account: " + user.getUsername()
+                    + "Password: " + randomPassword
+                    +"\nPlease log in web to change password. If you have any problem please contact to Viet Travel via this email address.";
+
+            emailService.sendEmail(user.getEmail(), subject, content);
+
+        } catch (Exception e) {
+            throw BusinessException.of(Constants.Message.TOKEN_ENCRYPTION_FAILED_MESSAGE, e);
+        }
+    }
+
 }

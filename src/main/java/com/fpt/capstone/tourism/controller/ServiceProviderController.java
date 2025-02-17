@@ -46,7 +46,7 @@ public class ServiceProviderController {
         return ResponseEntity.ok(serviceProviderService.updateServiceProvider(id, serviceProviderDTO));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/change-status/{id}")
     public ResponseEntity<GeneralResponse<ServiceProviderDTO>> deleteServiceProvider(@PathVariable Long id, @RequestParam boolean isDeleted) {
         return ResponseEntity.ok(serviceProviderService.deleteServiceProvider(id, isDeleted));
     }

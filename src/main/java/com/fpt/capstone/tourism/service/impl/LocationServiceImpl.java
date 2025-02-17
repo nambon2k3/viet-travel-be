@@ -78,9 +78,12 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public GeneralResponse<PagingDTO<List<LocationDTO>>> getAllLocation(int page, int size, String keyword, Boolean isDeleted) {
+    public GeneralResponse<PagingDTO<List<LocationDTO>>> getAllLocation(int page, int size, String keyword, Boolean isDeleted, String orderDate) {
         try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+            // Determine sorting order dynamically
+            Sort sort = "asc".equalsIgnoreCase(orderDate) ? Sort.by("createdAt").ascending() : Sort.by("createdAt").descending();
+            Pageable pageable = PageRequest.of(page, size, sort);
+
             Specification<Location> spec = buildSearchSpecification(keyword, isDeleted);
 
             Page<Location> serviceProviderPage = locationRepository.findAll(spec, pageable);
@@ -175,6 +178,8 @@ public class LocationServiceImpl implements LocationService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
+
+
 
     private GeneralResponse<PagingDTO<List<LocationDTO>>> buildPagedResponse(Page<Location> locationPage, List<LocationDTO> locationDTOS) {
         PagingDTO<List<LocationDTO>> pagingDTO = PagingDTO.<List<LocationDTO>>builder()

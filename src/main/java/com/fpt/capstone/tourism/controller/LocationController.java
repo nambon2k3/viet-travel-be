@@ -34,8 +34,9 @@ public class LocationController {
     public ResponseEntity<GeneralResponse<PagingDTO<List<LocationDTO>>>> getAll(@RequestParam(defaultValue = "0") int page,
                                                                                                 @RequestParam(defaultValue = "10") int size,
                                                                                                 @RequestParam(required = false) String keyword,
-                                                                                                @RequestParam(required = false) Boolean isDeleted) {
-        return ResponseEntity.ok(locationService.getAllLocation(page, size, keyword, isDeleted));
+                                                                                                @RequestParam(required = false) Boolean isDeleted,
+                                                                                                @RequestParam(defaultValue = "desc") String orderDate) {
+        return ResponseEntity.ok(locationService.getAllLocation(page, size, keyword, isDeleted, orderDate));
     }
 
     @PutMapping("/update/{id}")
@@ -43,11 +44,9 @@ public class LocationController {
         return ResponseEntity.ok(locationService.updateLocation(id, locationRequestDTO));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<GeneralResponse<LocationDTO>> delete(@PathVariable Long id, @RequestParam boolean isDeleted) {
+    @DeleteMapping("/change-status/{id}")
+    public ResponseEntity<GeneralResponse<LocationDTO>> delete(@PathVariable Long id,
+                                                               @RequestParam boolean isDeleted) {
         return ResponseEntity.ok(locationService.deleteLocation(id, isDeleted));
     }
-
-//
-
 }
