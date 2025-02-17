@@ -111,7 +111,7 @@ public class TourServiceImpl implements TourService {
             if (keyword != null && !keyword.trim().isEmpty()) {
                 // Ensure PostgreSQL has UNACCENT enabled
                 Expression<String> normalizedTourName = cb.function("unaccent", String.class, cb.lower(root.get("name")));
-                Expression<String> normalizedLocationName = cb.function("unaccent", String.class, cb.lower(root.join("depart_location", JoinType.LEFT).get("name")));
+                Expression<String> normalizedLocationName = cb.function("unaccent", String.class, cb.lower(root.join("locations", JoinType.LEFT).get("name")));
 
                 // Remove accents from the input keyword
                 Expression<String> normalizedKeyword = cb.function("unaccent", String.class, cb.literal(keyword.toLowerCase()));

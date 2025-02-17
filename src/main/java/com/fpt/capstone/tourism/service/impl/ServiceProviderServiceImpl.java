@@ -13,6 +13,7 @@ import com.fpt.capstone.tourism.model.ServiceProvider;
 import com.fpt.capstone.tourism.repository.LocationRepository;
 import com.fpt.capstone.tourism.repository.ServiceProviderRepository;
 import com.fpt.capstone.tourism.service.ServiceProviderService;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -26,10 +27,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.fpt.capstone.tourism.constants.Constants.Message.*;
@@ -268,23 +271,38 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             // Always filter out deleted records
             predicates.add(cb.equal(root.get("deleted"), false));
 
-            // Search by service provider name or location name if a keyword is provided
+            // Normalize text for search (Ignore case & accents)
             if (keyword != null && !keyword.trim().isEmpty()) {
-                String likePattern = "%" + keyword.toLowerCase() + "%";
+                // Normalize the keyword before passing it into the query
+                String normalizedKeyword = removeAccents(keyword.toLowerCase());
 
-                Predicate providerNamePredicate = cb.like(cb.lower(root.get("name")), likePattern);
+                // Use unaccent in DB for Service Provider name
+                Expression<String> normalizedServiceName = cb.function("unaccent", String.class, cb.lower(root.get("name")));
+
+                // Use unaccent in DB for Location name
                 Join<ServiceProvider, Location> locationJoin = root.join("location", JoinType.LEFT);
-                Predicate locationNamePredicate = cb.like(cb.lower(locationJoin.get("name")), likePattern);
+                Expression<String> normalizedLocationName = cb.function("unaccent", String.class, cb.lower(locationJoin.get("name")));
+
+                // Compare using LIKE
+                Predicate serviceNamePredicate = cb.like(normalizedServiceName, "%" + normalizedKeyword + "%");
+                Predicate locationNamePredicate = cb.like(normalizedLocationName, "%" + normalizedKeyword + "%");
 
                 // Match either ServiceProvider name or Location name
-                predicates.add(cb.or(providerNamePredicate, locationNamePredicate));
+                predicates.add(cb.or(serviceNamePredicate, locationNamePredicate));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
 
-
+    public static String removeAccents(String text) {
+        if (text == null) {
+            return null;
+        }
+        String normalized = Normalizer.normalize(text, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{M}"); // Removes diacritics (accents)
+        return pattern.matcher(normalized).replaceAll("");
+    }
 
 
 
