@@ -17,6 +17,7 @@ import com.fpt.capstone.tourism.repository.BlogRepository;
 import com.fpt.capstone.tourism.service.BlogService;
 import com.fpt.capstone.tourism.service.TagService;
 import com.fpt.capstone.tourism.service.UserService;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -159,14 +160,24 @@ public class BlogServiceImpl implements BlogService {
     private Specification<Blog> buildSearchSpecification(String keyword, Boolean isDeleted) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (keyword != null && !keyword.isEmpty()) {
-                Predicate titlePredicate = cb.like(root.get("title"), "%" + keyword + "%");
-                Predicate descPredicate = cb.like(root.get("description"), "%" + keyword + "%");
+
+            // Normalize Vietnamese text for search (ignore case and accents)
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                Expression<String> normalizedTitle = cb.function("unaccent", String.class, cb.lower(root.get("title")));
+                Expression<String> normalizedDescription = cb.function("unaccent", String.class, cb.lower(root.get("description")));
+                Expression<String> normalizedKeyword = cb.function("unaccent", String.class, cb.literal(keyword.toLowerCase()));
+
+                Predicate titlePredicate = cb.like(normalizedTitle, cb.concat("%", cb.concat(normalizedKeyword, "%")));
+                Predicate descPredicate = cb.like(normalizedDescription, cb.concat("%", cb.concat(normalizedKeyword, "%")));
+
                 predicates.add(cb.or(titlePredicate, descPredicate));
             }
+
+            // Filter by deletion status
             if (isDeleted != null) {
                 predicates.add(cb.equal(root.get("deleted"), isDeleted));
             }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
