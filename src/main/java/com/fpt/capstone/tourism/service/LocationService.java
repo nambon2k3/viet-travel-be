@@ -12,7 +12,7 @@ public interface LocationService {
 
     GeneralResponse<LocationDTO> getLocationById(Long id);
 
-    GeneralResponse<PagingDTO<List<LocationDTO>>> getAllLocation(int page, int size, String keyword, Boolean isDeleted);
+    GeneralResponse<PagingDTO<List<LocationDTO>>> getAllLocation(int page, int size, String keyword, Boolean isDeleted, String orderDate);
 
     GeneralResponse<LocationDTO> deleteLocation(Long id, boolean isDeleted);
 
