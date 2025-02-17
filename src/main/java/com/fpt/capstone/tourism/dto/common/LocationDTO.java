@@ -16,5 +16,4 @@ public class LocationDTO {
     private boolean deleted;
     private GeoPositionDTO geoPosition;
     private LocalDateTime createdAt;
-
 }

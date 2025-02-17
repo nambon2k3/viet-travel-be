@@ -10,4 +10,6 @@ public interface EmailConfirmationService {
     Token createEmailConfirmationToken(User user);
     void sendConfirmationEmail(User user, Token token) throws Exception;
     Token validateConfirmationToken(String token);
+
+    void sendAccountServiceProvider(User user, String randomPassword);
 }
