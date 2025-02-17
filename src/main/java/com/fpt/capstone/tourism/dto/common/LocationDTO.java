@@ -12,6 +12,6 @@ public class LocationDTO {
     private String description;
     private String image;
     private boolean deleted;
-    private GeoPosition geoPosition;
+    private GeoPositionDTO geoPosition;
 
 }

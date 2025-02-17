@@ -19,9 +19,9 @@ public class HomepageController {
     private final HomepageService homepageService;
 
     @GetMapping("/homepage")
-    public ResponseEntity<GeneralResponse<HomepageDTO>> view(@RequestParam("numberTour") int numberTour,
-                                                             @RequestParam("numberBlog") int numberBlog,
-                                                             @RequestParam("numberActivity") int numberActivity) {
+    public ResponseEntity<GeneralResponse<HomepageDTO>> view(@RequestParam(value = "numberTour", defaultValue = "3") int numberTour,
+                                                             @RequestParam(value = "numberBlog", defaultValue = "3") int numberBlog,
+                                                             @RequestParam(value = "numberActivity", defaultValue = "3") int numberActivity) {
         return ResponseEntity.ok(homepageService.viewHomepage(numberTour, numberBlog, numberActivity));
     }
 
