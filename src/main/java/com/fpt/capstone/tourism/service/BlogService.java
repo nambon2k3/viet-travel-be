@@ -18,4 +18,6 @@ public interface BlogService {
     GeneralResponse<PagingDTO<List<BlogResponseDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted);
     List<BlogResponseDTO> findNewestBlogs(int numberBlog);
     List<PublicBlogResponseDTO> getPublicBlog();
+    List<PublicBlogResponseDTO> getBlogsByTagName(String tagName, int numberOfBlogs);
+    List<PublicBlogResponseDTO> getNewestBlogs(int numberBlog);
 }

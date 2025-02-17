@@ -195,6 +195,7 @@ public class BlogServiceImpl implements BlogService {
         return new GeneralResponse<>(HttpStatus.OK.value(), "Success", pagingDTO);
     }
 
+    @Override
     public List<PublicBlogResponseDTO> getNewestBlogs(int numberBlog) {
         try{
             Pageable pageable = PageRequest.of(0, numberBlog, Sort.by("createdAt").descending());
@@ -205,9 +206,10 @@ public class BlogServiceImpl implements BlogService {
         }
     }
 
+    @Override
     public List<PublicBlogResponseDTO> getBlogsByTagName(String tagName, int numberOfBlogs) {
         Pageable pageable = PageRequest.of(0, numberOfBlogs);
-        List<Blog> blogs = blogRepository.findByBlogTags_Name(tagName);
+        List<Blog> blogs = blogRepository.findByBlogTags_Name(tagName, pageable);
         return blogs.stream()
                 .map(publicBlogMapper::blogToPublicBlogResponseDTO)
                 .collect(Collectors.toList());

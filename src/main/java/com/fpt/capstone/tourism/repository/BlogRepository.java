@@ -18,5 +18,5 @@ public interface BlogRepository extends JpaRepository<Blog, Long>, JpaSpecificat
     List<Blog> findTopBlogs(Pageable pageable);
 
     @Query("SELECT b FROM Blog b JOIN b.blogTags t WHERE t.name = :tagName")
-    List<Blog> findByBlogTags_Name(@Param("tagName") String tagName);
+    List<Blog> findByBlogTags_Name(@Param("tagName") String tagName, Pageable pageable);
 }
