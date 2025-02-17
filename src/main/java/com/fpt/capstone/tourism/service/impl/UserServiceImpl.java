@@ -21,6 +21,7 @@ import com.fpt.capstone.tourism.repository.UserRepository;
 import com.fpt.capstone.tourism.service.CloudinaryService;
 import com.fpt.capstone.tourism.repository.UserRoleRepository;
 import com.fpt.capstone.tourism.service.UserService;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.transaction.Transactional;
@@ -463,18 +464,25 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private Specification<User> buildSearchSpecification(String keyword, Boolean isDeleted,String roleName) {
+    private Specification<User> buildSearchSpecification(String keyword, Boolean isDeleted, String roleName) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Keyword search in multiple fields
-            if (keyword != null && !keyword.isEmpty()) {
+            // Normalize Vietnamese text for search (ignore case and accents)
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                Expression<String> normalizedUsername = criteriaBuilder.function("unaccent", String.class, criteriaBuilder.lower(root.get("username")));
+                Expression<String> normalizedEmail = criteriaBuilder.function("unaccent", String.class, criteriaBuilder.lower(root.get("email")));
+                Expression<String> normalizedFullName = criteriaBuilder.function("unaccent", String.class, criteriaBuilder.lower(root.get("fullName")));
+                Expression<String> normalizedPhone = criteriaBuilder.function("unaccent", String.class, criteriaBuilder.lower(root.get("phone")));
+                Expression<String> normalizedAddress = criteriaBuilder.function("unaccent", String.class, criteriaBuilder.lower(root.get("address")));
+                Expression<String> normalizedKeyword = criteriaBuilder.function("unaccent", String.class, criteriaBuilder.literal(keyword.toLowerCase()));
+
                 Predicate keywordPredicate = criteriaBuilder.or(
-                        criteriaBuilder.like(root.get("username"), "%" + keyword + "%"),
-                        criteriaBuilder.like(root.get("email"), "%" + keyword + "%"),
-                        criteriaBuilder.like(root.get("fullName"), "%" + keyword + "%"),
-                        criteriaBuilder.like(root.get("phone"), "%" + keyword + "%"),
-                        criteriaBuilder.like(root.get("address"), "%" + keyword + "%")
+                        criteriaBuilder.like(normalizedUsername, criteriaBuilder.concat("%", criteriaBuilder.concat(normalizedKeyword, "%"))),
+                        criteriaBuilder.like(normalizedEmail, criteriaBuilder.concat("%", criteriaBuilder.concat(normalizedKeyword, "%"))),
+                        criteriaBuilder.like(normalizedFullName, criteriaBuilder.concat("%", criteriaBuilder.concat(normalizedKeyword, "%"))),
+                        criteriaBuilder.like(normalizedPhone, criteriaBuilder.concat("%", criteriaBuilder.concat(normalizedKeyword, "%"))),
+                        criteriaBuilder.like(normalizedAddress, criteriaBuilder.concat("%", criteriaBuilder.concat(normalizedKeyword, "%")))
                 );
                 predicates.add(keywordPredicate);
             }
@@ -494,4 +502,5 @@ public class UserServiceImpl implements UserService {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
+
 }

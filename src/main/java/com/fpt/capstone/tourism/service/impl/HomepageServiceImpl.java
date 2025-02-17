@@ -41,19 +41,14 @@ public class HomepageServiceImpl implements HomepageService {
         List<ActivityDTO> recomendedActivities = activityService.findRecommendedActivities(numberActivity);
 
         //Mapping to Dto
-
-
         HomepageDTO homepageDTO = HomepageDTO.builder()
                 .topTourOfYear(topTourOfYear)
                 .newBlogs(newBlogs)
                 .trendingTours(trendingTours)
                 .recommendedActivities(recomendedActivities)
                 .build();
-
         return new GeneralResponse<>(HttpStatus.OK.value(), "Homepage loaded successfully", homepageDTO);
     }
-
-
 
     @Override
     public GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> viewAllHotel(int page, int size, String keyword) {
@@ -69,4 +64,5 @@ public class HomepageServiceImpl implements HomepageService {
     public GeneralResponse<PagingDTO<List<TourDTO>>> viewAllTour(int page, int size, String keyword, Double budgetFrom, Double budgetTo, Integer duration, Date fromDate) {
         return tourService.getAllPublicTour(page, size, keyword, budgetFrom, budgetTo, duration, fromDate);
     }
+
 }

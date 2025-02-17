@@ -7,9 +7,11 @@ import com.fpt.capstone.tourism.dto.common.TagDTO;
 import com.fpt.capstone.tourism.dto.request.BlogRequestDTO;
 import com.fpt.capstone.tourism.dto.response.BlogResponseDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
+import com.fpt.capstone.tourism.dto.response.PublicBlogResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.mapper.BlogMapper;
+import com.fpt.capstone.tourism.mapper.PublicBlogMapper;
 import com.fpt.capstone.tourism.model.Blog;
 import com.fpt.capstone.tourism.model.Tag;
 import com.fpt.capstone.tourism.model.User;
@@ -17,6 +19,7 @@ import com.fpt.capstone.tourism.repository.BlogRepository;
 import com.fpt.capstone.tourism.service.BlogService;
 import com.fpt.capstone.tourism.service.TagService;
 import com.fpt.capstone.tourism.service.UserService;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +46,7 @@ public class BlogServiceImpl implements BlogService {
     private final UserService userService;
     private final TagService tagService;
     private final BlogMapper blogMapper;
+    private final PublicBlogMapper publicBlogMapper;
 
     @Override
     @Transactional
@@ -159,14 +163,24 @@ public class BlogServiceImpl implements BlogService {
     private Specification<Blog> buildSearchSpecification(String keyword, Boolean isDeleted) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (keyword != null && !keyword.isEmpty()) {
-                Predicate titlePredicate = cb.like(root.get("title"), "%" + keyword + "%");
-                Predicate descPredicate = cb.like(root.get("description"), "%" + keyword + "%");
+
+            // Normalize Vietnamese text for search (ignore case and accents)
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                Expression<String> normalizedTitle = cb.function("unaccent", String.class, cb.lower(root.get("title")));
+                Expression<String> normalizedDescription = cb.function("unaccent", String.class, cb.lower(root.get("description")));
+                Expression<String> normalizedKeyword = cb.function("unaccent", String.class, cb.literal(keyword.toLowerCase()));
+
+                Predicate titlePredicate = cb.like(normalizedTitle, cb.concat("%", cb.concat(normalizedKeyword, "%")));
+                Predicate descPredicate = cb.like(normalizedDescription, cb.concat("%", cb.concat(normalizedKeyword, "%")));
+
                 predicates.add(cb.or(titlePredicate, descPredicate));
             }
+
+            // Filter by deletion status
             if (isDeleted != null) {
                 predicates.add(cb.equal(root.get("deleted"), isDeleted));
             }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
@@ -179,5 +193,55 @@ public class BlogServiceImpl implements BlogService {
                 .items(blogDTOs)
                 .build();
         return new GeneralResponse<>(HttpStatus.OK.value(), "Success", pagingDTO);
+    }
+
+    @Override
+    public List<PublicBlogResponseDTO> getNewestBlogs(int numberBlog) {
+        try{
+            Pageable pageable = PageRequest.of(0, numberBlog, Sort.by("createdAt").descending());
+            List<Blog> blogList = blogRepository.findTopBlogs(pageable);
+            return blogList.stream().map(publicBlogMapper::blogToPublicBlogResponseDTO).collect(Collectors.toList());
+        }catch (Exception ex) {
+            throw BusinessException.of("Error retrieving newest blogs", ex);
+        }
+    }
+
+    @Override
+    public List<PublicBlogResponseDTO> getBlogsByTagName(String tagName, int numberOfBlogs) {
+        Pageable pageable = PageRequest.of(0, numberOfBlogs);
+        List<Blog> blogs = blogRepository.findByBlogTags_Name(tagName, pageable);
+        return blogs.stream()
+                .map(publicBlogMapper::blogToPublicBlogResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PublicBlogResponseDTO> getPublicBlog() {
+        // Get 3 blogs with the tag "food & drink"
+        List<PublicBlogResponseDTO> foodAndDrinkBlogs = getBlogsByTagName("Food & Drinks", 3);
+
+        // Get 6 blogs with the tag "adventure"
+        List<PublicBlogResponseDTO> adventureBlogs = getBlogsByTagName("Adventure", 6);
+
+        // Get 3 blogs with the tag "cultural"
+        List<PublicBlogResponseDTO> culturalBlogs = getBlogsByTagName("Cultural", 3);
+
+        // Get 11 newest blogs
+        List<PublicBlogResponseDTO> newestBlogs = getNewestBlogs(11);
+
+        List<PublicBlogResponseDTO> allPublicBlogs = new ArrayList<>();
+        allPublicBlogs.addAll(foodAndDrinkBlogs);
+        allPublicBlogs.addAll(adventureBlogs);
+        allPublicBlogs.addAll(culturalBlogs);
+
+        List<PublicBlogResponseDTO> newestBlogsAsPublic = newestBlogs.stream()
+                .map(blogResponse -> PublicBlogResponseDTO.builder()
+                        .id(blogResponse.getId())
+                        .thumbnailImageUrl(blogResponse.getThumbnailImageUrl())
+                        .title(blogResponse.getTitle())
+                        .build())
+                .collect(Collectors.toList());
+        allPublicBlogs.addAll(newestBlogsAsPublic);
+        return allPublicBlogs;
     }
 }
