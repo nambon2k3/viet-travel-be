@@ -45,8 +45,11 @@ public class BlogController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Boolean isDeleted) {
-        return ResponseEntity.ok(blogService.getBlogs(page, size, keyword, isDeleted));
+            @RequestParam(required = false) Boolean isDeleted,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "desc") String sortDirection) {
+        return ResponseEntity.ok(blogService.getBlogs(page, size, keyword, isDeleted, sortField, sortDirection));
     }
+
 
 }

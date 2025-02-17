@@ -18,5 +18,6 @@ public interface ServiceProviderRepository extends JpaRepository<ServiceProvider
     ServiceProvider findByPhone(String phoneNumber);
     Optional<ServiceProvider> findByName(String serviceProviderName);
     boolean existsByName(String serviceProviderName);
+    Optional<ServiceProvider> findByUserId(Long userId);
 }
 

@@ -61,6 +61,7 @@ public class Constants {
         public static final String GET_SERVICE_CONTACT_FAIL = "Failed to retrieve service contact.";
         public static final String GET_ALL_SERVICE_CONTACTS_SUCCESS = "Service contacts retrieved successfully.";
         public static final String GET_ALL_SERVICE_CONTACTS_FAIL = "Failed to retrieve service contacts.";
+        public static final String SERVICE_CONTACTS_NOT_EXITS = "Failed to retrieve service contacts because service contact is not exits.";
         public static final String UPDATE_SERVICE_CONTACT_SUCCESS = "Service contact updated successfully.";
         public static final String UPDATE_SERVICE_CONTACT_FAIL = "Failed to update service contact.";
         public static final String DELETE_SERVICE_CONTACT_SUCCESS = "Service contact deleted successfully.";
@@ -123,6 +124,8 @@ public class Constants {
         public static final String UPDATE_SERVICE_PROVIDER_FAIL = "Update service provider fail";
 
         public static final String GET_TAGS_NOT_FOUND_MESSAGE = "Get tags failed";
+        public static final String BLOG_RETRIEVED_SUCCESS_MESSAGE = "Blog retrieved successfully";
+        public static final String BLOG_RETRIEVED_FAIL_MESSAGE = "Blog retrieved failed";
     }
 
 

@@ -12,14 +12,19 @@ import com.fpt.capstone.tourism.model.ServiceProvider;
 import com.fpt.capstone.tourism.repository.ServiceContactRepository;
 import com.fpt.capstone.tourism.repository.ServiceProviderRepository;
 import com.fpt.capstone.tourism.service.ServiceContactService;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -165,13 +170,21 @@ public class ServiceContactServiceImpl implements ServiceContactService {
         }
     }
 
-
     @Override
-    public GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>> getAllServiceContacts(int page, int size) {
+    public GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>> getAllServiceContacts(
+            int page, int size, String keyword, Boolean isDeleted, String sortField, String sortDirection, Long providerId) {
         try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ServiceContact> serviceContactPage = serviceContactRepository.findAll(pageable);
-
+            // Validate sortField to prevent invalid field names
+            List<String> allowedSortFields = Arrays.asList("id", "fullName", "email", "phoneNumber", "position");
+            if (!allowedSortFields.contains(sortField)) {
+                sortField = "id";
+            }
+            // Determine sort direction
+            Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+            // Build search specification
+            Specification<ServiceContact> spec = buildSearchSpecification(keyword, isDeleted, providerId);
+            Page<ServiceContact> serviceContactPage = serviceContactRepository.findAll(spec, pageable);
             List<ServiceContactManagementRequestDTO> serviceContacts = serviceContactPage.getContent().stream()
                     .map(serviceContact -> {
                         ServiceContactManagementRequestDTO dto = serviceContactMapper.toDTO(serviceContact);
@@ -182,7 +195,6 @@ public class ServiceContactServiceImpl implements ServiceContactService {
                         return dto;
                     })
                     .collect(Collectors.toList());
-
             PagingDTO<List<ServiceContactManagementRequestDTO>> pagingDTO = PagingDTO.<List<ServiceContactManagementRequestDTO>>builder()
                     .page(page)
                     .size(size)
@@ -194,6 +206,35 @@ public class ServiceContactServiceImpl implements ServiceContactService {
             throw BusinessException.of(GET_ALL_SERVICE_CONTACTS_FAIL, e);
         }
     }
+
+    private Specification<ServiceContact> buildSearchSpecification(String keyword, Boolean isDeleted, Long providerId) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Filter by Service Provider
+            predicates.add(criteriaBuilder.equal(root.get("serviceProvider").get("id"), providerId));
+
+            // Search by keyword in multiple fields
+            if (keyword != null && !keyword.isEmpty()) {
+                String searchPattern = "%" + keyword.toLowerCase() + "%";
+                Predicate searchPredicate = criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("fullName")), searchPattern),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), searchPattern),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("phoneNumber")), searchPattern),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("position")), searchPattern)
+                );
+                predicates.add(searchPredicate);
+            }
+
+            // Filter by isDeleted
+            if (isDeleted != null) {
+                predicates.add(criteriaBuilder.equal(root.get("deleted"), isDeleted));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
 
     @Override
     @Transactional
