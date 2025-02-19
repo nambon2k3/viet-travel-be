@@ -9,6 +9,7 @@ import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.mapper.GeoPositionMapper;
 import com.fpt.capstone.tourism.mapper.LocationMapper;
+import com.fpt.capstone.tourism.model.Activity;
 import com.fpt.capstone.tourism.model.GeoPosition;
 import com.fpt.capstone.tourism.model.Location;
 import com.fpt.capstone.tourism.repository.LocationRepository;
@@ -160,6 +161,14 @@ public class LocationServiceImpl implements LocationService {
             throw BusinessException.of(GENERAL_FAIL_MESSAGE, ex);
         }
 
+    }
+
+    @Override
+    public List<LocationDTO> findRecommendedLocations(int numberLocation) {
+        List<Location> randomLocations = locationRepository.findRandomLocation(numberLocation);
+        return randomLocations.stream()
+                .map(locationMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     private Specification<Location> buildSearchSpecification(String keyword, Boolean isDeleted) {
