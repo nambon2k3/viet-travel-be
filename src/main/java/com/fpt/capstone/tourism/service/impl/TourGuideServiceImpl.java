@@ -56,7 +56,7 @@ public class TourGuideServiceImpl implements TourGuideService {
                             .anyMatch(role -> role.getRole().getId().equals(10L)))
                     .map(user -> {
                         TourGuideResponseDTO userDTO = tourGuideMapper.toDTO(user);
-                        userDTO.setRoles(Collections.singletonList("Tour Guide"));
+                        userDTO.setRoles(Collections.singletonList("Tour_Guide"));
                         return userDTO;
                     })
                     .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND_MESSAGE));
@@ -69,15 +69,13 @@ public class TourGuideServiceImpl implements TourGuideService {
         }
     }
 
-
-
     @Override
     @Transactional
     public GeneralResponse<?> create(TourGuideRequestDTO userDTO) {
         try {
             // Validate user input
-            Validator.validateTourGuideFields(
-                    userDTO.getFullName(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getPassword(),
+            Validator.validateCreateTourGuideFields(
+                    userDTO.getFullName(), userDTO.getUsername(), userDTO.getPassword(),
                     userDTO.getEmail(), String.valueOf(userDTO.getGender()), userDTO.getPhone(),
                     userDTO.getAddress());
 
@@ -114,7 +112,7 @@ public class TourGuideServiceImpl implements TourGuideService {
 
             // Convert saved entity to response DTO
             TourGuideResponseDTO responseDTO = tourGuideMapper.toDTO(savedUser);
-            responseDTO.setRoles(Collections.singletonList("Tour Guide"));
+            responseDTO.setRoles(Collections.singletonList("Tour_Guide"));
 
             return GeneralResponse.of(responseDTO, "Tour guide created successfully.");
         } catch (BusinessException e) {
@@ -131,9 +129,10 @@ public class TourGuideServiceImpl implements TourGuideService {
             // Find user by ID
             User user = userRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, USER_NOT_FOUND_MESSAGE));
-            // Validate user input
-            Validator.validateTourGuideFields(
-                    userDTO.getFullName(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getPassword(),
+
+            // Validate user input (password is now optional)
+            Validator.validateUpdateTourGuideFields(
+                    userDTO.getFullName(), userDTO.getUsername(), userDTO.getPassword(),
                     userDTO.getEmail(), String.valueOf(userDTO.getGender()), userDTO.getPhone(),
                     userDTO.getAddress());
 
@@ -144,7 +143,6 @@ public class TourGuideServiceImpl implements TourGuideService {
             if (!user.getPhone().equals(userDTO.getPhone()) && userRepository.existsByPhone(userDTO.getPhone())) {
                 throw BusinessException.of(HttpStatus.CONFLICT, PHONE_ALREADY_EXISTS_MESSAGE);
             }
-
             // Update fields
             user.setFullName(userDTO.getFullName());
             user.setUsername(userDTO.getUsername());
@@ -154,16 +152,16 @@ public class TourGuideServiceImpl implements TourGuideService {
             user.setAddress(userDTO.getAddress());
             user.setAvatarImage(userDTO.getAvatarImage());
 
-            // Update password if provided
-            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()
-                    && !passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
-                user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            // Only update the password if a new one is provided
+            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+                if (!passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
+                    user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+                }
             }
-
             // Save updated user
             User updatedUser = userRepository.save(user);
             TourGuideResponseDTO responseDTO = tourGuideMapper.toDTO(updatedUser);
-            responseDTO.setRoles(Collections.singletonList("Tour Guide"));
+            responseDTO.setRoles(Collections.singletonList("Tour_Guide"));
 
             return GeneralResponse.of(responseDTO, "Tour guide updated successfully.");
         } catch (BusinessException e) {
