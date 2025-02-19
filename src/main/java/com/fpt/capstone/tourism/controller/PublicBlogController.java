@@ -2,6 +2,7 @@ package com.fpt.capstone.tourism.controller;
 
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.response.BlogResponseDTO;
+import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.dto.response.PublicBlogResponseDTO;
 import com.fpt.capstone.tourism.model.Blog;
 import com.fpt.capstone.tourism.service.BlogService;
@@ -45,14 +46,21 @@ public class PublicBlogController {
     }
 
     @GetMapping("/newest")
-    public ResponseEntity<List<PublicBlogResponseDTO>> getNewestBlogs(
-            @RequestParam(defaultValue = "11") int numberOfBlogs) {
-        List<PublicBlogResponseDTO> newestBlogs = blogService.getNewestBlogs(numberOfBlogs);
-        return ResponseEntity.ok(newestBlogs);
+    public ResponseEntity<GeneralResponse<PagingDTO<List<PublicBlogResponseDTO>>>> getNewestBlogs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(blogService.getNewestBlogs(page, size));
     }
 
     @GetMapping("/details/{id}")
     public ResponseEntity<GeneralResponse<BlogResponseDTO>> detail(@PathVariable Long id) {
         return ResponseEntity.ok(blogService.getBlogById(id));
     }
+
+    @GetMapping("/random")
+    public ResponseEntity<GeneralResponse<List<PublicBlogResponseDTO>>> getRandomBlogs(
+            @RequestParam(defaultValue = "3") int blogNumber) {
+        return ResponseEntity.ok(blogService.getRandomBlogs(blogNumber));
+    }
+
 }
