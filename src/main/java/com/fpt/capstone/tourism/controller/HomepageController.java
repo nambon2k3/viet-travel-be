@@ -49,4 +49,9 @@ public class HomepageController {
                                                                                  @RequestParam(required = false) String keyword){
         return ResponseEntity.ok(homepageService.viewAllRestaurant(page, size, keyword));
     }
+    @GetMapping("/activity/details/{id}")
+    public ResponseEntity<GeneralResponse<PublicActivityDetailDTO>> viewActivityDetail(@PathVariable Long id,
+                                                                                       @RequestParam(value = "numberActivity", defaultValue = "3") int numberActivity){
+        return ResponseEntity.ok(homepageService.viewPublicActivityDetail(id, numberActivity));
+    }
 }

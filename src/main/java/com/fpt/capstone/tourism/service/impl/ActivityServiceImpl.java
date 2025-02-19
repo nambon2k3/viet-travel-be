@@ -190,6 +190,17 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
+    @Override
+    public List<ActivityDTO> findRelatedActivities(Long activityId, int numberActivity) {
+        try{
+            Long locationId = activityRepository.findById(activityId).orElseThrow().getLocation().getId();
+            return activityRepository.findRelatedActivities(locationId, numberActivity)
+                    .stream().map(activityMapper::toDTO).collect(Collectors.toList());
+        } catch (Exception ex){
+            throw BusinessException.of(GENERAL_FAIL_MESSAGE, ex);
+        }
+    }
+
     private Specification<Activity> buildSearchSpecification(String keyword, Boolean isDeleted, Long categoryId) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

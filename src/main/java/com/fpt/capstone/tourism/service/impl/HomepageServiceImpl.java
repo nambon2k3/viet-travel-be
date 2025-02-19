@@ -11,6 +11,7 @@ import com.fpt.capstone.tourism.model.Activity;
 import com.fpt.capstone.tourism.model.Blog;
 import com.fpt.capstone.tourism.model.Location;
 import com.fpt.capstone.tourism.model.Tour;
+import com.fpt.capstone.tourism.repository.ActivityRepository;
 import com.fpt.capstone.tourism.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,8 @@ public class HomepageServiceImpl implements HomepageService {
     private final ActivityService activityService;
     private final ServiceProviderService providerService;
     private final LocationService locationService;
+    private final ActivityRepository activityRepository;
+    private final ActivityMapper activityMapper;
 
     @Override
     public GeneralResponse<HomepageDTO> viewHomepage(int numberTour, int numberBlog, int numberActivity, int numberLocation) {
@@ -66,6 +69,20 @@ public class HomepageServiceImpl implements HomepageService {
     @Override
     public GeneralResponse<PagingDTO<List<TourDTO>>> viewAllTour(int page, int size, String keyword, Double budgetFrom, Double budgetTo, Integer duration, Date fromDate) {
         return tourService.getAllPublicTour(page, size, keyword, budgetFrom, budgetTo, duration, fromDate);
+    }
+
+    @Override
+    public GeneralResponse<PublicActivityDetailDTO> viewPublicActivityDetail(Long activityId, int numberActivity) {
+        ActivityDTO activityDTO = activityMapper.toDTO(activityRepository.findById(activityId).orElseThrow());
+        List<ActivityDTO> relatedActivities = activityService.findRelatedActivities(activityId, numberActivity);
+
+        //Mapping to Dto
+        PublicActivityDetailDTO publicActivityDetailDTO = PublicActivityDetailDTO.builder()
+                .detailActivityDTO(activityDTO)
+                .relatedActivities(relatedActivities)
+                .build();
+
+        return new GeneralResponse<>(HttpStatus.OK.value(), "Activity detail loaded successfully", publicActivityDetailDTO);
     }
 
 }

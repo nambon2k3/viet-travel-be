@@ -1,5 +1,6 @@
 package com.fpt.capstone.tourism.repository;
 
+import com.fpt.capstone.tourism.dto.common.ActivityDTO;
 import com.fpt.capstone.tourism.model.Activity;
 import com.fpt.capstone.tourism.model.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +16,7 @@ public interface ActivityRepository extends JpaRepository<Activity, Long>, JpaSp
     List<Activity> findRandomActivities( int numberActivity);
 
     Activity findByTitle(String title);
+    @Query(value = "SELECT * FROM activity WHERE is_deleted = FALSE AND location_id =:locationId ORDER BY RANDOM() LIMIT :numberActivity", nativeQuery = true)
+    List<Activity> findRelatedActivities(Long locationId, int numberActivity);
 }
 
