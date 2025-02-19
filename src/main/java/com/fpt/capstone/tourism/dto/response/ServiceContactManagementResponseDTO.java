@@ -20,6 +20,7 @@ public class ServiceContactManagementResponseDTO {
     private String phoneNumber;
     private String email;
     private Gender gender;
+    private Long serviceProviderId;
     private String serviceProviderName;
     private Boolean deleted;
     private LocalDateTime createdAt;

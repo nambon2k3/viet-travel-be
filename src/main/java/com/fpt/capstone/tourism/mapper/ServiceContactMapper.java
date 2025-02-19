@@ -1,6 +1,6 @@
 package com.fpt.capstone.tourism.mapper;
 
-import com.fpt.capstone.tourism.dto.common.ServiceContactManagementRequestDTO;
+import com.fpt.capstone.tourism.dto.request.ServiceContactManagementRequestDTO;
 import com.fpt.capstone.tourism.dto.response.ServiceContactManagementResponseDTO;
 import com.fpt.capstone.tourism.model.ServiceContact;
 import org.mapstruct.Mapper;
@@ -12,6 +12,7 @@ public interface ServiceContactMapper extends EntityMapper<ServiceContactManagem
     ServiceContact toEntity(ServiceContactManagementRequestDTO dto);
 
     @Mapping(source = "serviceProvider.name", target = "serviceProviderName")
+    @Mapping(source = "serviceProvider.id", target ="serviceProviderId")
     @Mapping(target = "deleted", source = "deleted")
     @Mapping(target = "createdAt", source = "createdAt")
     @Mapping(target = "updatedAt", source = "updatedAt")

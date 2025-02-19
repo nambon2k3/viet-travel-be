@@ -1,8 +1,9 @@
 package com.fpt.capstone.tourism.controller;
 
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
-import com.fpt.capstone.tourism.dto.common.ServiceContactManagementRequestDTO;
+import com.fpt.capstone.tourism.dto.request.ServiceContactManagementRequestDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
+import com.fpt.capstone.tourism.dto.response.ServiceContactManagementResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.model.ServiceProvider;
 import com.fpt.capstone.tourism.model.User;
@@ -19,11 +20,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.fpt.capstone.tourism.constants.Constants.Message.GET_ALL_SERVICE_CONTACTS_FAIL;
-import static com.fpt.capstone.tourism.constants.Constants.Message.SERVICE_CONTACTS_NOT_EXITS;
-import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.USER_NOT_FOUND;
+import static com.fpt.capstone.tourism.constants.Constants.Message.*;
+import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.*;
 
 @RestController
 @RequestMapping("/service-provider/service-contacts")
@@ -31,7 +30,6 @@ import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformat
 public class ServiceContactController {
 
     private final ServiceContactService serviceContactService;
-    private final UserService userService;
     private final UserRepository userRepository;
     private final ServiceProviderRepository serviceProviderRepository;
 
@@ -41,7 +39,7 @@ public class ServiceContactController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>>> getAllServiceContacts(
+    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactManagementResponseDTO>>>> getAllServiceContacts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -51,15 +49,14 @@ public class ServiceContactController {
             @RequestParam(defaultValue = "desc") String sortDirection) {
         try {
             if (userDetails == null) {
-                throw BusinessException.of("Unauthorized access: User is not authenticated.");
+                throw BusinessException.of(USER_NOT_AUTHENTICATED);
             }
 
             User user = userRepository.findByUsername(userDetails.getUsername())
-                    .orElseThrow(() -> BusinessException.of("User not found"));
-
+                    .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND));
             // Get ServiceProvider using userId
             ServiceProvider serviceProvider = serviceProviderRepository.findByUserId(user.getId())
-                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND,SERVICE_CONTACTS_NOT_EXITS));
+                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACTS_NOT_EXITS));
 
             Long loggedInProviderId = serviceProvider.getId();
             return ResponseEntity.ok(serviceContactService.getAllServiceContacts(
@@ -69,19 +66,37 @@ public class ServiceContactController {
         }
     }
 
-
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
-        return ResponseEntity.ok(serviceContactService.createServiceContact(serviceContactManagementRequestDTO));
+    public ResponseEntity<?> create(@AuthenticationPrincipal UserDetails userDetails,
+                                    @Valid @RequestBody ServiceContactManagementRequestDTO requestDTO) {
+        Long providerId = getLoggedInServiceProviderId(userDetails);
+        return ResponseEntity.ok(serviceContactService.createServiceContact(requestDTO, providerId));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody ServiceContactManagementRequestDTO serviceContactManagementRequestDTO) {
-        return ResponseEntity.ok(serviceContactService.updateServiceContact(id, serviceContactManagementRequestDTO));
+    public ResponseEntity<?> update(@AuthenticationPrincipal UserDetails userDetails,
+                                    @PathVariable Long id,
+                                    @Valid @RequestBody ServiceContactManagementRequestDTO requestDTO) {
+        Long providerId = getLoggedInServiceProviderId(userDetails);
+        return ResponseEntity.ok(serviceContactService.updateServiceContact(id, requestDTO, providerId));
     }
 
     @PostMapping("/change-status/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id,@RequestParam boolean isDeleted) {
         return ResponseEntity.ok(serviceContactService.deleteServiceContact(id,isDeleted));
     }
+
+    private Long getLoggedInServiceProviderId(UserDetails userDetails) {
+        if (userDetails == null) {
+            throw BusinessException.of(USER_NOT_AUTHENTICATED);
+        }
+        User user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> BusinessException.of(USER_NOT_FOUND));
+
+        ServiceProvider serviceProvider = serviceProviderRepository.findByUserId(user.getId())
+                .orElseThrow(() -> BusinessException.of(SERVICE_PROVIDER_NOT_FOUND));
+
+        return serviceProvider.getId();
+    }
+
 }
