@@ -19,4 +19,6 @@ public interface ActivityService {
     GeneralResponse<ActivityDTO> updateActivity(Long id, ActivityDTO activityDTO);
 
     GeneralResponse<ActivityDTO> deleteActivity(Long id, boolean isDeleted);
+
+    List<ActivityDTO> findRelatedActivities(Long activityId, int numberActivity);
 }
