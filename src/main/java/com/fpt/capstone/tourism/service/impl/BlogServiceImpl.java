@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -133,9 +134,17 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public GeneralResponse<PagingDTO<List<BlogResponseDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted) {
+    public GeneralResponse<PagingDTO<List<BlogResponseDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted, String sortField, String sortDirection) {
         try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+            // Validate sortField to prevent invalid field names
+            List<String> allowedSortFields = Arrays.asList("id", "createdAt", "title");
+            if (!allowedSortFields.contains(sortField)) {
+                sortField = "createdAt";
+            }
+            Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+            // Build search specification
             Specification<Blog> spec = buildSearchSpecification(keyword, isDeleted);
 
             Page<Blog> blogPage = blogRepository.findAll(spec, pageable);
@@ -145,7 +154,7 @@ public class BlogServiceImpl implements BlogService {
 
             return buildPagedResponse(blogPage, blogDTOs);
         } catch (Exception ex) {
-            throw BusinessException.of("Error retrieving blogs", ex);
+            throw BusinessException.of(BLOG_RETRIEVED_FAIL_MESSAGE, ex);
         }
     }
 
