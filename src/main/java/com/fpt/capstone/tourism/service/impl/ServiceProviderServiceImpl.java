@@ -229,7 +229,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             }
 
             if (isDeleted != null) {
-                predicates.add(cb.equal(root.get("isDeleted"), isDeleted));
+                predicates.add(cb.equal(root.get("deleted"), isDeleted));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

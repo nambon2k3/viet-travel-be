@@ -20,6 +20,6 @@ public class ActivityDTO {
     private double pricePerPerson;
     private boolean isDeleted;
     private GeoPositionDTO geoPosition;
-    private Long locationId;
+    private LocationDTO locationId;
     private Long activityCategoryId;
 }
