@@ -1,6 +1,6 @@
 package com.fpt.capstone.tourism.service.impl;
 
-import com.fpt.capstone.tourism.dto.common.ServiceContactManagementRequestDTO;
+import com.fpt.capstone.tourism.dto.request.ServiceContactManagementRequestDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.dto.response.ServiceContactManagementResponseDTO;
@@ -171,7 +171,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
     }
 
     @Override
-    public GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>> getAllServiceContacts(
+    public GeneralResponse<PagingDTO<List<ServiceContactManagementResponseDTO>>> getAllServiceContacts(
             int page, int size, String keyword, Boolean isDeleted, String sortField, String sortDirection, Long providerId) {
         try {
             // Validate sortField to prevent invalid field names
@@ -179,33 +179,34 @@ public class ServiceContactServiceImpl implements ServiceContactService {
             if (!allowedSortFields.contains(sortField)) {
                 sortField = "id";
             }
+
             // Determine sort direction
             Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
             Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
             // Build search specification
             Specification<ServiceContact> spec = buildSearchSpecification(keyword, isDeleted, providerId);
             Page<ServiceContact> serviceContactPage = serviceContactRepository.findAll(spec, pageable);
-            List<ServiceContactManagementRequestDTO> serviceContacts = serviceContactPage.getContent().stream()
-                    .map(serviceContact -> {
-                        ServiceContactManagementRequestDTO dto = serviceContactMapper.toDTO(serviceContact);
 
-                        if (serviceContact.getServiceProvider() != null) {
-                            dto.setServiceProviderName(serviceContact.getServiceProvider().getName());
-                        }
-                        return dto;
-                    })
+            // Convert entities to response DTOs
+            List<ServiceContactManagementResponseDTO> serviceContacts = serviceContactPage.getContent().stream()
+                    .map(serviceContactMapper::toResponseDTO)
                     .collect(Collectors.toList());
-            PagingDTO<List<ServiceContactManagementRequestDTO>> pagingDTO = PagingDTO.<List<ServiceContactManagementRequestDTO>>builder()
+
+            // Build pagination response
+            PagingDTO<List<ServiceContactManagementResponseDTO>> pagingDTO = PagingDTO.<List<ServiceContactManagementResponseDTO>>builder()
                     .page(page)
                     .size(size)
                     .total(serviceContactPage.getTotalElements())
                     .items(serviceContacts)
                     .build();
+
             return GeneralResponse.of(pagingDTO, GET_ALL_SERVICE_CONTACTS_SUCCESS);
         } catch (Exception e) {
             throw BusinessException.of(GET_ALL_SERVICE_CONTACTS_FAIL, e);
         }
     }
+
 
     private Specification<ServiceContact> buildSearchSpecification(String keyword, Boolean isDeleted, Long providerId) {
         return (root, query, criteriaBuilder) -> {

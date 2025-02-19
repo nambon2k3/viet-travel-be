@@ -1,7 +1,9 @@
-package com.fpt.capstone.tourism.dto.common;
+package com.fpt.capstone.tourism.dto.request;
 
 import com.fpt.capstone.tourism.enums.Gender;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -13,6 +15,7 @@ public class ServiceContactManagementRequestDTO {
     private String phoneNumber;
     private String email;
     private Gender gender;
+    private Long serviceProviderId;
     private String serviceProviderName;
 }
 

@@ -1,8 +1,9 @@
 package com.fpt.capstone.tourism.controller;
 
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
-import com.fpt.capstone.tourism.dto.common.ServiceContactManagementRequestDTO;
+import com.fpt.capstone.tourism.dto.request.ServiceContactManagementRequestDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
+import com.fpt.capstone.tourism.dto.response.ServiceContactManagementResponseDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.model.ServiceProvider;
 import com.fpt.capstone.tourism.model.User;
@@ -19,11 +20,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.fpt.capstone.tourism.constants.Constants.Message.GET_ALL_SERVICE_CONTACTS_FAIL;
 import static com.fpt.capstone.tourism.constants.Constants.Message.SERVICE_CONTACTS_NOT_EXITS;
-import static com.fpt.capstone.tourism.constants.Constants.UserExceptionInformation.USER_NOT_FOUND;
 
 @RestController
 @RequestMapping("/service-provider/service-contacts")
@@ -41,7 +39,7 @@ public class ServiceContactController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactManagementRequestDTO>>>> getAllServiceContacts(
+    public ResponseEntity<GeneralResponse<PagingDTO<List<ServiceContactManagementResponseDTO>>>> getAllServiceContacts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -59,7 +57,7 @@ public class ServiceContactController {
 
             // Get ServiceProvider using userId
             ServiceProvider serviceProvider = serviceProviderRepository.findByUserId(user.getId())
-                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND,SERVICE_CONTACTS_NOT_EXITS));
+                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACTS_NOT_EXITS));
 
             Long loggedInProviderId = serviceProvider.getId();
             return ResponseEntity.ok(serviceContactService.getAllServiceContacts(
