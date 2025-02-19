@@ -129,6 +129,8 @@ public class Constants {
         public static final String EMPTY_PRICE = "Price can not be empty";
         public static final String EMPTY_LOCATION = "Location can not be empty";
         public static final String EMPTY_ACTIVITY_CATEGORY = "Activity category can not be empty";
+
+        public static final String SERVICE_NOT_EXITS = "Service not exits";
     }
 
 

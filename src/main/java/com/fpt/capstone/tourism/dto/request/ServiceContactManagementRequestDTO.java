@@ -15,7 +15,5 @@ public class ServiceContactManagementRequestDTO {
     private String phoneNumber;
     private String email;
     private Gender gender;
-    private Long serviceProviderId;
-    private String serviceProviderName;
 }
 

@@ -41,7 +41,8 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
     @Override
     @Transactional
-    public GeneralResponse<ServiceContactManagementResponseDTO> createServiceContact(ServiceContactManagementRequestDTO requestDTO) {
+    public GeneralResponse<ServiceContactManagementResponseDTO> createServiceContact(
+            ServiceContactManagementRequestDTO requestDTO, Long providerId) {
         try {
             // Validate required fields
             Validator.validateServiceContact(
@@ -50,10 +51,6 @@ public class ServiceContactServiceImpl implements ServiceContactService {
                     requestDTO.getEmail(),
                     requestDTO.getPosition()
             );
-
-            // Find service provider by name
-            ServiceProvider serviceProvider = serviceProviderRepository.findByName(requestDTO.getServiceProviderName())
-                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_PROVIDER_NOT_FOUND));
 
             // Check for duplicate phone number
             if (serviceContactRepository.existsByPhoneNumber(requestDTO.getPhoneNumber())) {
@@ -68,12 +65,14 @@ public class ServiceContactServiceImpl implements ServiceContactService {
             // Convert DTO to entity
             ServiceContact serviceContact = serviceContactMapper.toEntity(requestDTO);
             serviceContact.setDeleted(false);
-            serviceContact.setServiceProvider(serviceProvider);
+            serviceContact.setServiceProvider(serviceProviderRepository.findById(providerId)
+                    .orElseThrow(() -> BusinessException.of(SERVICE_PROVIDER_NOT_FOUND)));
+
             ServiceContact savedServiceContact = serviceContactRepository.save(serviceContact);
 
             // Convert to response DTO
             ServiceContactManagementResponseDTO responseDTO = serviceContactMapper.toResponseDTO(savedServiceContact);
-            responseDTO.setServiceProviderName(serviceProvider.getName());
+            responseDTO.setServiceProviderName(serviceContact.getServiceProvider().getName());
 
             return GeneralResponse.of(responseDTO, CREATE_SERVICE_CONTACT_SUCCESS);
         } catch (BusinessException e) {
@@ -85,7 +84,8 @@ public class ServiceContactServiceImpl implements ServiceContactService {
 
     @Override
     @Transactional
-    public GeneralResponse<ServiceContactManagementResponseDTO> updateServiceContact(Long id, ServiceContactManagementRequestDTO requestDTO) {
+    public GeneralResponse<ServiceContactManagementResponseDTO> updateServiceContact(
+            Long id, ServiceContactManagementRequestDTO requestDTO, Long providerId) {
         try {
             // Validate required fields
             Validator.validateServiceContact(
@@ -99,9 +99,10 @@ public class ServiceContactServiceImpl implements ServiceContactService {
             ServiceContact serviceContact = serviceContactRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_CONTACT_NOT_FOUND));
 
-            // Find service provider by name
-            ServiceProvider serviceProvider = serviceProviderRepository.findByName(requestDTO.getServiceProviderName())
-                    .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, SERVICE_PROVIDER_NOT_FOUND));
+            // Ensure the contact belongs to the logged-in service provider
+            if (!serviceContact.getServiceProvider().getId().equals(providerId)) {
+                throw BusinessException.of(HttpStatus.FORBIDDEN, "You are not authorized to update this service contact.");
+            }
 
             // Check for duplicate phone number (excluding current contact)
             Optional<ServiceContact> existingPhoneContact = serviceContactRepository.findByPhoneNumber(requestDTO.getPhoneNumber());
@@ -132,15 +133,12 @@ public class ServiceContactServiceImpl implements ServiceContactService {
                 serviceContact.setGender(requestDTO.getGender());
             }
 
-            // Update service provider
-            serviceContact.setServiceProvider(serviceProvider);
-
             // Save changes
             ServiceContact updatedServiceContact = serviceContactRepository.save(serviceContact);
 
             // Convert to response DTO
             ServiceContactManagementResponseDTO responseDTO = serviceContactMapper.toResponseDTO(updatedServiceContact);
-            responseDTO.setServiceProviderName(serviceProvider.getName());
+            responseDTO.setServiceProviderName(serviceContact.getServiceProvider().getName());
 
             return GeneralResponse.of(responseDTO, UPDATE_SERVICE_CONTACT_SUCCESS);
         } catch (BusinessException e) {
@@ -149,6 +147,7 @@ public class ServiceContactServiceImpl implements ServiceContactService {
             throw BusinessException.of(HttpStatus.INTERNAL_SERVER_ERROR, UPDATE_SERVICE_CONTACT_FAIL, e);
         }
     }
+
 
     @Override
     public GeneralResponse<?> getServiceContactById(Long id) {
