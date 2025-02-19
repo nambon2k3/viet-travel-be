@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface HomepageService {
-    GeneralResponse<HomepageDTO> viewHomepage(int numberTour, int numberBlog, int numberActivity);
+    GeneralResponse<HomepageDTO> viewHomepage(int numberTour, int numberBlog, int numberActivity, int numberLocation);
 
 
     GeneralResponse<PagingDTO<List<ServiceProviderDTO>>> viewAllHotel(int page, int size, String keyword);

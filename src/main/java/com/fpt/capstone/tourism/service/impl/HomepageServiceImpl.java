@@ -32,20 +32,23 @@ public class HomepageServiceImpl implements HomepageService {
     private final BlogService blogService;
     private final ActivityService activityService;
     private final ServiceProviderService providerService;
+    private final LocationService locationService;
 
     @Override
-    public GeneralResponse<HomepageDTO> viewHomepage(int numberTour, int numberBlog, int numberActivity) {
+    public GeneralResponse<HomepageDTO> viewHomepage(int numberTour, int numberBlog, int numberActivity, int numberLocation) {
         TourDTO topTourOfYear = tourService.findTopTourOfYear();
         List<TourDTO> trendingTours = tourService.findTrendingTours(numberTour);
         List<BlogResponseDTO> newBlogs = blogService.findNewestBlogs(numberBlog);
-        List<ActivityDTO> recomendedActivities = activityService.findRecommendedActivities(numberActivity);
+        List<ActivityDTO> recommendedActivities = activityService.findRecommendedActivities(numberActivity);
+        List<LocationDTO> recommendedLocations = locationService.findRecommendedLocations(numberLocation);
 
         //Mapping to Dto
         HomepageDTO homepageDTO = HomepageDTO.builder()
                 .topTourOfYear(topTourOfYear)
                 .newBlogs(newBlogs)
                 .trendingTours(trendingTours)
-                .recommendedActivities(recomendedActivities)
+                .recommendedActivities(recommendedActivities)
+                .recommendedLocations(recommendedLocations)
                 .build();
         return new GeneralResponse<>(HttpStatus.OK.value(), "Homepage loaded successfully", homepageDTO);
     }

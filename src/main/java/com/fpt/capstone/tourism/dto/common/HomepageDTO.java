@@ -17,4 +17,5 @@ public class HomepageDTO {
     private List<TourDTO> trendingTours;
     private List<BlogResponseDTO> newBlogs;
     private List<ActivityDTO> recommendedActivities;
+    private List<LocationDTO> recommendedLocations;
 }
