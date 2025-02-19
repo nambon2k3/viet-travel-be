@@ -97,11 +97,36 @@ public class Validator {
     public static void validateUserUpdate(String fullName, String username, String password, String rePassword,
                                           String email, String gender, String phone, String address,
                                           String avatarImage, List<String> roleNames) {
-        validateUserFields(fullName, username, password, rePassword, email, gender, phone, address, avatarImage, roleNames);
 
-        // Only validate password if provided
-        if (StringUtils.hasText(password)) {
+
+        isNullOrEmpty(fullName, EMPTY_FULL_NAME);
+        validateRegex(fullName, REGEX_FULLNAME, FULL_NAME_INVALID);
+
+        isNullOrEmpty(username, EMPTY_USERNAME);
+        validateRegex(username, REGEX_USERNAME, USERNAME_INVALID);
+
+        //Only validate password if it's not empty
+        if (password != null && !password.isEmpty()) {
             validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
+            isNullOrEmpty(rePassword, EMPTY_REPASSWORD);
+            if (!password.equals(rePassword)) {
+                throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
+            }
+        }
+        isNullOrEmpty(email, EMPTY_EMAIL);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+
+        isNullOrEmpty(phone, EMPTY_PHONE_NUMBER);
+        validateRegex(phone, REGEX_PHONE, PHONE_INVALID);
+
+        isNullOrEmpty(address, EMPTY_ADDRESS);
+
+        if (!"male".equalsIgnoreCase(gender) && !"female".equalsIgnoreCase(gender)) {
+            throw BusinessException.of(GENDER_INVALID);
+        }
+
+        if (roleNames == null || roleNames.isEmpty()) {
+            throw BusinessException.of(ROLES_NAME_INVALID);
         }
     }
 
