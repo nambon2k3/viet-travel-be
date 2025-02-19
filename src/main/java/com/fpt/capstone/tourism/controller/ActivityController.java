@@ -1,5 +1,6 @@
 package com.fpt.capstone.tourism.controller;
 
+import com.fpt.capstone.tourism.dto.common.ActivityDTO;
 import com.fpt.capstone.tourism.dto.common.GeneralResponse;
 import com.fpt.capstone.tourism.dto.common.LocationDTO;
 import com.fpt.capstone.tourism.dto.request.LocationRequestDTO;
@@ -16,38 +17,39 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/head-business/activity")
 public class ActivityController {
-//    private final ActivityService activityService;
-//
-//
-//    @PostMapping("/create")
-//    public ResponseEntity<GeneralResponse<LocationDTO>> create(@RequestBody LocationRequestDTO locationRequestDTO) {
-//        return ResponseEntity.ok(locationService.saveLocation(locationRequestDTO));
-//    }
-//
-//    @GetMapping("/details/{id}")
-//    public ResponseEntity<GeneralResponse<LocationDTO>> detail(@PathVariable Long id) {
-//        return ResponseEntity.ok(locationService.getLocationById(id));
-//    }
-//
-//    @GetMapping("/list")
-//    public ResponseEntity<GeneralResponse<PagingDTO<List<LocationDTO>>>> getAll(@RequestParam(defaultValue = "0") int page,
-//                                                                                @RequestParam(defaultValue = "10") int size,
-//                                                                                @RequestParam(required = false) String keyword,
-//                                                                                @RequestParam(required = false) Boolean isDeleted,
-//                                                                                @RequestParam(defaultValue = "desc") String orderDate) {
-//        return ResponseEntity.ok(locationService.getAllLocation(page, size, keyword, isDeleted, orderDate));
-//    }
-//
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<GeneralResponse<LocationDTO>> update(@PathVariable Long id, @RequestBody LocationRequestDTO locationRequestDTO) {
-//        return ResponseEntity.ok(locationService.updateLocation(id, locationRequestDTO));
-//    }
-//
-//    @DeleteMapping("/change-status/{id}")
-//    public ResponseEntity<GeneralResponse<LocationDTO>> delete(@PathVariable Long id,
-//                                                               @RequestParam boolean isDeleted) {
-//        return ResponseEntity.ok(locationService.deleteLocation(id, isDeleted));
-//    }
+    private final ActivityService activityService;
+
+
+    @PostMapping("/create")
+    public ResponseEntity<GeneralResponse<ActivityDTO>> create(@RequestBody ActivityDTO activityDTO) {
+        return ResponseEntity.ok(activityService.saveActivity(activityDTO));
+    }
+
+    @GetMapping("/details/{id}")
+    public ResponseEntity<GeneralResponse<ActivityDTO>> detail(@PathVariable Long id) {
+        return ResponseEntity.ok(activityService.getActivityById(id));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<GeneralResponse<PagingDTO<List<ActivityDTO>>>> getAll(@RequestParam(defaultValue = "0") int page,
+                                                                                @RequestParam(defaultValue = "10") int size,
+                                                                                @RequestParam(required = false) String keyword,
+                                                                                @RequestParam(required = false) Boolean isDeleted,
+                                                                                @RequestParam(required = false) Long categoryId,
+                                                                                @RequestParam(defaultValue = "desc") String orderDate) {
+        return ResponseEntity.ok(activityService.getAllActivity(page, size, keyword, isDeleted, orderDate, categoryId));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<GeneralResponse<ActivityDTO>> update(@PathVariable Long id, @RequestBody ActivityDTO activityDTO) {
+        return ResponseEntity.ok(activityService.updateActivity(id, activityDTO));
+    }
+
+    @DeleteMapping("/change-status/{id}")
+    public ResponseEntity<GeneralResponse<ActivityDTO>> delete(@PathVariable Long id,
+                                                               @RequestParam boolean isDeleted) {
+        return ResponseEntity.ok(activityService.deleteActivity(id, isDeleted));
+    }
 
 
 }

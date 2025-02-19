@@ -126,6 +126,9 @@ public class Constants {
         public static final String GET_TAGS_NOT_FOUND_MESSAGE = "Get tags failed";
         public static final String BLOG_RETRIEVED_SUCCESS_MESSAGE = "Blog retrieved successfully";
         public static final String BLOG_RETRIEVED_FAIL_MESSAGE = "Blog retrieved failed";
+        public static final String EMPTY_PRICE = "Price can not be empty";
+        public static final String EMPTY_LOCATION = "Location can not be empty";
+        public static final String EMPTY_ACTIVITY_CATEGORY = "Activity category can not be empty";
     }
 
 
