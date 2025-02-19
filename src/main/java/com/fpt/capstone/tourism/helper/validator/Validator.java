@@ -1,15 +1,12 @@
 package com.fpt.capstone.tourism.helper.validator;
-import com.fpt.capstone.tourism.dto.common.LocationDTO;
+import com.fpt.capstone.tourism.dto.common.*;
 import com.fpt.capstone.tourism.dto.request.LocationRequestDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import java.util.List;
 import com.fpt.capstone.tourism.constants.Constants;
-import com.fpt.capstone.tourism.dto.common.GeoPositionDTO;
 import com.fpt.capstone.tourism.dto.common.LocationDTO;
-import com.fpt.capstone.tourism.dto.common.ServiceCategoryDTO;
-import com.fpt.capstone.tourism.dto.common.ServiceProviderDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -240,4 +237,19 @@ public class Validator {
 
     }
 
+    public static void validateActivity(ActivityDTO activityDTO) {
+        isNullOrEmpty(activityDTO.getImageUrl(), EMPTY_IMAGE_URL);
+
+        isNullOrEmpty(activityDTO.getContent(), EMPTY_BLOG_CONTENT);
+
+        isNullOrEmpty(activityDTO.getTitle(), EMPTY_BLOG_TITLE);
+
+        isNullOrEmpty(String.valueOf(activityDTO.getPricePerPerson()), EMPTY_PRICE);
+        if(activityDTO.getPricePerPerson() < 0){
+            throw BusinessException.of("Price can not be lower than 0");
+        }
+        isNullOrEmpty(activityDTO.getGeoPosition().toString(), EMPTY_LOCATION_GEO_POSITION);
+        isNullOrEmpty(activityDTO.getLocation().toString(), EMPTY_LOCATION);
+        isNullOrEmpty(activityDTO.getActivityCategory().toString(), EMPTY_ACTIVITY_CATEGORY);
+    }
 }

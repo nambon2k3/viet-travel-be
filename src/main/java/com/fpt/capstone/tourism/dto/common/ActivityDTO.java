@@ -18,8 +18,8 @@ public class ActivityDTO {
     private String content;
     private String imageUrl;
     private double pricePerPerson;
-    private boolean isDeleted;
+    private boolean deleted;
     private GeoPositionDTO geoPosition;
-    private Long locationId;
-    private Long activityCategoryId;
+    private LocationDTO location;
+    private ActivityCategoryDTO activityCategory;
 }
