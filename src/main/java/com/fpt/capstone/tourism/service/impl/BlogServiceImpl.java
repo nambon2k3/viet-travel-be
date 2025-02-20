@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -205,13 +206,54 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<PublicBlogResponseDTO> getNewestBlogs(int numberBlog) {
-        try{
-            Pageable pageable = PageRequest.of(0, numberBlog, Sort.by("createdAt").descending());
-            List<Blog> blogList = blogRepository.findTopBlogs(pageable);
-            return blogList.stream().map(publicBlogMapper::blogToPublicBlogResponseDTO).collect(Collectors.toList());
-        }catch (Exception ex) {
+    public GeneralResponse<PagingDTO<List<PublicBlogResponseDTO>>> getNewestBlogs(int page, int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<Blog> blogPage = blogRepository.findAll(pageable);
+
+            // Convert entity list to DTO list
+            List<PublicBlogResponseDTO> blogDTOs = blogPage.getContent()
+                    .stream()
+                    .map(publicBlogMapper::blogToPublicBlogResponseDTO)
+                    .collect(Collectors.toList());
+
+            // Wrap in PagingDTO using builder
+            PagingDTO<List<PublicBlogResponseDTO>> pagingDTO = PagingDTO.<List<PublicBlogResponseDTO>>builder()
+                    .page(blogPage.getNumber())
+                    .size(blogPage.getSize())
+                    .total(blogPage.getTotalElements())
+                    .items(blogDTOs)
+                    .build();
+
+            return GeneralResponse.of(pagingDTO, "Fetched newest blogs successfully.");
+        } catch (Exception ex) {
             throw BusinessException.of("Error retrieving newest blogs", ex);
+        }
+    }
+
+    @Override
+    public GeneralResponse<List<PublicBlogResponseDTO>> getRandomBlogs(int count) {
+        try {
+            List<Blog> allBlogs = blogRepository.findAll(); // Fetch all blogs
+            if (allBlogs.isEmpty()) {
+                return GeneralResponse.of(Collections.emptyList(), "No blogs available.");
+            }
+
+            // Ensure count is not more than available blogs
+            int limit = Math.min(count, allBlogs.size());
+
+            // Shuffle and pick 'limit' blogs
+            Collections.shuffle(allBlogs);
+            List<Blog> randomBlogs = allBlogs.stream().limit(limit).collect(Collectors.toList());
+
+            // Convert to DTO
+            List<PublicBlogResponseDTO> blogDTOs = randomBlogs.stream()
+                    .map(publicBlogMapper::blogToPublicBlogResponseDTO)
+                    .collect(Collectors.toList());
+
+            return GeneralResponse.of(blogDTOs, "Fetched " + limit + " random blogs successfully.");
+        } catch (Exception ex) {
+            throw BusinessException.of(HttpStatus.INTERNAL_SERVER_ERROR, "Error retrieving random blogs", ex);
         }
     }
 
@@ -224,33 +266,4 @@ public class BlogServiceImpl implements BlogService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<PublicBlogResponseDTO> getPublicBlog() {
-        // Get 3 blogs with the tag "food & drink"
-        List<PublicBlogResponseDTO> foodAndDrinkBlogs = getBlogsByTagName("Food & Drinks", 3);
-
-        // Get 6 blogs with the tag "adventure"
-        List<PublicBlogResponseDTO> adventureBlogs = getBlogsByTagName("Adventure", 6);
-
-        // Get 3 blogs with the tag "cultural"
-        List<PublicBlogResponseDTO> culturalBlogs = getBlogsByTagName("Cultural", 3);
-
-        // Get 11 newest blogs
-        List<PublicBlogResponseDTO> newestBlogs = getNewestBlogs(11);
-
-        List<PublicBlogResponseDTO> allPublicBlogs = new ArrayList<>();
-        allPublicBlogs.addAll(foodAndDrinkBlogs);
-        allPublicBlogs.addAll(adventureBlogs);
-        allPublicBlogs.addAll(culturalBlogs);
-
-        List<PublicBlogResponseDTO> newestBlogsAsPublic = newestBlogs.stream()
-                .map(blogResponse -> PublicBlogResponseDTO.builder()
-                        .id(blogResponse.getId())
-                        .thumbnailImageUrl(blogResponse.getThumbnailImageUrl())
-                        .title(blogResponse.getTitle())
-                        .build())
-                .collect(Collectors.toList());
-        allPublicBlogs.addAll(newestBlogsAsPublic);
-        return allPublicBlogs;
-    }
 }

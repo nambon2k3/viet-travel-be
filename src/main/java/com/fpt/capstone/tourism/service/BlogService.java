@@ -7,6 +7,7 @@ import com.fpt.capstone.tourism.dto.response.BlogResponseDTO;
 import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.dto.response.PublicBlogResponseDTO;
 import com.fpt.capstone.tourism.model.Blog;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface BlogService {
     GeneralResponse<BlogResponseDTO> changeBlogDeletedStatus(Long id, boolean isDeleted);
     GeneralResponse<PagingDTO<List<BlogResponseDTO>>> getBlogs(int page, int size, String keyword, Boolean isDeleted, String sortField, String sortDirection);
     List<BlogResponseDTO> findNewestBlogs(int numberBlog);
-    List<PublicBlogResponseDTO> getPublicBlog();
     List<PublicBlogResponseDTO> getBlogsByTagName(String tagName, int numberOfBlogs);
-    List<PublicBlogResponseDTO> getNewestBlogs(int numberBlog);
+    GeneralResponse<PagingDTO<List<PublicBlogResponseDTO>>> getNewestBlogs(int page, int size);
+    GeneralResponse<List<PublicBlogResponseDTO>> getRandomBlogs(int blogNumber);
 }
