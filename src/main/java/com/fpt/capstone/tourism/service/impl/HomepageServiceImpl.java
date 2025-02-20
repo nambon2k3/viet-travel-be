@@ -6,6 +6,7 @@ import com.fpt.capstone.tourism.dto.response.PagingDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.mapper.ActivityMapper;
 import com.fpt.capstone.tourism.mapper.BlogMapper;
+import com.fpt.capstone.tourism.mapper.ServiceProviderMapper;
 import com.fpt.capstone.tourism.mapper.TourMapper;
 import com.fpt.capstone.tourism.model.Activity;
 import com.fpt.capstone.tourism.model.Blog;
@@ -36,24 +37,29 @@ public class HomepageServiceImpl implements HomepageService {
     private final LocationService locationService;
     private final ActivityRepository activityRepository;
     private final ActivityMapper activityMapper;
+    private final ServiceProviderMapper serviceProviderMapper;
 
     @Override
     public GeneralResponse<HomepageDTO> viewHomepage(int numberTour, int numberBlog, int numberActivity, int numberLocation) {
-        TourDTO topTourOfYear = tourService.findTopTourOfYear();
-        List<TourDTO> trendingTours = tourService.findTrendingTours(numberTour);
-        List<BlogResponseDTO> newBlogs = blogService.findNewestBlogs(numberBlog);
-        List<ActivityDTO> recommendedActivities = activityService.findRecommendedActivities(numberActivity);
-        List<LocationDTO> recommendedLocations = locationService.findRecommendedLocations(numberLocation);
+        try {
+            TourDTO topTourOfYear = tourService.findTopTourOfYear();
+            List<TourDTO> trendingTours = tourService.findTrendingTours(numberTour);
+            List<BlogResponseDTO> newBlogs = blogService.findNewestBlogs(numberBlog);
+            List<ActivityDTO> recommendedActivities = activityService.findRecommendedActivities(numberActivity);
+            List<LocationDTO> recommendedLocations = locationService.findRecommendedLocations(numberLocation);
 
-        //Mapping to Dto
-        HomepageDTO homepageDTO = HomepageDTO.builder()
-                .topTourOfYear(topTourOfYear)
-                .newBlogs(newBlogs)
-                .trendingTours(trendingTours)
-                .recommendedActivities(recommendedActivities)
-                .recommendedLocations(recommendedLocations)
-                .build();
-        return new GeneralResponse<>(HttpStatus.OK.value(), "Homepage loaded successfully", homepageDTO);
+            //Mapping to Dto
+            HomepageDTO homepageDTO = HomepageDTO.builder()
+                    .topTourOfYear(topTourOfYear)
+                    .newBlogs(newBlogs)
+                    .trendingTours(trendingTours)
+                    .recommendedActivities(recommendedActivities)
+                    .recommendedLocations(recommendedLocations)
+                    .build();
+            return new GeneralResponse<>(HttpStatus.OK.value(), "Homepage loaded successfully", homepageDTO);
+        } catch (Exception ex) {
+            throw BusinessException.of("Error retrieve homepage data", ex);
+        }
     }
 
     @Override
@@ -73,16 +79,38 @@ public class HomepageServiceImpl implements HomepageService {
 
     @Override
     public GeneralResponse<PublicActivityDetailDTO> viewPublicActivityDetail(Long activityId, int numberActivity) {
-        ActivityDTO activityDTO = activityMapper.toDTO(activityRepository.findById(activityId).orElseThrow());
-        List<ActivityDTO> relatedActivities = activityService.findRelatedActivities(activityId, numberActivity);
+        try {
+            ActivityDTO activityDTO = activityMapper.toDTO(activityRepository.findById(activityId).orElseThrow());
+            List<ActivityDTO> relatedActivities = activityService.findRelatedActivities(activityId, numberActivity);
 
-        //Mapping to Dto
-        PublicActivityDetailDTO publicActivityDetailDTO = PublicActivityDetailDTO.builder()
-                .detailActivityDTO(activityDTO)
-                .relatedActivities(relatedActivities)
-                .build();
+            //Mapping to Dto
+            PublicActivityDetailDTO publicActivityDetailDTO = PublicActivityDetailDTO.builder()
+                    .detailActivityDTO(activityDTO)
+                    .relatedActivities(relatedActivities)
+                    .build();
 
-        return new GeneralResponse<>(HttpStatus.OK.value(), "Activity detail loaded successfully", publicActivityDetailDTO);
+            return new GeneralResponse<>(HttpStatus.OK.value(), "Activity detail loaded successfully", publicActivityDetailDTO);
+        } catch (Exception ex) {
+            throw BusinessException.of("Error retrieve public activity detail data", ex);
+        }
     }
+
+//    @Override
+//    public GeneralResponse<PublicServiceDetailDTO> viewPublicRestaurantDetail(Long id, int numberRestaurant) {
+//        try {
+//            ServiceProviderDTO serviceProviderDTO = serviceProviderMapper.toDTO(providerService.findById(activityId).orElseThrow());
+//            List<ActivityDTO> relatedActivities = activityService.findRelatedActivities(activityId, numberActivity);
+//
+//            //Mapping to Dto
+//            PublicActivityDetailDTO publicActivityDetailDTO = PublicActivityDetailDTO.builder()
+//                    .detailActivityDTO(activityDTO)
+//                    .relatedActivities(relatedActivities)
+//                    .build();
+//
+//            return new GeneralResponse<>(HttpStatus.OK.value(), "Activity detail loaded successfully", publicActivityDetailDTO);
+//        } catch (Exception ex) {
+//            throw BusinessException.of("Error retrieve public activity detail data", ex);
+//        }
+//    }
 
 }
