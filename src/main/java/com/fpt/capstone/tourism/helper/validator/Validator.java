@@ -1,15 +1,12 @@
 package com.fpt.capstone.tourism.helper.validator;
-import com.fpt.capstone.tourism.dto.common.LocationDTO;
+import com.fpt.capstone.tourism.dto.common.*;
 import com.fpt.capstone.tourism.dto.request.LocationRequestDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import java.util.List;
 import com.fpt.capstone.tourism.constants.Constants;
-import com.fpt.capstone.tourism.dto.common.GeoPositionDTO;
 import com.fpt.capstone.tourism.dto.common.LocationDTO;
-import com.fpt.capstone.tourism.dto.common.ServiceCategoryDTO;
-import com.fpt.capstone.tourism.dto.common.ServiceProviderDTO;
 import com.fpt.capstone.tourism.exception.common.BusinessException;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -97,11 +94,36 @@ public class Validator {
     public static void validateUserUpdate(String fullName, String username, String password, String rePassword,
                                           String email, String gender, String phone, String address,
                                           String avatarImage, List<String> roleNames) {
-        validateUserFields(fullName, username, password, rePassword, email, gender, phone, address, avatarImage, roleNames);
 
-        // Only validate password if provided
-        if (StringUtils.hasText(password)) {
+
+        isNullOrEmpty(fullName, EMPTY_FULL_NAME);
+        validateRegex(fullName, REGEX_FULLNAME, FULL_NAME_INVALID);
+
+        isNullOrEmpty(username, EMPTY_USERNAME);
+        validateRegex(username, REGEX_USERNAME, USERNAME_INVALID);
+
+        //Only validate password if it's not empty
+        if (password != null && !password.isEmpty()) {
             validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
+            isNullOrEmpty(rePassword, EMPTY_REPASSWORD);
+            if (!password.equals(rePassword)) {
+                throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
+            }
+        }
+        isNullOrEmpty(email, EMPTY_EMAIL);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+
+        isNullOrEmpty(phone, EMPTY_PHONE_NUMBER);
+        validateRegex(phone, REGEX_PHONE, PHONE_INVALID);
+
+        isNullOrEmpty(address, EMPTY_ADDRESS);
+
+        if (!"male".equalsIgnoreCase(gender) && !"female".equalsIgnoreCase(gender)) {
+            throw BusinessException.of(GENDER_INVALID);
+        }
+
+        if (roleNames == null || roleNames.isEmpty()) {
+            throw BusinessException.of(ROLES_NAME_INVALID);
         }
     }
 
@@ -139,7 +161,7 @@ public class Validator {
         }
     }
 
-    public static void validateTourGuideFields(String fullName, String username, String password, String rePassword,
+    public static void validateCreateTourGuideFields(String fullName, String username, String password,
                                            String email, String gender, String phone, String address) {
         isNullOrEmpty(fullName, EMPTY_FULL_NAME);
         validateRegex(fullName, REGEX_FULLNAME, FULL_NAME_INVALID);
@@ -150,10 +172,6 @@ public class Validator {
         isNullOrEmpty(password, EMPTY_PASSWORD);
         validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
 
-        isNullOrEmpty(rePassword, EMPTY_REPASSWORD);
-        if (!password.equals(rePassword)) {
-            throw BusinessException.of(PASSWORDS_DO_NOT_MATCH_MESSAGE);
-        }
         isNullOrEmpty(email, EMPTY_EMAIL);
         validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
 
@@ -162,6 +180,32 @@ public class Validator {
 
         isNullOrEmpty(address, EMPTY_ADDRESS);
         //isNullOrEmpty(avatarImage, USER_INFORMATION_NULL_OR_EMPTY);
+
+        if (!"male".equalsIgnoreCase(gender) && !"female".equalsIgnoreCase(gender)) {
+            throw BusinessException.of(GENDER_INVALID);
+        }
+    }
+
+    public static void validateUpdateTourGuideFields(String fullName, String username, String password,
+                                               String email, String gender, String phone, String address) {
+        isNullOrEmpty(fullName, EMPTY_FULL_NAME);
+        validateRegex(fullName, REGEX_FULLNAME, FULL_NAME_INVALID);
+
+        isNullOrEmpty(username, EMPTY_USERNAME);
+        validateRegex(username, REGEX_USERNAME, USERNAME_INVALID);
+
+        //Only validate password if it's not empty (for updates)
+        if (password != null && !password.isEmpty()) {
+            validateRegex(password, REGEX_PASSWORD, PASSWORD_INVALID);
+        }
+
+        isNullOrEmpty(email, EMPTY_EMAIL);
+        validateRegex(email, REGEX_EMAIL, EMAIL_INVALID);
+
+        isNullOrEmpty(phone, EMPTY_PHONE_NUMBER);
+        validateRegex(phone, REGEX_PHONE, PHONE_INVALID);
+
+        isNullOrEmpty(address, EMPTY_ADDRESS);
 
         if (!"male".equalsIgnoreCase(gender) && !"female".equalsIgnoreCase(gender)) {
             throw BusinessException.of(GENDER_INVALID);
@@ -215,4 +259,19 @@ public class Validator {
 
     }
 
+    public static void validateActivity(ActivityDTO activityDTO) {
+        isNullOrEmpty(activityDTO.getImageUrl(), EMPTY_IMAGE_URL);
+
+        isNullOrEmpty(activityDTO.getContent(), EMPTY_BLOG_CONTENT);
+
+        isNullOrEmpty(activityDTO.getTitle(), EMPTY_BLOG_TITLE);
+
+        isNullOrEmpty(String.valueOf(activityDTO.getPricePerPerson()), EMPTY_PRICE);
+        if(activityDTO.getPricePerPerson() < 0){
+            throw BusinessException.of("Price can not be lower than 0");
+        }
+        isNullOrEmpty(activityDTO.getGeoPosition().toString(), EMPTY_LOCATION_GEO_POSITION);
+        isNullOrEmpty(activityDTO.getLocation().toString(), EMPTY_LOCATION);
+        isNullOrEmpty(activityDTO.getActivityCategory().toString(), EMPTY_ACTIVITY_CATEGORY);
+    }
 }

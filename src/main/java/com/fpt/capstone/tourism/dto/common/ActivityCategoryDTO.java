@@ -12,5 +12,5 @@ import lombok.Data;
 public class ActivityCategoryDTO {
     private Long id;
     private String name;
-    private boolean isDeleted;
+    private boolean deleted;
 }

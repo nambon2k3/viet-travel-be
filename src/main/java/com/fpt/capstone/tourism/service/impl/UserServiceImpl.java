@@ -332,21 +332,26 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     @Transactional
     public GeneralResponse<?> updateUser(Long id, UserCreationRequestDTO userDTO) {
         try {
-            // Validate user input
+            // Validate user input (password is now optional)
             Validator.validateUserUpdate(userDTO.getFullName(), userDTO.getUsername(),
-                    userDTO.getPassword(), userDTO.getRePassword(), userDTO.getEmail(), String.valueOf(userDTO.getGender()),
-                    userDTO.getPhone(), userDTO.getAddress(), userDTO.getAvatarImage(), userDTO.getRoleNames());
+                    userDTO.getPassword(), userDTO.getRePassword(), userDTO.getEmail(),
+                    String.valueOf(userDTO.getGender()), userDTO.getPhone(),
+                    userDTO.getAddress(), userDTO.getAvatarImage(), userDTO.getRoleNames());
+
             // Find user by ID
             User user = userRepository.findById(id)
                     .orElseThrow(() -> BusinessException.of(HttpStatus.NOT_FOUND, USER_NOT_FOUND_MESSAGE));
+
             // Check for duplicate username (except for the current user)
             Optional<User> existingUser = userRepository.findByUsername(userDTO.getUsername());
             if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
                 throw BusinessException.of(HttpStatus.CONFLICT, DUPLICATE_USERNAME_MESSAGE);
             }
+
             // Check for duplicate email (except for the current user)
             Optional<User> existingEmailUser = userRepository.findByEmail(userDTO.getEmail());
             if (existingEmailUser.isPresent() && !existingEmailUser.get().getId().equals(id)) {
@@ -359,9 +364,12 @@ public class UserServiceImpl implements UserService {
                 throw BusinessException.of(HttpStatus.CONFLICT, PHONE_ALREADY_EXISTS_MESSAGE);
             }
 
-            //Only update fields if they have changed
+            // Only update fields if they have changed
             if (!user.getFullName().equals(userDTO.getFullName())) {
                 user.setFullName(userDTO.getFullName());
+            }
+            if (!user.getUsername().equals(userDTO.getUsername())) {
+                user.setUsername(userDTO.getUsername());
             }
             if (!user.getEmail().equals(userDTO.getEmail())) {
                 user.setEmail(userDTO.getEmail());
@@ -372,12 +380,15 @@ public class UserServiceImpl implements UserService {
             if (!user.getAddress().equals(userDTO.getAddress())) {
                 user.setAddress(userDTO.getAddress());
             }
-            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()
-                    && !passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
-                user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+            //Only update the password if a new one is provided
+            if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+                if (!passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
+                    user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+                }
             }
 
-            //Only update roles if they have changed
+            // Only update roles if they have changed
             Set<String> currentRoleNames = user.getUserRoles().stream()
                     .map(userRole -> userRole.getRole().getRoleName())
                     .collect(Collectors.toSet());

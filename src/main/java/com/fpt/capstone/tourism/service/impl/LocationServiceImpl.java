@@ -9,6 +9,7 @@ import com.fpt.capstone.tourism.exception.common.BusinessException;
 import com.fpt.capstone.tourism.helper.validator.Validator;
 import com.fpt.capstone.tourism.mapper.GeoPositionMapper;
 import com.fpt.capstone.tourism.mapper.LocationMapper;
+import com.fpt.capstone.tourism.model.Activity;
 import com.fpt.capstone.tourism.model.GeoPosition;
 import com.fpt.capstone.tourism.model.Location;
 import com.fpt.capstone.tourism.repository.LocationRepository;
@@ -162,6 +163,14 @@ public class LocationServiceImpl implements LocationService {
 
     }
 
+    @Override
+    public List<LocationDTO> findRecommendedLocations(int numberLocation) {
+        List<Location> randomLocations = locationRepository.findRandomLocation(numberLocation);
+        return randomLocations.stream()
+                .map(locationMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     private Specification<Location> buildSearchSpecification(String keyword, Boolean isDeleted) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -172,7 +181,7 @@ public class LocationServiceImpl implements LocationService {
             }
 
             if (isDeleted != null) {
-                predicates.add(cb.equal(root.get("isDeleted"), isDeleted));
+                predicates.add(cb.equal(root.get("deleted"), isDeleted));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

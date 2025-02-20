@@ -21,8 +21,9 @@ public class HomepageController {
     @GetMapping("/homepage")
     public ResponseEntity<GeneralResponse<HomepageDTO>> view(@RequestParam(value = "numberTour", defaultValue = "3") int numberTour,
                                                              @RequestParam(value = "numberBlog", defaultValue = "3") int numberBlog,
-                                                             @RequestParam(value = "numberActivity", defaultValue = "3") int numberActivity) {
-        return ResponseEntity.ok(homepageService.viewHomepage(numberTour, numberBlog, numberActivity));
+                                                             @RequestParam(value = "numberActivity", defaultValue = "3") int numberActivity,
+                                                             @RequestParam(value = "numberLocation", defaultValue = "7") int numberLocation) {
+        return ResponseEntity.ok(homepageService.viewHomepage(numberTour, numberBlog, numberActivity, numberLocation));
     }
 
     @GetMapping("/list-tour")
@@ -47,5 +48,10 @@ public class HomepageController {
                                                                                  @RequestParam(defaultValue = "10") int size,
                                                                                  @RequestParam(required = false) String keyword){
         return ResponseEntity.ok(homepageService.viewAllRestaurant(page, size, keyword));
+    }
+    @GetMapping("/activity/details/{id}")
+    public ResponseEntity<GeneralResponse<PublicActivityDetailDTO>> viewActivityDetail(@PathVariable Long id,
+                                                                                       @RequestParam(value = "numberActivity", defaultValue = "3") int numberActivity){
+        return ResponseEntity.ok(homepageService.viewPublicActivityDetail(id, numberActivity));
     }
 }

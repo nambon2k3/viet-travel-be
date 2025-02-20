@@ -17,4 +17,6 @@ public interface LocationService {
     GeneralResponse<LocationDTO> deleteLocation(Long id, boolean isDeleted);
 
     GeneralResponse<LocationDTO> updateLocation(Long id, LocationRequestDTO locationRequestDTO);
+
+    List<LocationDTO> findRecommendedLocations(int numberLocation);
 }

@@ -32,7 +32,7 @@ public class Activity extends BaseEntity {
     @Column(name="is_deleted")
     private Boolean deleted;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geo_position_id")
     private GeoPosition geoPosition;
 
